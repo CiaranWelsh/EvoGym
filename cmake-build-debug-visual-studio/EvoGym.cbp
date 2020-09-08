@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="EvoGym"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\rrbuild\;CMake Files\..\rrbuild\roadrunner\;CMake Files\..\rrbuild\roadrunner\rr-install-msvc\;CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\;CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\;CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\;CMake Files\src\;CMake Files\test\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 all"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 edit_cache"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="intrinsics_gen">
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 intrinsics_gen"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="TestTest">
+				<Option output="D:/EvoGym/cmake-build-debug-visual-studio/test/TestTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DSTATIC_RR"/>
+					<Add directory="D:/EvoGym/test"/>
+					<Add directory="D:/rrbuild/roadrunner/rr-install-msvc/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 TestTest"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="TestTest/fast">
+				<Option output="D:/EvoGym/cmake-build-debug-visual-studio/test/TestTest.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/EvoGym/cmake-build-debug-visual-studio/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add option="-DSTATIC_RR"/>
+					<Add directory="D:/EvoGym/test"/>
+					<Add directory="D:/rrbuild/roadrunner/rr-install-msvc/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.18362.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 TestTest/fast"/>
+					<CompileFile command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f D:\EvoGym\cmake-build-debug-visual-studio\test\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/EvoGym/test/main.cpp">
+			<Option target="TestTest"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/ImportRoadrunnerAndDependencies.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/PocoFoundation-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/PocoFoundation-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/PocoNet-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/PocoNet-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/bzip2-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/bzip2-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/clapack-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/clapack-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/iconv-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/iconv-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/libxml2-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/libxml2-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/libxml2-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/nleq1-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/nleq1-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/nleq2-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/nleq2-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner-static-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner-static-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner_c_api-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/roadrunner_c_api-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/rr-libstruct-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/rr-libstruct-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/sbml-static-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/sbml-static-config-version.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/sbml-static-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/sundials-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/sundials-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/zlib-config-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/zlib-config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/llvm/LLVM-Config.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/llvm/LLVMConfig.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/llvm/LLVMConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/llvm/LLVMExports-release.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/../rrbuild/roadrunner/rr-install-msvc/lib/cmake/llvm/LLVMExports.cmake">
+			<Option virtualFolder="CMake Files\..\rrbuild\roadrunner\rr-install-msvc\lib\cmake\llvm\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\src\"/>
+		</Unit>
+		<Unit filename="D:/EvoGym/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
