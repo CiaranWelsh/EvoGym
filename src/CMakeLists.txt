@@ -4,6 +4,7 @@ set(
         SOURCES
         NetworkGenerationOptions.cpp
         RateLaw.cpp
+        Motif.cpp
 
 )
 set(
@@ -11,6 +12,7 @@ set(
         include/evo/NetworkGenerationOptions.h
         include/evo/RoleTypes.h
         include/evo/RateLaw.h
+        include/evo/Motif.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
