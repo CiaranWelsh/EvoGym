@@ -17,10 +17,14 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../test"
   "D:/rrbuild/roadrunner/rr-install-msvc/include"
+  "../test/googletest/googletest/include"
+  "../test/googletest/googletest"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "D:/EvoGym/cmake-build-debug-visual-studio/test/googletest/googletest/CMakeFiles/gtest.dir/DependInfo.cmake"
+  "D:/EvoGym/cmake-build-debug-visual-studio/test/googletest/googletest/CMakeFiles/gtest_main.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

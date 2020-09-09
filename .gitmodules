@@ -1,0 +1,9 @@
+[submodule "test/googletest"]
+	path = test/googletest
+	url = https://github.com/google/googletest.git
+[submodule "third_party/stats"]
+	path = third_party/stats
+	url = git@github.com:CiaranWelsh/stats.git
+[submodule "third_party/pystring"]
+	path = third_party/pystring
+	url = git@github.com:CiaranWelsh/pystring.git
