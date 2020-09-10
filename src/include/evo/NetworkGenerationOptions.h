@@ -36,16 +36,11 @@ namespace evo {
         RateLaws rate_laws_;
         Motifs motifs_;
 
-        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
-        // The cheapest way of randomly generating a network and storing
-        // it in a data structure with other randomly generated networks
-        // is to create it at the same location from which it will be used.
-        // The alternative is to create the network and then move or copy the
-        // network into the data structure.
-        // todo consider this more
+        // for when we want the random model with a core component
+        std::string core_sbml_;
 
         void validate() const;
+
 
     public:
         NetworkGenerationOptions() = default;
@@ -56,9 +51,7 @@ namespace evo {
 
         NetworkGenerationOptions(RateLaws rateLaws, Motifs motifs);
 
-        unsigned int getSeed() const;
-
-        NetworkGenerationOptions& setSeed(unsigned int seed);
+        unsigned int getTimeNow();
 
         int getBoundarySpeciesLowerBound() const;
 
@@ -119,8 +112,8 @@ namespace evo {
         const RateLaws &getRateLaws() const;
 
         NetworkGenerationOptions& setRateLaws(const RateLaws &rateLaws);
-
-
+        const std::string &getCoreSBML() const;
+        void setCoreSBML(const std::string &coreSbml);
     };
 }
 

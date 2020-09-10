@@ -12,10 +12,11 @@ namespace evo {
 
     RandomNetworkGenerator::RandomNetworkGenerator(const NetworkGenerationOptions &options)
         : options_(options) {
+        createRRModel();
         std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         createCompartments();
-        //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-        //        createBoundarySpecies();
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        createBoundarySpecies();
         //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         //        createFloatingSpecies();
         //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
@@ -27,32 +28,32 @@ namespace evo {
         //        createCompartments();
     }
 
+    void RandomNetworkGenerator::createRRModel(){
+        if (options_.getCoreSBML().empty()){
+            rr_ = std::make_unique<RoadRunner>(RoadRunner());
+        } else {
+            rr_ = std::make_unique<RoadRunner>(options_.getCoreSBML());
+        }
+    }
+
+    const std::unique_ptr<RoadRunner> &RandomNetworkGenerator::getRR() const {
+        return rr_;
+    }
+
+
     const NetworkGenerationOptions &RandomNetworkGenerator::getOptions() const {
         return options_;
     }
 
-    const RoadRunner &RandomNetworkGenerator::getRr() const {
-        return rr;
-    }
-
     std::string RandomNetworkGenerator::selectRandomCompartment() {
-        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-        //        if (getOptions().getNCompartments() != rr.getNumberOfCompartments()) {
-        //            std::ostringstream err;
-        //            err << "Expected to have " << rr.getNumberOfCompartments()
-        //                << " compartments in model \""
-        //                << rr.getModelName() << "\" but instead found " << getOptions().getNCompartments();
-        //            THROW_LOGIC_ERROR(err.str());
-        //        }
-        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         int random_index = nc::random::randInt<int>(0, options_.getNCompartments());
         std::cout << __FILE__ << ":" << __LINE__ << std::endl;
-        return rr.getCompartmentIds()[random_index];
+        return getRR()->getCompartmentIds()[random_index];
     }
 
     std::vector<std::string> RandomNetworkGenerator::selectRandomSpecies(int n) {
-        std::vector<std::string> species = rr.getBoundarySpeciesIds();
-        std::vector<std::string> floating = rr.getFloatingSpeciesIds();
+        std::vector<std::string> species = getRR()->getBoundarySpeciesIds();
+        std::vector<std::string> floating = getRR()->getFloatingSpeciesIds();
 
         // all species
         species.insert(floating.end(), floating.begin(), floating.end());
@@ -75,10 +76,10 @@ namespace evo {
         std::vector<std::string> out;
         for (auto &i : species_indices) {
             if (i < options_.getNBoundarySpecies()) {
-                out.push_back(rr.getBoundarySpeciesIds()[i]);
+                out.push_back(getRR()->getBoundarySpeciesIds()[i]);
             } else {
                 int idx = i - options_.getNBoundarySpecies();
-                out.push_back(rr.getFloatingSpeciesIds()[idx]);
+                out.push_back(getRR()->getFloatingSpeciesIds()[idx]);
             }
         }
         return out;
@@ -96,7 +97,7 @@ namespace evo {
             if (i == options_.getNCompartments() - 1)
                 forceRegenerate = true;
             id << "C" << i;
-            rr.addCompartment(id.str(), val, forceRegenerate);// regenerate model on last iter
+            getRR()->addCompartment(id.str(), val, forceRegenerate);// regenerate model on last iter
             id.str(std::string());                            // clear the stream
         }
     }
@@ -114,7 +115,7 @@ namespace evo {
             if (i == options_.getNFloatingSpecies() - 1)
                 forceRegenerate = true;
             std::string comp = selectRandomCompartment();
-            rr.addSpecies(id.str(), comp, val, false, false, "", forceRegenerate);
+            getRR()->addSpecies(id.str(), comp, val, false, false, "", forceRegenerate);
             id.str(std::string());
         }
     }
@@ -122,7 +123,7 @@ namespace evo {
     void RandomNetworkGenerator::createBoundarySpecies() {
         std::ostringstream id;
         for (int i = 0; i < options_.getNBoundarySpecies(); i++) {
-            id << "S" << i;
+            id << "I" << i;
             int val = options_.getBoundarySpeciesUpperBound();
             if (options_.getBoundarySpeciesLowerBound() != options_.getBoundarySpeciesUpperBound()) {
                 val = nc::random::randInt(options_.getBoundarySpeciesLowerBound(),
@@ -132,7 +133,7 @@ namespace evo {
             if (i == options_.getNBoundarySpecies() - 1)
                 forceRegenerate = true;
             std::string comp = selectRandomCompartment();
-            rr.addSpecies(id.str(), comp, val, false, true, "", forceRegenerate);
+            getRR()->addSpecies(id.str(), comp, val, false, true, "", forceRegenerate);
             id.str(std::string());
         }
     }
@@ -168,12 +169,9 @@ namespace evo {
         //        for (auto &it: roles){
         //            std::cout << "first: " << it.first << ", second: " << it.second << std::endl;
         //        }
-        //        rr.addReaction()
+        //        getRR()->addReaction()
     }
 
-    double RandomNetworkGenerator::createParameterValue() {
-        return 0;
-    }
 
     RoadRunner *RandomNetworkGenerator::generate() {
         return nullptr;

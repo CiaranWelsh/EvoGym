@@ -18,6 +18,9 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cma
 # for include(<...>)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
 
+# for include sanitizer module
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
+
 #######################################################################
 # includes
 #
@@ -28,13 +31,16 @@ include(GenerateExportHeader)
 include(ImportRoadrunnerAndDependencies)
 
 # get boost for NumCpp
-find_package(boost REQUIRED)
+find_package(Boost REQUIRED)
 
 #######################################################################
 #   options
 #
 
 option(WITH_ADDRESS_SANITIZER "Compile with address sanitizer" OFF)
+if (${WITH_ADDRESS_SANITIZER})
+    find_package(Sanitizers)
+endif ()
 
 # Hide things by default
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -47,7 +53,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 if (NOT ${WIN32})
     if (${WITH_ADDRESS_SANITIZER})
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
     endif ()
 endif ()
 

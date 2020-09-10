@@ -45,6 +45,8 @@ target_include_directories(
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/stats>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gcem>
 )
+#add_sanitizers(${target}-static)
+add_sanitize_address(${target}-static)
 
 target_compile_definitions(
         ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC)

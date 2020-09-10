@@ -5,19 +5,19 @@
 #ifndef EVOGYM_RANDOMNETWORKGENERATOR_H
 #define EVOGYM_RANDOMNETWORKGENERATOR_H
 
-#include "stats.hpp"
 #include "NumCpp.hpp"
-#include "rr/rrRoadRunner.h"
 #include "evo/NetworkGenerationOptions.h"
 #include "evo/evo_error.h"
+#include "rr/rrRoadRunner.h"
+#include "stats.hpp"
 
 
 using namespace rr;
 
-namespace evo{
+namespace evo {
 
     class RandomNetworkGenerator {
-        const NetworkGenerationOptions& options_;
+        const NetworkGenerationOptions &options_;
 
         void createCompartments();
 
@@ -25,22 +25,13 @@ namespace evo{
 
         void createBoundarySpecies();
 
-        /**
-         *
-         * @details factory like method for generating parameter
-         * values based on the appropriate fields inside RandomNetworkGenerator::options.
-         * Parameters are randomly drawn from a uniform distribution, other distributions may
-         * be supported later.
-         */
-        double createParameterValue();
-
         std::string selectRandomCompartment();
 
 
     public:
-        RoadRunner rr;
+        std::unique_ptr<RoadRunner> rr_;
 
-        explicit RandomNetworkGenerator(const NetworkGenerationOptions& options );
+        explicit RandomNetworkGenerator(const NetworkGenerationOptions &options);
 
         /**
          *
@@ -48,24 +39,32 @@ namespace evo{
          * the instantiated roadrunner instance after its been created. We can
          * simply get a list/vector of pointers to networks.
          */
-        RoadRunner* generate();
+        RoadRunner *generate();
 
         const NetworkGenerationOptions &getOptions() const;
-
-        const RoadRunner &getRr() const;
-
-        static double getRandomDouble(double lower, double higher);
-
-        int getRandomInt(int lower, int higher) const;
 
         std::vector<std::string> selectRandomSpecies(int n);
 
         RateLaw getRandomRateLaw() const;
 
         void createReactions();
+        const std::unique_ptr<RoadRunner> &getRR() const;
+
+        /**
+         * @brief create a roadrunner model.
+         * @details If a sbml string was given to
+         * evo::NetworkGenerationOptions::core_sbml_ (via the
+         * evo::NetworkGenerationOptions::setCoreSBML method) then this core
+         * network will a subgraph in the random network. Otherwise,
+         * an empty rr::RoadRunner model instance is created. When a submodel
+         * is given, the options in evo::NetworkGenerationOptions are in addition to
+         * those already present in the core SBML model. I.e. if the sbml model has
+         * 5 nodes and you specify you want 2 boundary and 3 Floating nodes, you'll
+         * have a network with 10 nodes.
+         */
+        void createRRModel();
     };
-}
+}// namespace evo
 
 
-
-#endif //EVOGYM_RANDOMNETWORKGENERATOR_H
+#endif//EVOGYM_RANDOMNETWORKGENERATOR_H

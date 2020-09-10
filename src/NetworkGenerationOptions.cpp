@@ -12,9 +12,15 @@ namespace evo {
 
     NetworkGenerationOptions::NetworkGenerationOptions(RateLaws rateLaws) :
             rate_laws_(std::move(rateLaws)) {
+        nc::random::seed(std::chrono::system_clock::now().time_since_epoch().count());
         validate();
     }
-
+    const std::string &NetworkGenerationOptions::getCoreSBML() const {
+        return core_sbml_;
+    }
+    void NetworkGenerationOptions::setCoreSBML(const std::string &coreSbml) {
+        core_sbml_ = coreSbml;
+    }
     NetworkGenerationOptions::NetworkGenerationOptions(Motifs motifs)
         : motifs_(std::move(motifs)){}
 
@@ -153,7 +159,6 @@ namespace evo {
     NetworkGenerationOptions& NetworkGenerationOptions::setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound) {
         NetworkGenerationOptions::boundarySpeciesLowerBound = boundarySpeciesLowerBound;
         return *this;
-        return *this;
     }
 
     int NetworkGenerationOptions::getBoundarySpeciesUpperBound() const {
@@ -164,14 +169,16 @@ namespace evo {
         NetworkGenerationOptions::boundarySpeciesUpperBound = boundarySpeciesUpperBound;
         return *this;
     }
-    unsigned int NetworkGenerationOptions::getSeed() const {
-        return seed;
+    unsigned int NetworkGenerationOptions::getTimeNow() {
+        return std::chrono::system_clock::now().time_since_epoch().count();
     }
-    NetworkGenerationOptions& NetworkGenerationOptions::setSeed(unsigned int seed) {
-        NetworkGenerationOptions::seed = seed;
-        nc::random::seed(seed);
-        return *this;
-    }
+    //    unsigned int NetworkGenerationOptions::getSeed() const {
+//        return seed_;
+//    }
+//    NetworkGenerationOptions& NetworkGenerationOptions::setSeed(unsigned int seed) {
+//        nc::random::seed(seed);
+//        return *this;
+//    }
 
 }
 
