@@ -26,7 +26,10 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 
 include(ImportRoadrunnerAndDependencies)
-find_package(NumCpp CONFIG REQUIRED)
+
+# get boost for NumCpp
+find_package(boost REQUIRED)
+
 #######################################################################
 #   options
 #

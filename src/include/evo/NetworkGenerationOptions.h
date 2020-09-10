@@ -5,6 +5,8 @@
 #ifndef EVOGYM_NETWORKGENERATIONOPTIONS_H
 #define EVOGYM_NETWORKGENERATIONOPTIONS_H
 
+#include <chrono>
+
 #include "rr/Dictionary.h"
 #include "sbml/SBMLTypes.h"
 
@@ -34,6 +36,8 @@ namespace evo {
         RateLaws rate_laws_;
         Motifs motifs_;
 
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
         // The cheapest way of randomly generating a network and storing
         // it in a data structure with other randomly generated networks
         // is to create it at the same location from which it will be used.
@@ -52,65 +56,69 @@ namespace evo {
 
         NetworkGenerationOptions(RateLaws rateLaws, Motifs motifs);
 
+        unsigned int getSeed() const;
+
+        NetworkGenerationOptions& setSeed(unsigned int seed);
+
         int getBoundarySpeciesLowerBound() const;
 
-        void setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound);
+        NetworkGenerationOptions& setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound);
 
         int getBoundarySpeciesUpperBound() const;
 
-        void setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
+        NetworkGenerationOptions& setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
 
         const Motifs &getMotifs() const;
 
-        void setMotifs(const Motifs &motifs);
+        NetworkGenerationOptions& setMotifs(const Motifs &motifs);
 
         int getNMotifs() const;
 
-        void setNMotifs(int nMotifs);
+        NetworkGenerationOptions& setNMotifs(int nMotifs);
 
         int getNFloatingSpecies() const;
 
-        void setNFloatingSpecies(int nFloatingSpecies);
+        NetworkGenerationOptions& setNFloatingSpecies(int nFloatingSpecies);
 
         int getNBoundarySpecies() const;
 
-        void setNBoundarySpecies(int nBoundarySpecies);
+        NetworkGenerationOptions& setNBoundarySpecies(int nBoundarySpecies);
 
         int getNReactions() const;
 
-        void setNReactions(int nReactions);
+        NetworkGenerationOptions& setNReactions(int nReactions);
 
         int getNCompartments() const;
 
-        void setNCompartments(int nCompartments);
+        NetworkGenerationOptions& setNCompartments(int nCompartments);
 
         double getSpeciesLowerBound() const;
 
-        void setSpeciesLowerBound(double speciesLowerBound);
+        NetworkGenerationOptions& setSpeciesLowerBound(double speciesLowerBound);
 
         double getSpeciesUpperBound() const;
 
-        void setSpeciesUpperBound(double speciesUpperBound);
+        NetworkGenerationOptions& setSpeciesUpperBound(double speciesUpperBound);
 
         double getParameterLowerBound() const;
 
-        void setParameterLowerBound(double parameterLowerBound);
+        NetworkGenerationOptions& setParameterLowerBound(double parameterLowerBound);
 
         double getParameterUpperBound() const;
 
-        void setParameterUpperBound(double parameterUpperBound);
+        NetworkGenerationOptions& setParameterUpperBound(double parameterUpperBound);
 
         double getCompartmentLowerBound() const;
 
-        void setCompartmentLowerBound(double compartmentLowerBound);
+        NetworkGenerationOptions& setCompartmentLowerBound(double compartmentLowerBound);
 
         double getCompartmentUpperBound() const;
 
-        void setCompartmentUpperBound(double compartmentUpperBound);
+        NetworkGenerationOptions& setCompartmentUpperBound(double compartmentUpperBound);
 
         const RateLaws &getRateLaws() const;
 
-        void setRateLaws(const RateLaws &rateLaws);
+        NetworkGenerationOptions& setRateLaws(const RateLaws &rateLaws);
 
 
     };

@@ -33,17 +33,33 @@ public:
                                 {"A", EVO_SUBSTRATE},
                                 {"B", EVO_PRODUCT},
                         }));
-//        rateLaws["uni-uni"] = uni_uni;
-//        rateLaws["uni-bi"] = uni_bi;
+        rateLaws["uni-uni"] = uni_uni;
+        rateLaws["uni-bi"] = uni_bi;
     };
 };
 
 
-TEST_F(RandomNetworkGeneratorTests, TestRandomInt) {
+TEST_F(RandomNetworkGeneratorTests, TestCompartmentsNum) {
     NetworkGenerationOptions options(rateLaws);
+    options.setNCompartments(10);
     RandomNetworkGenerator generator(options);
-    int x = generator.getRandomInt(0, 5);
-    std::cout << x << std::endl;
+    std::vector<std::string> comps = generator.rr.getCompartmentIds();
+    ASSERT_EQ(10, comps.size());
+}
+
+TEST_F(RandomNetworkGeneratorTests, TestCompartmentsValues) {
+    NetworkGenerationOptions options(rateLaws);
+    options.setNCompartments(10);
+    options.setCompartmentLowerBound(0);
+    options.setCompartmentUpperBound(10);
+    RandomNetworkGenerator generator(options);
+    std::vector<int> vec;
+    for (int i=0; i< generator.rr.getNumberOfCompartments(); i++){
+        vec.push_back(generator.rr.getCompartmentByIndex(i));
+    }
+
+//    std::vector<std::string> comps = generator.rr.getC();
+//    ASSERT_EQ(10, comps.size());
 }
 
 TEST_F(RandomNetworkGeneratorTests, test) {

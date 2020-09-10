@@ -6,7 +6,7 @@
 
 #include <utility>
 #include "evogym_export.h"
-
+#include "NumCpp.hpp"
 
 namespace evo {
 
@@ -25,96 +25,108 @@ namespace evo {
         return nFloatingSpecies_;
     }
 
-    void NetworkGenerationOptions::setNFloatingSpecies(int nFloatingSpecies) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setNFloatingSpecies(int nFloatingSpecies) {
         nFloatingSpecies_ = nFloatingSpecies;
+        return *this;
     }
 
     int NetworkGenerationOptions::getNBoundarySpecies() const {
         return nBoundarySpecies_;
     }
 
-    void NetworkGenerationOptions::setNBoundarySpecies(int nBoundarySpecies) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setNBoundarySpecies(int nBoundarySpecies) {
         nBoundarySpecies_ = nBoundarySpecies;
+        return *this;
     }
 
     int NetworkGenerationOptions::getNReactions() const {
         return nReactions_;
     }
 
-    void NetworkGenerationOptions::setNReactions(int nReactions) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setNReactions(int nReactions) {
         nReactions_ = nReactions;
+        return *this;
     }
 
     int NetworkGenerationOptions::getNCompartments() const {
         return nCompartments_;
     }
 
-    void NetworkGenerationOptions::setNCompartments(int nCompartments) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setNCompartments(int nCompartments) {
         nCompartments_ = nCompartments;
+        return *this;
     }
 
     double NetworkGenerationOptions::getSpeciesLowerBound() const {
         return speciesLowerBound;
     }
 
-    void NetworkGenerationOptions::setSpeciesLowerBound(double speciesLowerBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setSpeciesLowerBound(double speciesLowerBound) {
         NetworkGenerationOptions::speciesLowerBound = speciesLowerBound;
+        return *this;
     }
 
     double NetworkGenerationOptions::getSpeciesUpperBound() const {
         return speciesUpperBound;
     }
 
-    void NetworkGenerationOptions::setSpeciesUpperBound(double speciesUpperBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setSpeciesUpperBound(double speciesUpperBound) {
         NetworkGenerationOptions::speciesUpperBound = speciesUpperBound;
+        return *this;
     }
 
     double NetworkGenerationOptions::getParameterLowerBound() const {
         return parameterLowerBound;
     }
 
-    void NetworkGenerationOptions::setParameterLowerBound(double parameterLowerBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setParameterLowerBound(double parameterLowerBound) {
         NetworkGenerationOptions::parameterLowerBound = parameterLowerBound;
+        return *this;
     }
 
     double NetworkGenerationOptions::getParameterUpperBound() const {
         return parameterUpperBound;
     }
 
-    void NetworkGenerationOptions::setParameterUpperBound(double parameterUpperBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setParameterUpperBound(double parameterUpperBound) {
         NetworkGenerationOptions::parameterUpperBound = parameterUpperBound;
+        return *this;
     }
 
     double NetworkGenerationOptions::getCompartmentLowerBound() const {
         return compartmentLowerBound;
     }
 
-    void NetworkGenerationOptions::setCompartmentLowerBound(double compartmentLowerBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setCompartmentLowerBound(double compartmentLowerBound) {
         NetworkGenerationOptions::compartmentLowerBound = compartmentLowerBound;
+        return *this;
     }
 
     double NetworkGenerationOptions::getCompartmentUpperBound() const {
         return compartmentUpperBound;
     }
 
-    void NetworkGenerationOptions::setCompartmentUpperBound(double compartmentUpperBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setCompartmentUpperBound(double compartmentUpperBound) {
         NetworkGenerationOptions::compartmentUpperBound = compartmentUpperBound;
+        return *this;
     }
 
     const RateLaws &NetworkGenerationOptions::getRateLaws() const {
         return rate_laws_;
     }
 
-    void NetworkGenerationOptions::setRateLaws(const RateLaws &rateLaws) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setRateLaws(const RateLaws &rateLaws) {
         rate_laws_ = rateLaws;
+        return *this;
     }
 
     int NetworkGenerationOptions::getNMotifs() const {
         return nMotifs;
     }
 
-    void NetworkGenerationOptions::setNMotifs(int nMotifs) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setNMotifs(int nMotifs) {
         NetworkGenerationOptions::nMotifs = nMotifs;
+        return *this;
     }
 
     void NetworkGenerationOptions::validate() const {
@@ -129,24 +141,36 @@ namespace evo {
         return motifs_;
     }
 
-    void NetworkGenerationOptions::setMotifs(const Motifs &motifs) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setMotifs(const Motifs &motifs) {
         motifs_ = motifs;
+        return *this;
     }
 
     int NetworkGenerationOptions::getBoundarySpeciesLowerBound() const {
         return boundarySpeciesLowerBound;
     }
 
-    void NetworkGenerationOptions::setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound) {
         NetworkGenerationOptions::boundarySpeciesLowerBound = boundarySpeciesLowerBound;
+        return *this;
+        return *this;
     }
 
     int NetworkGenerationOptions::getBoundarySpeciesUpperBound() const {
         return boundarySpeciesUpperBound;
     }
 
-    void NetworkGenerationOptions::setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound) {
+    NetworkGenerationOptions& NetworkGenerationOptions::setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound) {
         NetworkGenerationOptions::boundarySpeciesUpperBound = boundarySpeciesUpperBound;
+        return *this;
+    }
+    unsigned int NetworkGenerationOptions::getSeed() const {
+        return seed;
+    }
+    NetworkGenerationOptions& NetworkGenerationOptions::setSeed(unsigned int seed) {
+        NetworkGenerationOptions::seed = seed;
+        nc::random::seed(seed);
+        return *this;
     }
 
 }

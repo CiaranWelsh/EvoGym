@@ -3,13 +3,28 @@
 //
 
 #include "evo/RandomNetworkGenerator.h"
+#include "../third_party/NumCpp/include/NumCpp/NdArray.hpp"
+#include "../third_party/NumCpp/include/NumCpp/Random/randInt.hpp"
 #include <chrono>
+
 
 namespace evo {
 
     RandomNetworkGenerator::RandomNetworkGenerator(const NetworkGenerationOptions &options)
         : options_(options) {
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         createCompartments();
+        //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        createBoundarySpecies();
+        //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        createFloatingSpecies();
+        //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        createReactions();
+        //        selectRandomCompartment();
+        //        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        selectRandomSpecies(2);
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        createCompartments();
     }
 
     const NetworkGenerationOptions &RandomNetworkGenerator::getOptions() const {
@@ -20,100 +35,125 @@ namespace evo {
         return rr;
     }
 
-    double RandomNetworkGenerator::getRandomDouble(double lower, double higher) {
-        nc::random::randn<double>(nc::Shape(3,4))
-
-        if (lower == higher) {
-            return lower;
-        } else {
-            return stats::runif(lower, higher);
-        }
-    }
-
     std::string RandomNetworkGenerator::selectRandomCompartment() {
-        if (rr.getNumberOfCompartments() == 1) {
-            return rr.getCompartmentIds()[0];
-        } else {
-            int compartment_index;
-            if (getOptions().getNCompartments() > 1) {
-                compartment_index =
-                        std::rand() % getOptions().getNCompartments() + 1;// +1 for inclusive open boundaries
-            }
-            return rr.getCompartmentIds()[compartment_index];
-        }
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        //        if (getOptions().getNCompartments() != rr.getNumberOfCompartments()) {
+        //            std::ostringstream err;
+        //            err << "Expected to have " << rr.getNumberOfCompartments()
+        //                << " compartments in model \""
+        //                << rr.getModelName() << "\" but instead found " << getOptions().getNCompartments();
+        //            THROW_LOGIC_ERROR(err.str());
+        //        }
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        int random_index = nc::random::randInt<int>(0, options_.getNCompartments());
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        return rr.getCompartmentIds()[random_index];
     }
 
-    std::string RandomNetworkGenerator::selectRandomSpecies() {
+    std::vector<std::string> RandomNetworkGenerator::selectRandomSpecies(int n) {
         std::vector<std::string> species = rr.getBoundarySpeciesIds();
         std::vector<std::string> floating = rr.getFloatingSpeciesIds();
+
         // all species
         species.insert(floating.end(), floating.begin(), floating.end());
-        return species[getRandomInt(0, species.size())];
+
+        nc::NdArray<int> s(species.size());
+        std::cout << s << std::endl;
+
+        if (n > species.size()) {
+            std::ostringstream err;
+            err << "Requested selecting "
+                << n
+                << " random species without replacement but only "
+                << species.size() << " species exist.";
+            LOGIC_ERROR(err.str());
+        }
+        // do the sampling
+        nc::NdArray<int> species_indices = nc::random::choice(s, n, false);
+
+        // convert indices into the strings we need.
+        std::vector<std::string> out;
+        for (auto &i : species_indices) {
+            if (i < options_.getNBoundarySpecies()) {
+                out.push_back(rr.getBoundarySpeciesIds()[i]);
+            } else {
+                int idx = i - options_.getNBoundarySpecies();
+                out.push_back(rr.getFloatingSpeciesIds()[idx]);
+            }
+        }
+        return out;
     }
 
     void RandomNetworkGenerator::createCompartments() {
         std::ostringstream id;
         for (int i = 0; i < options_.getNCompartments(); i++) {
-            double val = getRandomDouble(getOptions().getCompartmentLowerBound(),
-                                         getOptions().getCompartmentUpperBound());
+            double val = options_.getCompartmentUpperBound();
+            if (options_.getCompartmentLowerBound() != options_.getCompartmentUpperBound()) {
+                val = nc::random::uniform(options_.getCompartmentLowerBound(),
+                                          options_.getCompartmentUpperBound());
+            }
+            bool forceRegenerate = false;
+            if (i == options_.getNCompartments() - 1)
+                forceRegenerate = true;
             id << "C" << i;
-            rr.addCompartment(id.str(), val, false);
-            id.flush();
+            rr.addCompartment(id.str(), val, forceRegenerate);// regenerate model on last iter
+            id.str(std::string());                            // clear the stream
         }
     }
 
     void RandomNetworkGenerator::createFloatingSpecies() {
-        for (int i = 0; i < getOptions().getNFloatingSpecies(); i++) {
-            double val = getRandomDouble(
-                    getOptions().getSpeciesLowerBound(),
-                    getOptions().getSpeciesUpperBound());
-            std::ostringstream id;
+        std::ostringstream id;
+        for (int i = 0; i < options_.getNFloatingSpecies(); i++) {
             id << "S" << i;
+            double val = options_.getSpeciesUpperBound();
+            if (options_.getSpeciesLowerBound() != options_.getSpeciesUpperBound()) {
+                val = nc::random::uniform(options_.getSpeciesLowerBound(),
+                                          options_.getSpeciesUpperBound());
+            }
+            bool forceRegenerate = false;
+            if (i == options_.getNFloatingSpecies() - 1)
+                forceRegenerate = true;
             std::string comp = selectRandomCompartment();
-            rr.addSpecies(id.str(), comp, val, false, false, "", false);
+            rr.addSpecies(id.str(), comp, val, false, false, "", forceRegenerate);
+            id.str(std::string());
         }
     }
-
-
-    int RandomNetworkGenerator::getRandomInt(int lower, int higher) const {
-
-
-        int open_interval = getOptions().getBoundarySpeciesUpperBound() - getOptions().getBoundarySpeciesLowerBound();
-        if (open_interval == 0) {
-            return lower;
-        } else {
-            return std::rand() % higher + lower + 1;
-        }
-    }
-
 
     void RandomNetworkGenerator::createBoundarySpecies() {
-        for (int i = 0; i < getOptions().getNBoundarySpecies(); i++) {
-            // When >1 compartment, generate random assignment
-            std::string comp = selectRandomCompartment();
-            double val = getRandomInt(
-                    getOptions().getBoundarySpeciesLowerBound(),
-                    getOptions().getBoundarySpeciesUpperBound());
-            std::ostringstream id;
+        std::ostringstream id;
+        for (int i = 0; i < options_.getNBoundarySpecies(); i++) {
             id << "S" << i;
-            rr.addSpecies(id.str(), comp, val, true, true, "", false);
-            id.flush();
+            int val = options_.getBoundarySpeciesUpperBound();
+            if (options_.getBoundarySpeciesLowerBound() != options_.getBoundarySpeciesUpperBound()) {
+                val = nc::random::randInt(options_.getBoundarySpeciesLowerBound(),
+                                          options_.getBoundarySpeciesUpperBound());
+            }
+            bool forceRegenerate = false;
+            if (i == options_.getNBoundarySpecies() - 1)
+                forceRegenerate = true;
+            std::string comp = selectRandomCompartment();
+            rr.addSpecies(id.str(), comp, val, false, true, "", forceRegenerate);
+            id.str(std::string());
         }
     }
 
     RateLaw RandomNetworkGenerator::getRandomRateLaw() const {
         // select a rate law at random.
-        std::cout <<__FILE__<<":"<<__LINE__<<std::endl;
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
 
         std::vector<RateLaw> keys;
-        std::cout <<__FILE__<<":"<<__LINE__<<std::endl;
-        for (auto &it : getOptions().getRateLaws()) {
-            std::cout <<__FILE__<<":"<<__LINE__<<std::endl;
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        for (auto &it : options_.getRateLaws()) {
+            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             keys.push_back(it.second);
         }
-        std::cout <<__FILE__<<":"<<__LINE__<<std::endl;
-        int random_rate_law_index = getRandomInt(0, getOptions().getRateLaws().size());
-        std::cout <<__FILE__<<":"<<__LINE__<<std::endl;
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
+        if (options_.getRateLaws().empty()) {
+            INVALID_ARGUMENT_ERROR("The RateLaw field of RandomNetworkGeneratorOptions is "
+                                   "empty. Please give some rate laws to continue");
+        }
+        int random_rate_law_index = nc::random::randInt<int>(0, options_.getRateLaws().size());
+        std::cout << __FILE__ << ":" << __LINE__ << std::endl;
         return keys[random_rate_law_index];
     }
 

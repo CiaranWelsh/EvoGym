@@ -5,20 +5,19 @@
 #ifndef EVOGYM_RANDOMNETWORKGENERATOR_H
 #define EVOGYM_RANDOMNETWORKGENERATOR_H
 
+#include "stats.hpp"
+#include "NumCpp.hpp"
 #include "rr/rrRoadRunner.h"
 #include "evo/NetworkGenerationOptions.h"
-#include "stats.hpp"
+#include "evo/evo_error.h"
 
-//#include "NumCpp.h"
 
 using namespace rr;
-//using namespace nc;
 
 namespace evo{
 
     class RandomNetworkGenerator {
         const NetworkGenerationOptions& options_;
-        RoadRunner rr;
 
         void createCompartments();
 
@@ -39,6 +38,7 @@ namespace evo{
 
 
     public:
+        RoadRunner rr;
 
         explicit RandomNetworkGenerator(const NetworkGenerationOptions& options );
 
@@ -58,7 +58,7 @@ namespace evo{
 
         int getRandomInt(int lower, int higher) const;
 
-        string selectRandomSpecies();
+        std::vector<std::string> selectRandomSpecies(int n);
 
         RateLaw getRandomRateLaw() const;
 

@@ -15,6 +15,10 @@ macro(add_test_executable BINARY)
     # The evo-gym-static target include directories
     # and compile definitions are
     # public and therefore transitive. --> no needed here.
+    # *but the IDE strugles to give me autocomplete
+    target_include_directories(${BINARY} PRIVATE
+            D:/EvoGym/third_party/NumCpp/include
+            )
     add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()

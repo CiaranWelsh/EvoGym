@@ -10,3 +10,6 @@
 [submodule "third_party/gcem"]
 	path = third_party/gcem
 	url = https://github.com/CiaranWelsh/gcem.git
+[submodule "third_party/NumCpp"]
+	path = third_party/NumCpp
+	url = https://github.com/CiaranWelsh/NumCpp.git

@@ -26,16 +26,18 @@ add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
 target_link_libraries(
         ${target}-static
         PUBLIC
-        NumCpp::NumCpp
         roadrunner-static::roadrunner-static
 )
 
+message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
 
 target_include_directories(
         ${target}-static PUBLIC
         $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${GCEM_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${STATS_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${NUMCPP_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
