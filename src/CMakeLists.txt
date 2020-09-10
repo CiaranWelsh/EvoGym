@@ -5,28 +5,43 @@ set(
         NetworkGenerationOptions.cpp
         RateLaw.cpp
         Motif.cpp
-
+        Population.cpp
+        RandomNetworkGenerator.cpp
+        IdGen.cpp
 )
+
 set(
         HEADERS
         include/evo/NetworkGenerationOptions.h
         include/evo/RoleTypes.h
         include/evo/RateLaw.h
         include/evo/Motif.h
+        include/evo/Population.h
+        include/evo/RandomNetworkGenerator.h
+        include/evo/IdGen.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(
         ${target}-static
-        PUBLIC roadrunner-static::roadrunner-static
+        PUBLIC
+        NumCpp::NumCpp
+        roadrunner-static::roadrunner-static
 )
+
+
 target_include_directories(
         ${target}-static PUBLIC
         $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${GCEM_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${STATS_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/stats>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gcem>
 )
 
 target_compile_definitions(

@@ -14,7 +14,7 @@ namespace evo{
     /**
      * A Motif is a collection of evo::RateLaw objects
      */
-    class Motif {
+    class EVOGYM_EXPORT Motif {
         std::string name_;
         RateLaws rate_laws_;
 

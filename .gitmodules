@@ -7,3 +7,6 @@
 [submodule "third_party/pystring"]
 	path = third_party/pystring
 	url = git@github.com:CiaranWelsh/pystring.git
+[submodule "third_party/gcem"]
+	path = third_party/gcem
+	url = https://github.com/CiaranWelsh/gcem.git

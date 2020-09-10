@@ -26,7 +26,7 @@ include(GNUInstallDirs)
 include(GenerateExportHeader)
 
 include(ImportRoadrunnerAndDependencies)
-
+find_package(NumCpp CONFIG REQUIRED)
 #######################################################################
 #   options
 #
@@ -36,6 +36,7 @@ option(WITH_ADDRESS_SANITIZER "Compile with address sanitizer" OFF)
 # Hide things by default
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
+set(CMAKE_CXX_STANDARD 14)
 
 #######################################################################
 #   Implement options
