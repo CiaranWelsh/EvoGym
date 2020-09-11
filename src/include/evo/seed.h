@@ -7,10 +7,18 @@
 
 #include "NumCpp.hpp"
 
-#ifndef SEED
-#define SEED std::chrono::system_clock::now().time_since_epoch().count()
+#ifndef CLOCK_SEED
+#define CLOCK_SEED std::chrono::system_clock::now().time_since_epoch().count()
 #endif
 
-#define SET_CLOCK_SEED nc::random::seed(SEED);
+namespace evo {
+
+    /**
+    * @brief an alternative to the macro for setting random seed
+    */
+    static void setSeed(unsigned int seed) {
+        nc::random::seed(seed);
+    }
+}// namespace evo
 
 #endif//EVOGYM_SEED_H

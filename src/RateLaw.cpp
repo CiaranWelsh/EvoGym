@@ -10,12 +10,30 @@ namespace evo {
 
     RateLaw::RateLaw(std::string name, const std::string& rate_law_string, RoleMap roles)
             : name_(std::move(name)),
+                rate_law_string_(rate_law_string),
               rate_law_(libsbml::SBML_parseFormula(rate_law_string.c_str())),
               roles_(std::move(roles)) {
         unpackRateLaw();
         validateRoleMap();
     }
-
+    void RateLaw::setName(const std::string &name) {
+        name_ = name;
+    }
+    void RateLaw::setRateLaw(libsbml::ASTNode *rateLaw) {
+        rate_law_ = rateLaw;
+    }
+    const std::string &RateLaw::getRateLawString() const {
+        return rate_law_string_;
+    }
+    void RateLaw::setRateLawString(const std::string &rateLawString) {
+        rate_law_string_ = rateLawString;
+    }
+    void RateLaw::setRoles(const RoleMap &roles) {
+        roles_ = roles;
+    }
+    void RateLaw::setRateLawElements(const std::set<std::string> &rateLawElements) {
+        rate_law_elements_ = rateLawElements;
+    }
     void RateLaw::unpackRateLaw(std::vector<libsbml::ASTNode *> rate_law_terms) {
         /*
          * When rate_law_terms is empty, the recursive function is being called for the first time

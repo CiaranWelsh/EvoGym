@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.15..3.18)
 project(EvoGym)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -12,6 +12,10 @@ if (NOT ROADRUNNER_INSTALL_PREFIX)
     )
 endif ()
 
+if (NOT EXISTS "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
+    message(FATAL_ERROR "Roadrunner cmake module path not found: \"${ROADRUNNER_INSTALL_PREFIX}/lib/cmake\"")
+endif ()
+
 # for find_package(<...> CONFIG)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
 
@@ -19,8 +23,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cma
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
 
 # for include sanitizer module
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sanitizers-cmake/cmake" ${CMAKE_MODULE_PATH})
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sanitizers-cmake/cmake")
 #######################################################################
 # includes
 #
@@ -32,6 +35,7 @@ include(ImportRoadrunnerAndDependencies)
 
 # get boost for NumCpp
 find_package(Boost REQUIRED)
+find_package(Sanitizers)
 
 #######################################################################
 #   options

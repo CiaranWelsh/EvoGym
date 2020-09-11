@@ -33,17 +33,16 @@ message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
 
 target_include_directories(
         ${target}-static PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        "D:/EvoGym/third_party/NumCpp/include"
         $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
-        $<BUILD_INTERFACE:${GCEM_INCLUDE_DIR}>
-        $<BUILD_INTERFACE:${STATS_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${NUMCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/stats>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gcem>
 )
 #add_sanitizers(${target}-static)
 add_sanitize_address(${target}-static)

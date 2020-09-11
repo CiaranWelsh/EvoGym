@@ -19,6 +19,7 @@ namespace evo {
     class EVOGYM_EXPORT RateLaw {
         std::string name_;
         libsbml::ASTNode *rate_law_;
+        std::string rate_law_string_;
         RoleMap roles_;
         std::set<std::string> rate_law_elements_;
 
@@ -59,7 +60,12 @@ namespace evo {
         libsbml::ASTNode *getRateLaw() const;
 
         const RoleMap &getRoles() const;
-
+        void setName(const std::string &name);
+        void setRateLaw(libsbml::ASTNode *rateLaw);
+        const std::string &getRateLawString() const;
+        void setRateLawString(const std::string &rateLawString);
+        void setRoles(const RoleMap &roles);
+        void setRateLawElements(const std::set<std::string> &rateLawElements);
     };
 
     typedef std::unordered_map<std::string, RateLaw> RateLaws;

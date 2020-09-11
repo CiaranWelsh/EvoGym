@@ -16,22 +16,26 @@ macro(add_test_executable BINARY)
     # and compile definitions are
     # public and therefore transitive. --> no needed here.
     # *but the IDE strugles to give me autocomplete
-    target_include_directories(${BINARY} PRIVATE
-            D:/EvoGym/third_party/NumCpp/include
-            )
+#    target_include_directories(${BINARY} PRIVATE
+#
+#            )
     add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
 
-#
-add_test_executable(NetworkGenerationOptionsTests NetworkGenerationOptionsTests.cpp)
-add_test_executable(Messaround messaround.cpp)
-add_test_executable(RateLawTests RateLawTests.cpp)
-add_test_executable(IdGenTests IdGenTests.cpp)
-add_test_executable(RandomNetworksTests RandomNetworkGeneratorTests.cpp)
 
-
-
+add_test_executable(
+        RandomNetworksTests
+        RandomNetworkGeneratorTests.cpp
+            "${EVOGYM_INCLUDE_DIR}/evo/RandomNetworkGenerator.h"
+            "${EVOGYM_SOURCE_DIR}/RandomNetworkGenerator.cpp"
+        RateLawTests.cpp
+            "${EVOGYM_INCLUDE_DIR}/evo/RateLaw.h"
+            "${EVOGYM_SOURCE_DIR}/RateLaw.cpp"
+        NetworkGenerationOptionsTests.cpp
+            "${EVOGYM_INCLUDE_DIR}/evo/NetworkGenerationOptions.h"
+            "${EVOGYM_SOURCE_DIR}/NetworkGenerationOptions.cpp"
+)
 
 
 

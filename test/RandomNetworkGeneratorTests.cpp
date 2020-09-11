@@ -13,8 +13,22 @@
 using namespace evo;
 using namespace rr;
 
+/**
+ * Unit test for Random Network Generator. The boundaries
+ * for this unit include the RandomNetworkGenerator class,
+ * along with its options class and the random seem module.
+ *
+ * The random seed needs to be set for once for every program. Not sure why
+ * this isn't always random automatically.
+ *
+ * Use SET_CLOCK_SEED to set the random seed based on the current time or
+ * SET_SEED(x) to set seed to x.
+ */
+
 class RandomNetworkGeneratorTests : public ::testing::Test {
 public:
+
+
     std::string sbml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                        "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">\n"
                        "  <model metaid=\"simple\" id=\"simple\">\n"
@@ -72,50 +86,46 @@ public:
                         }));
         rateLaws["uni-uni"] = uni_uni;
         rateLaws["uni-bi"] = uni_bi;
+
+    // the default seed in NumCpp doesn't appeat to be random.
+        // that means that the seed will need to be set, once per program
+    setSeed(CLOCK_SEED); // needs to be called somewhere once per program.
     };
 };
 
 
 TEST_F(RandomNetworkGeneratorTests, TestRandomSeedClock) {
     NetworkGenerationOptions options(rateLaws);
-    SET_CLOCK_SEED;
     int random = nc::random::randInt(10000000);
     std::cout << random << std::endl;
     ASSERT_NE(6492525, random);
     // 6492525 was what I got the first time I ran this.
-    // highly unlikey to happen again.
+    // 1:10000000 chance to happen again.
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestSetRandomSeed) {
-        NetworkGenerationOptions options(rateLaws);
-// create new seed
-#ifdef SEED
-#undef SEED
-#endif
-#define SEED 14
-    SET_CLOCK_SEED(SEED);
+    NetworkGenerationOptions options(rateLaws);
+    // create new seed
+    setSeed(14);
     int random = nc::random::randInt(10000000);
     std::cout << random << std::endl;
     ASSERT_EQ(6720983, random);
-
-// replace the SEED for other tests
-#undef SEED
-#define SEED std::chrono::system_clock::now().time_since_epoch().count()
-    SET_CLOCK_SEED;
+//    setSeed(CLOCK_SEED);
 }
-
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithoutSBMLCore) {
     NetworkGenerationOptions options(rateLaws);
+    options.setNFloatingSpecies(6);
     RandomNetworkGenerator generator(options);
-    ASSERT_EQ(0, generator.getRR()->getNumberOfFloatingSpecies());
+    ASSERT_EQ(6, generator.getRR()->getModel()->getNumFloatingSpecies());
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithSBMLCore) {
     NetworkGenerationOptions options(rateLaws);
     options.setCoreSBML(sbml);
+    options.setNFloatingSpecies(6);
     RandomNetworkGenerator generator(options);
-    ASSERT_EQ(2, generator.getRR()->getNumberOfFloatingSpecies());
+    ASSERT_EQ(8, generator.getRR()->getModel()->getNumFloatingSpecies());
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCompartmentsNum) {
@@ -132,8 +142,9 @@ TEST_F(RandomNetworkGeneratorTests, TestCompartmentsValues) {
     options.setCompartmentLowerBound(0);
     options.setCompartmentUpperBound(10);
     RandomNetworkGenerator generator(options);
-    nc::NdArray<int> arr(nc::Shape(1, generator.rr_->getNumberOfCompartments()));
-    for (int i = 0; i < generator.rr_->getNumberOfCompartments(); i++) {
+    const int& num_comp = generator.rr_->getModel()->getNumCompartments();
+    nc::NdArray<int> arr(nc::Shape(1, num_comp));
+    for (int i = 0; i < num_comp; i++) {
         arr[i] = generator.rr_->getCompartmentByIndex(i);
     }
     std::cout << arr << std::endl;
@@ -143,44 +154,163 @@ TEST_F(RandomNetworkGeneratorTests, TestCompartmentsValues) {
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpecies) {
+
     NetworkGenerationOptions options(rateLaws);
     options.setNCompartments(2)
-            .setNBoundarySpecies(2)
+            .setNBoundarySpecies(6)
             .setBoundarySpeciesLowerBound(0)
-            .setBoundarySpeciesUpperBound(4);
+            .setBoundarySpeciesUpperBound(1000000);
     RandomNetworkGenerator rng(options);
-    std::vector<std::string> ids = rng.getRR()->getBoundarySpeciesIds();
-    std::vector<std::string> expected_ids({"I0", "I1"});
-    ASSERT_EQ(expected_ids, ids);
+    ls::Matrix<double> amounts = rng.getRR()->getBoundarySpeciesConcentrationsNamedArray();
+    std::vector<std::string> expected_ids({"I0", "I1", "I2", "I3", "I4", "I5"});
+    ASSERT_EQ(expected_ids, amounts.getColNames());
+    const unsigned int nrow = amounts.numRows();
+    const unsigned int ncol = amounts.numCols();
+    auto arr = amounts.get2DMatrix((int &) nrow, (int &) ncol);
+    std::vector<std::vector<double> > store(nrow,std::vector<double>(ncol));
 
-    nc::random::seed(4);
-    std::vector<double> amounts = rng.getRR()->getBoundarySpeciesConcentrations();
-    std::vector<double> expected = {0.0, 1.0};
-    ASSERT_EQ(expected, amounts);
-    ExecutableModel m = rng.getRR()->getModel()
+    for (int i = 0; i < amounts.numRows(); i++) {
+        // preallocate columns
+        for (int j = 0; j < amounts.numCols(); j++) {
+            store[i][j] = arr[i][j];
+        }
+    }
+//    std::vector<std::vector<double>> actual = amounts.getValues();
+//
+//    // This is what I got the first time I ran this code. Since this is stochastic
+//    // we expect this to be different each time. The probability of getting this
+//    // set again is 1 in 6 million - I'll take my changes
+    std::vector<std::vector<double>> not_expected({ { 265792, 212457, 960338, 919575, 741166, 741709 } });
+    ASSERT_NE(not_expected, store);
+}
 
+TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
+//    setSeed(4);
+    NetworkGenerationOptions options(rateLaws);
+    options.setNCompartments(2)
+            .setNBoundarySpecies(6)
+            .setBoundarySpeciesLowerBound(0)
+            .setBoundarySpeciesUpperBound(1000000);
+    RandomNetworkGenerator rng(options);
+    ls::Matrix<double> amounts = rng.getRR()->getBoundarySpeciesConcentrationsNamedArray();
+    std::vector<std::string> expected_ids({"I0", "I1", "I2", "I3", "I4", "I5"});
+    ASSERT_EQ(expected_ids, amounts.getColNames());
+    const unsigned int nrow = amounts.numRows();
+    const unsigned int ncol = amounts.numCols();
+    auto arr = amounts.get2DMatrix((int &) nrow, (int &) ncol);
+    std::vector<std::vector<double>> store(nrow,std::vector<double>(ncol));
+
+    for (int i = 0; i < amounts.numRows(); i++) {
+        // preallocate columns
+        for (int j = 0; j < amounts.numCols(); j++) {
+            store[i][j] = arr[i][j];
+        }
+    }
+//    std::vector<std::vector<double>> actual = amounts.getValues();
+    // this time we've seeded so the values are predictable
+    std::vector<std::vector<double>> expected({ { 785548, 594250, 547982, 841208, 756566, 674789 } });
+    ASSERT_EQ(expected, store);
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpecies) {
+//    setSeed(CLOCK_SEED);
     NetworkGenerationOptions options(rateLaws);
     options.setNCompartments(2)
-            .setNFloatingSpecies(10)
+            .setNFloatingSpecies(3)
             .setSpeciesLowerBound(0.1)
             .setSpeciesUpperBound(10.0);
+    RandomNetworkGenerator rng(options);
+    ls::Matrix<double> amounts = rng.getRR()->getFloatingSpeciesAmountsNamedArray();
+    std::vector<std::string> expected_ids({ "S0", "S1", "S2" });
+    ASSERT_EQ(expected_ids, amounts.getColNames());
+    const unsigned int nrow = amounts.numRows();
+    const unsigned int ncol = amounts.numCols();
+    auto arr = amounts.get2DMatrix((int &) nrow, (int &) ncol);
+    std::vector<std::vector<double> > store(nrow,std::vector<double>(ncol));
+    for (int i = 0; i < amounts.numRows(); i++) {
+        for (int j = 0; j < amounts.numCols(); j++) {
+            std::cout << arr[i][j] << std::endl;
+            store[i][j] = arr[i][j];
+        }
+    }
+//    std::vector<std::vector<double>> actual = amounts.getValues();
+
+    // This is what I got the first time I ran this code. Since this is stochastic
+    // we expect this to be different each time. The probability of getting this
+    // set again is 1 in 6 million - I'll take my changes
+    std::vector<double> expected(
+            { 7.8895274531912403, 2.5797553728114799, 7.1356451668886898});
+    ASSERT_EQ(expected, store[0]);
+    for (int i=0; i<expected.size(); i++){
+        ASSERT_EQ(expected[i], store[0][i]);
+    }}
+
+TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
+//    setSeed(5);
+    NetworkGenerationOptions options(rateLaws);
+    options.setNCompartments(2)
+            .setNFloatingSpecies(3)
+            .setSpeciesLowerBound(0.1)
+            .setSpeciesUpperBound(10.0);
+    RandomNetworkGenerator rng(options);
+    ls::Matrix<double> amounts = rng.getRR()->getFloatingSpeciesAmountsNamedArray();
+    const unsigned int nrow = amounts.numRows();
+    const unsigned int ncol = amounts.numCols();
+    auto arr = amounts.get2DMatrix((int &) nrow, (int &) ncol);
+    std::vector<std::vector<double>> store(nrow,std::vector<double>(ncol));
+    for (int i = 0; i < amounts.numRows(); i++) {
+        for (int j = 0; j < amounts.numCols(); j++) {
+            store[i][j] = arr[i][j];
+        }
+    }
+//    std::vector<std::vector<double>> actual = amounts.getValues();
+    // this time we've seeded so the values are predictable
+    std::vector<double> expected(
+            { 7.8895274531912403, 2.5797553728114799, 7.1356451668886898});
+    for (int i=0; i<expected.size(); i++){
+        ASSERT_DOUBLE_EQ(expected[i], store[0][i]);
+    }
+
+}
+
+TEST_F(RandomNetworkGeneratorTests, TestReactions) {
+    NetworkGenerationOptions options(rateLaws);
+    options.setNCompartments(2)
+            .setNFloatingSpecies(3)
+            .setSpeciesLowerBound(0.1)
+            .setSpeciesUpperBound(10.0);
+    RandomNetworkGenerator generator(options);
+    std::cout << generator.getRR()->getSBML()<<std::endl;
+
 }
 
 
-TEST_F(RandomNetworkGeneratorTests, test2) {
-    RoadRunner rr;
-    rr.addCompartment("C1", 1.0, false);
-    rr.addCompartment("C2", 1.0, true);
-
-    // deprecated!
-    auto x = rr.getCompartmentIds();
-    for (auto &it : x) {
-        std::cout << it << ",";
-    }// outputs: "C1,C2,"
-
-    // deprecated
-    int n = rr.getNumberOfCompartments();// 2
+TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacement) {
+    std::vector<int> x = RandomNetworkGenerator::sample_with_replacement(10, 1000);
+    std::vector<int> y({1,2,3, 4, 5,6, 7, 8, 9});
+    ASSERT_EQ(x, y);
 }
+
+TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId) {
+    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGenerator generator(options);
+    std::vector<std::string> x = generator.rr_->getGlobalParameterIds();
+    std::string actual = generator.generateUniqueParameterID(0, "TheBase", x);
+    std::string expected = "TheBase0";
+    ASSERT_STREQ(expected.c_str(), actual.c_str());
+}
+
+TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId2) {
+    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGenerator generator(options);
+    generator.getRR()->addCompartment("Comp",1.0, false );
+    generator.getRR()->addParameter("TheBase0", 1.0, true);
+    std::vector<std::string> x = generator.rr_->getGlobalParameterIds();
+    std::string actual = generator.generateUniqueParameterID(0, "TheBase",x);
+    std::string expected = "TheBase1";
+    ASSERT_STREQ(expected.c_str(), actual.c_str());
+}
+
+
+
+//todo put check on when adding a reaction that we have enough species to implement the rate law    =

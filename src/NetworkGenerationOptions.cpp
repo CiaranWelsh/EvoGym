@@ -3,17 +3,17 @@
 //
 
 #include "evo/NetworkGenerationOptions.h"
+#include "evo/seed.h"
 
 #include <utility>
 #include "evogym_export.h"
-#include "NumCpp.hpp"
 
 namespace evo {
 
     NetworkGenerationOptions::NetworkGenerationOptions(RateLaws rateLaws) :
             rate_laws_(std::move(rateLaws)) {
-        nc::random::seed(std::chrono::system_clock::now().time_since_epoch().count());
         validate();
+
     }
     const std::string &NetworkGenerationOptions::getCoreSBML() const {
         return core_sbml_;
