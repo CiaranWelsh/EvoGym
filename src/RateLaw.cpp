@@ -2,9 +2,11 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#include <evo/RateLaw.h>
-
+#include <regex>
 #include "sbml/SBMLTypes.h"
+
+#include "evo/RateLaw.h"
+#include "evo/evo_error.h"
 
 namespace evo {
 
@@ -54,12 +56,21 @@ namespace evo {
         for (auto &rate_law_term: rate_law_terms) {
 
             if (rate_law_term->getNumChildren() == 0) {
+                std::string elementary_term_string = libsbml::SBML_formulaToString(rate_law_term);
+
+                // throw an error when user has given a variable name like S1 or K2. The parameters will
+                // be enumarated automatically.
+                if (std::regex_match(elementary_term_string, std::regex("\\d$"))){
+                    INVALID_ARGUMENT_ERROR("The elementary term of the rate law called \""
+                                           + getName() +"\" ends with a digit. Please rename this term "
+                                                         "so that it does not.");
+                }
                 rate_law_elements_.insert(libsbml::SBML_formulaToString(rate_law_term));
             } else {
                 std::vector<libsbml::ASTNode *> new_rate_law_terms;
                 for (int i = 0; i < rate_law_term->getNumChildren(); i++) {
                     auto node_type = rate_law_term->getChild(i)->getType();
-                    // exclude integers or doubles.
+                    // exclude integers or doubles. These are parameters, like K
                     if (node_type == libsbml::AST_INTEGER ||
                         node_type == libsbml::AST_REAL||
                         node_type == libsbml::AST_REAL_E) {

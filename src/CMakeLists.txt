@@ -7,7 +7,9 @@ set(
         Motif.cpp
         Population.cpp
         RandomNetworkGenerator.cpp
+        RandomNumberGenerator.cpp
         IdGen.cpp
+        seed.cpp
 )
 
 set(
@@ -18,7 +20,9 @@ set(
         include/evo/Motif.h
         include/evo/Population.h
         include/evo/RandomNetworkGenerator.h
+        include/evo/RandomNumberGenerator.h
         include/evo/IdGen.h
+        include/evo/seed.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})

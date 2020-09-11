@@ -16,9 +16,8 @@ namespace evo {
     /**
     * @brief an alternative to the macro for setting random seed
     */
-    static void setSeed(unsigned int seed) {
-        nc::random::seed(seed);
-    }
+//    void setSeed(unsigned int seed);
+
 }// namespace evo
 
 #endif//EVOGYM_SEED_H

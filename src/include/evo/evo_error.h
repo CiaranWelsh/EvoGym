@@ -34,9 +34,10 @@ namespace evo {
                     const std::string &function,
                     unsigned int line,
                     const std::string &msg = "") {
-        std::string errMsg = "File: " + file + "\n\tFunction: " + function + "\n\tLine: " + std::to_string(line) + "\n\tError: " + msg;
-        std::cerr << errMsg;
-        throw ErrorType(errMsg);
+        std::ostringstream errMsg;
+        errMsg << file << ":" << line<<":"<<function<<":"<<"\nError: " << msg << std::endl;
+        std::cerr << errMsg.str();
+        throw ErrorType(errMsg.str());
     }
 }// namespace evo
 

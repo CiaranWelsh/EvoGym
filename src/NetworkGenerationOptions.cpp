@@ -169,16 +169,18 @@ namespace evo {
         NetworkGenerationOptions::boundarySpeciesUpperBound = boundarySpeciesUpperBound;
         return *this;
     }
-    unsigned int NetworkGenerationOptions::getTimeNow() {
-        return std::chrono::system_clock::now().time_since_epoch().count();
+    const std::string &NetworkGenerationOptions::getCoreSbml() const {
+        return core_sbml_;
     }
-    //    unsigned int NetworkGenerationOptions::getSeed() const {
-//        return seed_;
-//    }
-//    NetworkGenerationOptions& NetworkGenerationOptions::setSeed(unsigned int seed) {
-//        nc::random::seed(seed);
-//        return *this;
-//    }
+    void NetworkGenerationOptions::setCoreSbml(const std::string &coreSbml) {
+        core_sbml_ = coreSbml;
+    }
+    unsigned int NetworkGenerationOptions::getSeed() const {
+        return seed_;
+    }
+    void NetworkGenerationOptions::setSeed(unsigned int seed) {
+        seed_ = seed;
+    }
 
 }
 

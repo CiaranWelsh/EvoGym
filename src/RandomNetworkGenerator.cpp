@@ -6,6 +6,7 @@
 #include "NumCpp.hpp"
 #include <chrono>
 #include <regex>
+#include "evo/RandomNumberGenerator.h"
 
 
 /*
@@ -20,6 +21,7 @@ namespace evo {
 
     RandomNetworkGenerator::RandomNetworkGenerator(const NetworkGenerationOptions &options)
         : options_(options) {
+        rng_.setSeed(options.getSeed());
         createRRModel();
         createCompartments();
         createBoundarySpecies();
@@ -94,14 +96,9 @@ namespace evo {
         // do the sampling
         std::vector<int> species_indices = sample_with_replacement(n, species.size());
 
-        for (auto i : species_indices) {
-            std::cout << "i: " << i << std::endl;
-        }
-
         // convert indices into the strings we need.
         std::vector<std::string> out;
         for (auto &i : species_indices) {
-            std::cout << "I1: " << i << std::endl;
             if (i < options_.getNBoundarySpecies()) {
                 out.push_back(getRR()->getBoundarySpeciesIds()[i]);
             } else {
@@ -207,34 +204,7 @@ namespace evo {
         }
     }
 
-    /**
-     * This strategy could be dangerous in that if there is no match at all we'll
-     * get stuck in an infinite loop.
-     *
-     * Therefore it is essential that the calling function first checks that the match_string is
-     * actually present in the rate law string. If not, no enter this function. If so, we use this
-     * strategy to locate the parameter in question.
-     *
-     * Note that this beats the regex strategy which will get complicated as soon as were in double
-     * triple digits.
-     */
-    std::string RandomNetworkGenerator::substituteRateLawComponent(libsbml::ASTNode *rate_law_term, const std::string& match_string, const std::string& substitute) {
-        if (rate_law_term->getNumChildren() == 0) {
-            std::string term_string = libsbml::SBML_formulaToString(rate_law_term);
-            if (term_string == match_string) {
-                return term_string;
-            } else {
-                return std::string();
-            }
-        } else {
-            for (int i = 0; i < rate_law_term->getNumChildren(); i++) {
-                return substituteRateLawComponent(rate_law_term->getChild(i), match_string, substitute);
-            }
-        }
-    }
-
     void RandomNetworkGenerator::createReactions() {
-        // this will be empty if no core sbml has been used.
         std::ostringstream reaction_name;
         std::vector<std::string> current_model_parameters = rr_->getGlobalParameterIds();
         for (int reaction_number = 0; reaction_number < options_.getNReactions(); reaction_number++) {
@@ -243,7 +213,7 @@ namespace evo {
 
             //            rr_->addRateRule(rateLaw.getName(), rateLaw.getRateLawString(), false);
             std::cout << rateLaw.getName() << std::endl;
-            const RoleMap &roles = rateLaw.getRoles();
+            const RoleMap &roles = rateLaw.getRoles(); // from user input
 
             // count number of parameters
             int parameter_count = 0;
@@ -264,8 +234,8 @@ namespace evo {
 
             // work out how many randomly selected species we need
             int num_random_species = (int) roles.size() - parameter_count;
-            int num_species = rr_->getNumberOfIndependentSpecies() + rr_->getNumberOfDependentSpecies();
-            if (num_random_species < num_species) {
+            int num_species = options_.getNBoundarySpecies() + options_.getNFloatingSpecies();
+            if (num_random_species > num_species) {
                 std::ostringstream err;
                 err << "Rate law \"" << rateLaw.getName() << "\" requires " << num_random_species << " species ";
                 err << "but your configurations only allow for " << num_species << ". Please change your configuration options.";
@@ -277,22 +247,23 @@ namespace evo {
 
             assert(species.size() == num_random_species);
 
-            // some vectors to store Species, sorted by role
+            // some vectors to store Species by role
             std::vector<std::string> substrates;
             std::vector<std::string> products;
             std::vector<std::string> modifiers;
 
-            // make a copy of the rate law string. In order to create a reaction
-            // we will need to generate a new parameter id and use regular expression
-            // to replace the placeholder with the new string
+            // make a copy of the rate law string. We will modify this for use in addReaction
+            // as the rate law contains only place holders.
             std::string rate_law_string = rateLaw.getRateLawString();
             for (auto &it : roles) {
-                std::regex reg(it.first);// non-greedy match
+                // Regex defined here as its the same expression for all cases.
+                // \b matches a word boundary (\\b escapes the first \)
+                std::regex reg(it.first + "\\b");//
                 std::cout << "first: " << it.first << ", second: " << it.second << std::endl;
                 switch (it.second) {
                     case (EVO_PARAMETER): {
                         // sample between specified boundaries and add to the model
-                        double val = nc::random::uniform(options_.getParameterLowerBound(), options_.getParameterUpperBound());
+                        auto val = nc::random::uniform<float>(options_.getParameterLowerBound(), options_.getParameterUpperBound());
                         // ensure unique parameter name. We pass in reference to used parameter names
                         // so we do not have to reload the model each time we add a parameter (performance reasons).
                         std::string parameter_name = generateUniqueParameterID(0, it.first, current_model_parameters);
@@ -301,7 +272,9 @@ namespace evo {
                         current_model_parameters.push_back(parameter_name);// add to list of parameter names
 
                         // now ensure the placeholder (it.first) contains the newly generated parameter name
+                        std::cout << "before: " << rate_law_string <<std::endl;
                         rate_law_string = regex_replace(rate_law_string, reg, parameter_name);
+                        std::cout << "after: " << rate_law_string <<std::endl;
 
                         break;
                     }
@@ -311,7 +284,9 @@ namespace evo {
                         species.resize(species.size() - 1);
 
                         // now ensure the placeholder (it.first) contains the species
+                        std::cout << "before: " << rate_law_string <<std::endl;
                         rate_law_string = regex_replace(rate_law_string, reg, substrate);
+                        std::cout << "after: " << rate_law_string <<std::endl;
                         break;
                     }
                     case (EVO_PRODUCT): {
@@ -320,7 +295,9 @@ namespace evo {
                         species.resize(species.size() - 1);
 
                         // now ensure the placeholder (it.first) contains the species
+                        std::cout << "before: " << rate_law_string <<std::endl;
                         rate_law_string = regex_replace(rate_law_string, reg, product);
+                        std::cout << "afetr: " << rate_law_string <<std::endl;
                         break;
                     }
                     case (EVO_MODIFIER): {
@@ -328,14 +305,15 @@ namespace evo {
                         modifiers.push_back(modifier);
                         species.resize(species.size() - 1);
                         // now ensure the placeholder (it.first) contains the species
+                        std::cout << "before: " << rate_law_string <<std::endl;
                         rate_law_string = regex_replace(rate_law_string, reg, modifier);
+                        std::cout << "after: " << rate_law_string <<std::endl;
                         break;
                     }
                     default:
                         LOGIC_ERROR("Unknown role specified");
                 }
             }
-            std::cout << __FILE__ << ":" << __LINE__ << std::endl;
             reaction_name << "R" << reaction_number;
             getRR()->addReaction(reaction_name.str(), substrates, products, rate_law_string, false);
             reaction_name.str("");// clear the stream

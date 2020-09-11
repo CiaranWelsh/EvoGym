@@ -39,6 +39,14 @@ namespace evo {
         // for when we want the random model with a core component
         std::string core_sbml_;
 
+        unsigned int seed_;
+
+    public:
+        const std::string &getCoreSbml() const;
+        void setCoreSbml(const std::string &coreSbml);
+        unsigned int getSeed() const;
+        void setSeed(unsigned int seed);
+    private:
         void validate() const;
 
 

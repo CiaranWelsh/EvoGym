@@ -7,6 +7,7 @@
 
 #include "NumCpp.hpp"
 #include "evo/NetworkGenerationOptions.h"
+#include "evo/RandomNumberGenerator.h"
 #include "evo/evo_error.h"
 #include "rr/rrRoadRunner.h"
 #include "rr/rrExecutableModel.h"
@@ -17,6 +18,8 @@ using namespace rr;
 namespace evo {
 
     class RandomNetworkGenerator {
+        RandomNumberGenerator rng_;
+
         const NetworkGenerationOptions &options_;
 
         void createCompartments();
@@ -70,7 +73,7 @@ namespace evo {
         static std::vector<int> sample_with_replacement(int nsamples, int npop);
 
         string generateUniqueParameterID(int number, const string &base_name, std::vector<std::string> &exclusion_list) const;
-        string substituteRateLawComponent(libsbml::ASTNode *rate_law_term, const string &match_string, const string &substitute);
+
     };
 }// namespace evo
 
