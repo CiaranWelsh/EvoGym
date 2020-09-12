@@ -1,6 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -DROADRUNNER_INSTALL_PREFIX=D:/rrbuild/roadrunner/rr-install-msvc -G "CodeBlocks - NMake Makefiles" D:\EvoGym
--- Could NOT find LibLZMA (missing: LIBLZMA_LIBRARY LIBLZMA_INCLUDE_DIR LIBLZMA_HAS_AUTO_DECODER LIBLZMA_HAS_EASY_ENCODER LIBLZMA_HAS_LZMA_PRESET) 
--- Found PythonInterp: C:/Miniconda/python.exe (found version "3.7.4") 
--- Configuring done
--- Generating done
--- Build files have been written to: D:/EvoGym/cmake-build-debug-visual-studio
