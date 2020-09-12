@@ -1,6 +1,6 @@
 
+#include "evo/RandomNetworkGeneratorOptions.h"
 #include "gtest/gtest.h"
-#include "evo/NetworkGenerationOptions.h"
 
 using namespace evo;
 
@@ -10,69 +10,77 @@ public:
 };
 
 TEST_F(NetworkGenerationOptionsTests, nFloatingSpecies){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setNFloatingSpecies(4);
     int actual = options.getNFloatingSpecies();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, nBoundarySpecies){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setNBoundarySpecies(4);
     int actual = options.getNBoundarySpecies();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, nReactions){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setNReactions(4);
     int actual = options.getNReactions();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, nCompartments){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setNCompartments(4);
     int actual = options.getNCompartments();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, speciesLowerBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setSpeciesLowerBound(4);
     double actual = options.getSpeciesLowerBound();
     ASSERT_EQ(4.0, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, speciesUpperBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setSpeciesUpperBound(4);
     double actual = options.getSpeciesUpperBound();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, parameterLowerBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setParameterLowerBound(4);
     double actual = options.getParameterLowerBound();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, parameterUpperBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setParameterUpperBound(4);
     double actual = options.getParameterUpperBound();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, compartmentLowerBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setCompartmentLowerBound(4);
     double actual = options.getCompartmentLowerBound();
     ASSERT_EQ(4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, compartmentUpperBoun){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setCompartmentUpperBound(4);
     double actual = options.getCompartmentUpperBound();
     ASSERT_EQ(4, actual);
 }
+
 TEST_F(NetworkGenerationOptionsTests, nMotifsTests){
-    NetworkGenerationOptions options;
+    RandomNetworkGeneratorOptions options;
     options.setNMotifs(4);
-    double actual = options.getCompartmentUpperBound();
+    double actual = options.getNMotifs();
+    ASSERT_EQ(4, actual);
+}
+
+TEST_F(NetworkGenerationOptionsTests, Seed){
+    RandomNetworkGeneratorOptions options;
+    options.setSeed(4);
+    unsigned long long int actual = options.getSeed();
     ASSERT_EQ(4, actual);
 }
 

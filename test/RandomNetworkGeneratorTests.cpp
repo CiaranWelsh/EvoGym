@@ -4,10 +4,9 @@
 
 #include "gtest/gtest.h"
 
-#include "evo/NetworkGenerationOptions.h"
+#include "evo/RandomNetworkGeneratorOptions.h"
 #include "evo/RandomNetworkGenerator.h"
-#include "evo/RandomNumberGenerator.h"
-#include "evo/seed.h"
+#include "evo/logger.h"
 
 #include <random>
 
@@ -89,37 +88,19 @@ public:
         rateLaws["uni-uni"] = uni_uni;
         rateLaws["uni-bi"] = uni_bi;
 
-    // the default seed in NumCpp doesn't appeat to be random.
-        // that means that the seed will need to be set, once per program
-//    setSeed(CLOCK_SEED); // needs to be called somewhere once per program.
     };
 };
 
 
-TEST_F(RandomNetworkGeneratorTests, TestRandomNumberGenerator) {
-    NetworkGenerationOptions options(rateLaws);
-    RandomNumberGenerator rng;
-    int random = rng.uniform_int(0, 1000);
-    ASSERT_NE(50, random);
-}
-
-TEST_F(RandomNetworkGeneratorTests, TestSetRandomSeed) {
-    NetworkGenerationOptions options(rateLaws);
-    RandomNumberGenerator rng(8);
-    int random = rng.uniform_int(0, 1000);
-    std::cout << random << std::endl;
-    ASSERT_EQ(321, random);
-}
-
 TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithoutSBMLCore) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNFloatingSpecies(6);
     RandomNetworkGenerator generator(options);
     ASSERT_EQ(6, generator.getRR()->getModel()->getNumFloatingSpecies());
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithSBMLCore) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setCoreSBML(sbml);
     options.setNFloatingSpecies(6);
     RandomNetworkGenerator generator(options);
@@ -127,7 +108,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithSBMLCore) {
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCompartmentsNum) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(10);
     RandomNetworkGenerator generator(options);
     std::vector<std::string> comps = generator.rr_->getCompartmentIds();
@@ -135,7 +116,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCompartmentsNum) {
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestCompartmentsValues) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(10);
     options.setCompartmentLowerBound(0);
     options.setCompartmentUpperBound(10);
@@ -153,7 +134,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCompartmentsValues) {
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpecies) {
 
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(2)
             .setNBoundarySpecies(6)
             .setBoundarySpeciesLowerBound(0)
@@ -184,7 +165,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpecies) {
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
 //    setSeed(4);
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(2)
             .setNBoundarySpecies(6)
             .setBoundarySpeciesLowerBound(0)
@@ -207,18 +188,19 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
     }
 //    std::vector<std::vector<double>> actual = amounts.getValues();
     // this time we've seeded so the values are predictable
-    std::vector<std::vector<double>> expected({ { 548244, 32401, 586928, 791823, 875281, 953564 } });
+    std::vector<std::vector<double>> expected({ { 672099, 41611, 493558, 834295, 551567, 740876 } });
     ASSERT_EQ(expected, store);
 }
 
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
 //    setSeed(5);
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(2)
             .setNFloatingSpecies(3)
             .setSpeciesLowerBound(0.1)
-            .setSpeciesUpperBound(10.0);
+            .setSpeciesUpperBound(10.0)
+            .setSeed(9);
     RandomNetworkGenerator rng(options);
     ls::Matrix<double> amounts = rng.getRR()->getFloatingSpeciesAmountsNamedArray();
     const unsigned int nrow = amounts.numRows();
@@ -233,16 +215,15 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
 //    std::vector<std::vector<double>> actual = amounts.getValues();
     // this time we've seeded so the values are predictable
     std::vector<double> expected(
-            { 2.87734800440855, 0.96640356944993799, 1.0966108096045799});
+            { 8.7572562648434999, 2.4358080117186298, 9.0125838738106498});
     for (int i=0; i<expected.size(); i++){
         std::cout << "i: " << std::endl;
         ASSERT_NEAR(expected[i], store[0][i], 0.001);
     }
-
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestReactions) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(2)
             .setNFloatingSpecies(3)
             .setSpeciesLowerBound(0.1)
@@ -254,25 +235,24 @@ TEST_F(RandomNetworkGeneratorTests, TestReactions) {
 
 
 TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacement) {
-        NetworkGenerationOptions options(rateLaws);
+        RandomNetworkGeneratorOptions options(rateLaws);
     RandomNetworkGenerator generator(options);
-    RandomNumberGenerator rng;
-    std::vector<int> x = generator.sample_with_replacement(3, 100, rng);
+    std::vector<int> x = RandomNetworkGenerator::sample_with_replacement(3, 100);
     std::vector<int> y({7, 32, 17 });
     ASSERT_NE(x, y);
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacementSeeded2) {
-        NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setSeed(9);
     RandomNetworkGenerator generator(options);
-    RandomNumberGenerator rng(7);
-    std::vector<int> x = generator.sample_with_replacement(4, 100, rng);
-    std::vector<int> y({46, 87, 47, 98});
+    std::vector<int> x = RandomNetworkGenerator::sample_with_replacement(4, 100);
+    std::vector<int> y({34, 20, 35, 32 });
     ASSERT_EQ(x, y);
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     RandomNetworkGenerator generator(options);
     std::vector<std::string> x = generator.rr_->getGlobalParameterIds();
     std::string actual = generator.generateUniqueParameterID(0, "TheBase", x);
@@ -281,7 +261,7 @@ TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId) {
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId2) {
-    NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGeneratorOptions options(rateLaws);
     RandomNetworkGenerator generator(options);
     generator.getRR()->addCompartment("Comp",1.0, false );
     generator.getRR()->addParameter("TheBase0", 1.0, true);
@@ -303,14 +283,50 @@ TEST_F(RandomNetworkGeneratorTests, TestRegexStrategyInReactionRateLawReplacemen
 
 }
 
-TEST_F(RandomNetworkGeneratorTests, test) {
-//    setSeed(CLOCK_SEED);
-    nc::random::seed(CLOCK_SEED);
-std::cout << CLOCK_SEED <<std::endl;
-    NetworkGenerationOptions options(rateLaws);
+TEST_F(RandomNetworkGeneratorTests, TestGlobalParametersBeingSetCorrectly) {
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setSeed(2);
     RandomNetworkGenerator generator(options);
-    std::string sbml = generator.getRR()->getSBML();
-    std::cout << sbml << std::endl;
+    double k1 = generator.getRR()->getGlobalParameterByIndex(0);
+    double k2 = generator.getRR()->getGlobalParameterByIndex(1);
+    ASSERT_NEAR(1.4452696629248301, k1, 0.0001);
+    ASSERT_NEAR(1.08653831902689, k2, 0.0001);
 }
+
+TEST_F(RandomNetworkGeneratorTests, TestStoiciometryMatrix) {
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setSeed(5);
+    RandomNetworkGenerator generator(options);
+    std::string x = generator.getRR()->getSBML();
+    std::cout << x << std::endl;
+
+    ls::Matrix<double> stoic = generator.getRR()->getFullStoichiometryMatrix();
+    auto actual = stoic.getValues();
+    std::vector<std::vector<double>> expected = {
+            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, -1, 0 }
+    };
+    ASSERT_EQ(expected, actual);
+
+}
+
+TEST_F(RandomNetworkGeneratorTests, TestTimeSeries) {
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setSeed(5);
+    RandomNetworkGenerator generator(options);
+
+    SimulateOptions simulateOptions;
+    simulateOptions.start = 0;
+    simulateOptions.duration = 100;
+    simulateOptions.steps = 101;
+
+//    auto rr = generator.getRR();
+//
+////    ls::Matrix<double> sim = generator.getRR()->simulate(&simulateOptions);
+//
+//    ASSERT_EQ(expected, actual);
+
+}
+
+
 
 

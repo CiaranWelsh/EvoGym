@@ -35,13 +35,13 @@ add_test_executable(
             "${EVOGYM_INCLUDE_DIR}/evo/RateLaw.h"
             "${EVOGYM_SOURCE_DIR}/RateLaw.cpp"
         NetworkGenerationOptionsTests.cpp
-            "${EVOGYM_INCLUDE_DIR}/evo/NetworkGenerationOptions.h"
-            "${EVOGYM_SOURCE_DIR}/NetworkGenerationOptions.cpp"
-        RandomNumberGeneratorTests.cpp
-            "${EVOGYM_INCLUDE_DIR}/evo/RandomNumberGenerator.h"
-            "${EVOGYM_SOURCE_DIR}/RandomNumberGenerator.cpp"
+            "${EVOGYM_INCLUDE_DIR}/evo/RandomNetworkGeneratorOptions.h"
+            "${EVOGYM_SOURCE_DIR}/RandomNetworkGeneratorOptions.cpp"
 )
 
+
+add_test_executable(NumCppTest NumCppRNGTest.cpp)
+add_test_executable(RNGMWE RNGMWE.cpp)
 
 
 
