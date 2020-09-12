@@ -246,9 +246,9 @@ TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacementSeeded2) {
     RandomNetworkGeneratorOptions options(rateLaws);
     options.setSeed(9);
     RandomNetworkGenerator generator(options);
-    std::vector<int> x = RandomNetworkGenerator::sample_with_replacement(4, 100);
-    std::vector<int> y({34, 20, 35, 32 });
-    ASSERT_EQ(x, y);
+    std::vector<int> actual = RandomNetworkGenerator::sample_with_replacement(4, 100);
+    std::vector<int> expected({58, 88, 46, 44});
+    ASSERT_EQ(actual, expected);
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestGenerateUniqueParameterId) {
@@ -289,8 +289,8 @@ TEST_F(RandomNetworkGeneratorTests, TestGlobalParametersBeingSetCorrectly) {
     RandomNetworkGenerator generator(options);
     double k1 = generator.getRR()->getGlobalParameterByIndex(0);
     double k2 = generator.getRR()->getGlobalParameterByIndex(1);
-    ASSERT_NEAR(1.4452696629248301, k1, 0.0001);
-    ASSERT_NEAR(1.08653831902689, k2, 0.0001);
+    ASSERT_NEAR(2.3229524971187701, k1, 0.0001);
+    ASSERT_NEAR(6.8898444095564404, k2, 0.0001);
 }
 
 TEST_F(RandomNetworkGeneratorTests, TestStoiciometryMatrix) {
@@ -303,7 +303,7 @@ TEST_F(RandomNetworkGeneratorTests, TestStoiciometryMatrix) {
     ls::Matrix<double> stoic = generator.getRR()->getFullStoichiometryMatrix();
     auto actual = stoic.getValues();
     std::vector<std::vector<double>> expected = {
-            { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, -1, 0 }
+            { 0, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, -1, 0 }
     };
     ASSERT_EQ(expected, actual);
 

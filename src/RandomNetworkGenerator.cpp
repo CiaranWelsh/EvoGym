@@ -201,7 +201,7 @@ namespace evo {
             INVALID_ARGUMENT_ERROR("The RateLaw field of RandomNetworkGeneratorOptions is "
                                    "empty. Please give some rate laws to continue");
         }
-        int random_rate_law_index = nc::random::randInt<int>(0, (int) options_.getRateLaws().size() - 1);
+        int random_rate_law_index = nc::random::randInt<int>(0, (int) options_.getRateLaws().size());
         return keys[random_rate_law_index];
     }
 
