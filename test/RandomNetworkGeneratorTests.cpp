@@ -188,7 +188,8 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
     options.setNCompartments(2)
             .setNBoundarySpecies(6)
             .setBoundarySpeciesLowerBound(0)
-            .setBoundarySpeciesUpperBound(1000000);
+            .setBoundarySpeciesUpperBound(1000000)
+            .setSeed(14);
     RandomNetworkGenerator rng(options);
     ls::Matrix<double> amounts = rng.getRR()->getBoundarySpeciesConcentrationsNamedArray();
     std::vector<std::string> expected_ids({"I0", "I1", "I2", "I3", "I4", "I5"});
@@ -206,7 +207,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
     }
 //    std::vector<std::vector<double>> actual = amounts.getValues();
     // this time we've seeded so the values are predictable
-    std::vector<std::vector<double>> expected({ { 785548, 594250, 547982, 841208, 756566, 674789 } });
+    std::vector<std::vector<double>> expected({ { 548244, 32401, 586928, 791823, 875281, 953564 } });
     ASSERT_EQ(expected, store);
 }
 
@@ -232,10 +233,10 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
 //    std::vector<std::vector<double>> actual = amounts.getValues();
     // this time we've seeded so the values are predictable
     std::vector<double> expected(
-            { 5.4841750682996704, 2.5797553728114799, 7.1356451668886898});
+            { 2.87734800440855, 0.96640356944993799, 1.0966108096045799});
     for (int i=0; i<expected.size(); i++){
         std::cout << "i: " << std::endl;
-        ASSERT_DOUBLE_EQ(expected[i], store[0][i]);
+        ASSERT_NEAR(expected[i], store[0][i], 0.001);
     }
 
 }
@@ -253,9 +254,20 @@ TEST_F(RandomNetworkGeneratorTests, TestReactions) {
 
 
 TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacement) {
-//    setSeed(CLOCK_SEED);
-    std::vector<int> x = RandomNetworkGenerator::sample_with_replacement(10, 1000);
-    std::vector<int> y({1,2,3, 4, 5,6, 7, 8, 9});
+        NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGenerator generator(options);
+    RandomNumberGenerator rng;
+    std::vector<int> x = generator.sample_with_replacement(3, 100, rng);
+    std::vector<int> y({7, 32, 17 });
+    ASSERT_NE(x, y);
+}
+
+TEST_F(RandomNetworkGeneratorTests, TestSampleWithReplacementSeeded2) {
+        NetworkGenerationOptions options(rateLaws);
+    RandomNetworkGenerator generator(options);
+    RandomNumberGenerator rng(7);
+    std::vector<int> x = generator.sample_with_replacement(4, 100, rng);
+    std::vector<int> y({46, 87, 47, 98});
     ASSERT_EQ(x, y);
 }
 
@@ -302,11 +314,3 @@ std::cout << CLOCK_SEED <<std::endl;
 }
 
 
-
-//todo put check on when adding a reaction that we have enough species to implement the rate law    =
-TEST_F(RandomNetworkGeneratorTests, test3) {
-        auto seed = static_cast<nc::uint32>(CLOCK_SEED);
-    nc::random::seed(seed);
-    auto randValue = nc::random::uniform<float>(0, 1);
-    std::cout << "seed = " << seed << " value = " << randValue << '\n';
-}

@@ -70,7 +70,7 @@ namespace evo {
         /**
          * @Brief Take a sample of size @param nsamples from a population of size @param npop
          */
-        static std::vector<int> sample_with_replacement(int nsamples, int npop);
+        std::vector<int> sample_with_replacement(int nsamples, int npop, const RandomNumberGenerator& rng);
 
         string generateUniqueParameterID(int number, const string &base_name, std::vector<std::string> &exclusion_list) const;
 

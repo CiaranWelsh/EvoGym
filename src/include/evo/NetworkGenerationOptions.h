@@ -43,9 +43,9 @@ namespace evo {
 
     public:
         const std::string &getCoreSbml() const;
-        void setCoreSbml(const std::string &coreSbml);
+        NetworkGenerationOptions &setCoreSbml(const std::string &coreSbml);
         unsigned int getSeed() const;
-        void setSeed(unsigned int seed);
+        NetworkGenerationOptions &setSeed(unsigned int seed);
     private:
         void validate() const;
 

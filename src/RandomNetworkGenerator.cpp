@@ -52,7 +52,7 @@ namespace evo {
         return getRR()->getCompartmentIds()[random_index];
     }
 
-    std::vector<int> RandomNetworkGenerator::sample_with_replacement(int nsamples, int npop) {
+    std::vector<int> RandomNetworkGenerator::sample_with_replacement(int nsamples, int npop, const RandomNumberGenerator& rng) {
         if (nsamples > npop) {
             LOGIC_ERROR("The number of samples cannot be more than the size of the population when sampling"
                         "with replacement");
@@ -60,8 +60,8 @@ namespace evo {
 
         std::vector<int> out;
         for (int j = npop - nsamples + 1; j < npop + 1; j++) {
-            auto random_number = nc::random::uniform<double>(0.0, 1.0);
-            unsigned int t = 1 + j * (int) random_number;
+            auto random_number = rng_.uniform_real(0.0, 1.0);
+            unsigned int t = 1 + (int)j * random_number;
             if (std::find(out.begin(), out.end(), t) != out.end()) {
                 out.push_back(j);
             } else {
@@ -71,8 +71,8 @@ namespace evo {
 
         // we subtract 1 from the output so that we have index friendly numbers
         // i.e. algorithm is 1 indexed and C++ is 0 indexed.
-        for (int &i : out) {
-            i -= 1;
+        for (int i=0;i<out.size();i++) {
+            out[i] -= 1;
         }
         return out;
     }
@@ -94,7 +94,7 @@ namespace evo {
             LOGIC_ERROR(err.str());
         }
         // do the sampling
-        std::vector<int> species_indices = sample_with_replacement(n, species.size());
+        std::vector<int> species_indices = sample_with_replacement(n, species.size(), rng_);
 
         // convert indices into the strings we need.
         std::vector<std::string> out;

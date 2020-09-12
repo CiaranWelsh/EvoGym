@@ -172,14 +172,18 @@ namespace evo {
     const std::string &NetworkGenerationOptions::getCoreSbml() const {
         return core_sbml_;
     }
-    void NetworkGenerationOptions::setCoreSbml(const std::string &coreSbml) {
+    NetworkGenerationOptions &NetworkGenerationOptions::setCoreSbml(const std::string &coreSbml) {
         core_sbml_ = coreSbml;
+        return *this;
     }
+
     unsigned int NetworkGenerationOptions::getSeed() const {
         return seed_;
     }
-    void NetworkGenerationOptions::setSeed(unsigned int seed) {
+
+    NetworkGenerationOptions &NetworkGenerationOptions::setSeed(unsigned int seed) {
         seed_ = seed;
+        return *this;
     }
 
 }
