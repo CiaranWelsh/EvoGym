@@ -64,30 +64,8 @@ public:
                        "    </listOfReactions>\n"
                        "  </model>\n"
                        "</sbml>";
-    RateLaw uni_uni;
-    RateLaw uni_bi;
-    RateLaws rateLaws;
-    RandomNetworkGeneratorTests() {
-        uni_uni = RateLaw(
-                "uni-uni",
-                "k*A",
-                RoleMap(
-                        {
-                                {"k", EVO_PARAMETER},
-                                {"A", EVO_SUBSTRATE},
-                        }));
-        uni_bi = RateLaw(
-                "uni-bi",
-                "k*A",
-                RoleMap(
-                        {
-                                {"k", EVO_PARAMETER},
-                                {"A", EVO_SUBSTRATE},
-                                {"B", EVO_PRODUCT},
-                        }));
-        rateLaws["uni-uni"] = uni_uni;
-        rateLaws["uni-bi"] = uni_bi;
 
+    RandomNetworkGeneratorTests() {
     };
 };
 
@@ -217,7 +195,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
     std::vector<double> expected(
             { 8.7572562648434999, 2.4358080117186298, 9.0125838738106498});
     for (int i=0; i<expected.size(); i++){
-        std::cout << "i: " << std::endl;
+        std::cout << "i: " << expected[i] << std::endl;
         ASSERT_NEAR(expected[i], store[0][i], 0.001);
     }
 }
@@ -324,6 +302,25 @@ TEST_F(RandomNetworkGeneratorTests, TestTimeSeries) {
 ////    ls::Matrix<double> sim = generator.getRR()->simulate(&simulateOptions);
 //
 //    ASSERT_EQ(expected, actual);
+
+}
+
+
+TEST_F(RandomNetworkGeneratorTests, TimeNetworkGeneration) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    RandomNetworkGeneratorOptions options(rateLaws);
+
+    int n = 100;
+
+    for (int i=0; i<n; i++){
+        RandomNetworkGenerator generator(options);
+    }
+
+    auto t2 = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds >( t2 - t1 ).count();
+
+    std::cout << "It took : " << duration << " milliseconds to build " << n << " models.";
 
 }
 

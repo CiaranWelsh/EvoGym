@@ -1,0 +1,24 @@
+Discussion points for roadrunner codebase
+-------------------------------------------
+- What does the RoadRunnder class do that the rrExecutableModel does not? 
+	- If the answer is nothing, that the RoadRunner class is only a wrapper around the rrExecutableModel, we should consolidate for the next version. 
+- The rr prefix on all the files. This presumably ensures unique filenames. My preference would be to structure the include directory to ensure this uniqueness instead. 
+	#include "rr/ExecutableModel.h"
+	- Note: In my roadrunner build system, the project gets installed in such a way as to make users use #include "rr/*" anyway. 
+- Do our best to update dependency packages. 
+	- poco, clapack, llvm all have newer versions they may come with upgrade advantages. Now that we have dependencies as git submodules, it will be much easier to upgrade. 
+- Support for C++17. 
+	- May be tricky because sbml (I think) doesn't yet compile with C++17. This is because some c++ features used by sbml have been deprecated. The easiest solution may be to go and find these classes/methods/functions and paste them into the code base. 
+
+
+
+Todo list for roadrunner code base
+------------------------------------
+- in rrExecutableModel there are lots of surpflous macros. 
+ ```#if(1)
+
+	#endif```
+	- maybe they once did something but they don't anymore so they should be removed. 
+- Go through the code with CLions (or VS) inspections and a recent compiler and follow the compiler advice. They will improve performance. 
+- Support for Debug mode - I couldn't get the dependencies to compile in debug mode. 
+- Deprecated function rr_->getCompartmentByIndex returns the initial volume, not a Compartment object (if indeed compartment object is a thing). Either way it should be named more appropriately. 

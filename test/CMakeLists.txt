@@ -42,6 +42,7 @@ add_test_executable(
 
 add_test_executable(NumCppTest NumCppRNGTest.cpp)
 add_test_executable(RNGMWE RNGMWE.cpp)
+add_test_executable(MessAround messaround.cpp)
 
 
 
