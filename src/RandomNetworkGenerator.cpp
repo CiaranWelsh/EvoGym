@@ -83,7 +83,7 @@ namespace evo {
             } else {
                 out.push_back(t);
             }
-        }// if(replace)
+        }
 
         // we subtract 1 from the output so that we have index friendly numbers
         // i.e. algorithm is 1 indexed and C++ is 0 indexed.
