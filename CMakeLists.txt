@@ -33,8 +33,26 @@ include(GenerateExportHeader)
 
 include(ImportRoadrunnerAndDependencies)
 
+find_path(
+        BOOST_INSTALL_PREFIX
+        NAMES lib/cmake/Boost-1.75.0/BoostConfig.cmake
+)
+
+if (NOT EXISTS ${BOOST_INSTALL_PREFIX})
+    message(FATAL_ERROR "Couldn't find Boost. Please provide the root to your boost installation \
+using
+    -DBOOST_INSTALL_PREFIX=\"/path/to/boost/install/prefix\".
+Note, the boost install prefix is the \
+folder that contains lib/cmake/BoostConfig.cmake. On mine this is
+    /Users/ciaranwelsh/Documents/boost/stage
+")
+endif()
+message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
+
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${BOOST_INSTALL_PREFIX}")
+
 # get boost for NumCpp
-find_package(Boost REQUIRED)
+find_package(Boost REQUIRED CONFIG )
 find_package(Sanitizers)
 
 #######################################################################
