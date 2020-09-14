@@ -46,13 +46,13 @@ Note, the boost install prefix is the \
 folder that contains lib/cmake/BoostConfig.cmake. On mine this is
     /Users/ciaranwelsh/Documents/boost/stage
 ")
-endif()
+endif ()
 message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
 
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${BOOST_INSTALL_PREFIX}")
 
 # get boost for NumCpp
-find_package(Boost REQUIRED CONFIG )
+find_package(Boost REQUIRED CONFIG)
 find_package(Sanitizers)
 
 #######################################################################
@@ -68,6 +68,12 @@ endif ()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 set(CMAKE_CXX_STANDARD 14)
+
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    #turn off optimizations for debug builds so profiler results do not get skewed
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+endif ()
 
 #######################################################################
 #   Implement options

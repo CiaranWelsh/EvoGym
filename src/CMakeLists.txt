@@ -33,7 +33,6 @@ message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
 target_include_directories(
         ${target}-static PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        "D:/EvoGym/third_party/NumCpp/include"
         $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${NUMCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
@@ -47,7 +46,8 @@ target_include_directories(
 add_sanitize_address(${target}-static)
 
 target_compile_definitions(
-        ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC)
+        ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
+)
 
 add_library(${target} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)

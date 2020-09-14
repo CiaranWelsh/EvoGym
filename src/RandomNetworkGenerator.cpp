@@ -138,7 +138,7 @@ namespace evo {
             id.str(std::string());// clear the stream
         }
         // regenerate so species have somewhere to be put into
-        getRR()->regenerate(true, false);
+//        getRR()->regenerate(true, false);
     }
 
     void RandomNetworkGenerator::createFloatingSpecies() {
@@ -162,7 +162,7 @@ namespace evo {
             id.str(std::string());
         }
         // regenerate so reactions have some floating species to choose from
-        getRR()->regenerate(true, false);
+//        getRR()->regenerate(true, false);
     }
 
     void RandomNetworkGenerator::createBoundarySpecies() {
@@ -187,7 +187,7 @@ namespace evo {
             id.str(std::string());
         }
         // regenerate so reactions have some boundary species to choose from
-        getRR()->regenerate(true, false);
+//        getRR()->regenerate(true, false);
     }
 
     RateLaw RandomNetworkGenerator::getRandomRateLaw() const {
