@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.15..3.18)
 project(EvoGym)
 
-set(CMAKE_CXX_STANDARD 14)
-
+set(CMAKE_CXX_STANDARD 17)
 
 if (NOT ROADRUNNER_INSTALL_PREFIX)
     find_path(
@@ -24,20 +23,29 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cma
 
 # for include sanitizer module
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/third_party/sanitizers-cmake/cmake")
+
+# put all runtime targets (exe and dll) into bin
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+
+# put libraries into lib
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+
+# archives
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+
 #######################################################################
 # includes
 #
+
 include(GNUInstallDirs)
 
 include(GenerateExportHeader)
 
 include(ImportRoadrunnerAndDependencies)
-
 find_path(
         BOOST_INSTALL_PREFIX
         NAMES lib/cmake/Boost-1.75.0/BoostConfig.cmake
 )
-
 if (NOT EXISTS ${BOOST_INSTALL_PREFIX})
     message(FATAL_ERROR "Couldn't find Boost. Please provide the root to your boost installation \
 using
@@ -50,11 +58,9 @@ endif ()
 message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
 
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${BOOST_INSTALL_PREFIX}")
-
 # get boost for NumCpp
 find_package(Boost REQUIRED CONFIG)
 find_package(Sanitizers)
-
 #######################################################################
 #   options
 #
@@ -67,7 +73,7 @@ endif ()
 # Hide things by default
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     #turn off optimizations for debug builds so profiler results do not get skewed
@@ -96,8 +102,6 @@ endif ()
 include(ImportRoadrunnerAndDependencies)
 
 add_subdirectory(third_party)
-
-
 #############################################################################
 # Add sources and tests to the project
 #
@@ -111,7 +115,14 @@ add_subdirectory(test)
 
 
 
+message(STATUS "
+Configuration Summary
+----------------------
+CMAKE_CXX_COMPILER          ${CMAKE_CXX_COMPILER}
+CMAKE_CXX_COMPILER_ID       ${CMAKE_CXX_COMPILER_ID}
+CMAKE_CXX_STANDARD          ${CMAKE_CXX_STANDARD}
 
+")
 
 
 

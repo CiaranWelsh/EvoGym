@@ -49,7 +49,7 @@ target_compile_definitions(
         ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
 )
 
-add_library(${target} SHARED ${SOURCES} ${HEADERS})
+add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/HowLongDoesItTakeToCreate100Networks.cpp ../test/hello_mpi.cpp)
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)
 target_include_directories(
         ${target} PUBLIC

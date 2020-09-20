@@ -25,13 +25,13 @@ public:
 };
 
 
-class ClassThatUsesRandomNumberGenerator {
+class ClassThatUsesRandomNumberGeneratorMine {
     RNGOptions options_;
 
 public:
-    ClassThatUsesRandomNumberGenerator() = default;
+    ClassThatUsesRandomNumberGeneratorMine() = default;
 
-    explicit ClassThatUsesRandomNumberGenerator(RNGOptions options)
+    explicit ClassThatUsesRandomNumberGeneratorMine(RNGOptions options)
             : options_(options){};
 
     const RNGOptions &getOptions() const {
@@ -50,6 +50,43 @@ public:
     }
 };
 
+class ClassThatUsesRandomNumberGenerator {
+    RNGOptions options_;
+
+public:
+    ClassThatUsesRandomNumberGenerator()
+    {
+        setSeed();
+    }
+
+    explicit ClassThatUsesRandomNumberGenerator(RNGOptions options)
+            : options_(options)
+    {
+        setSeed();
+    }
+
+    const RNGOptions &getOptions() const {
+        return options_;
+    }
+    void setOptions(const RNGOptions &options) {
+        options_ = options;
+        setSeed();
+    }
+
+    double randomUniformDouble(double low, double high){
+        return nc::random::uniform<double>(low, high);
+    }
+
+    int randomUniformInt(int low, int high){
+        return nc::random::randInt(low, high);
+    }
+
+private:
+    void setSeed()
+    {
+        nc::random::seed(options_.getSeed());
+    }
+};
 
 int main(){
 
