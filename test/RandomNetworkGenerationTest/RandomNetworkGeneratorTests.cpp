@@ -7,7 +7,7 @@
 #include "evo/RandomNetworkGenerator.h"
 #include "evo/RandomNetworkGeneratorOptions.h"
 #include "evo/logger.h"
-
+#include "rr/rrRoadRunner.h"
 #include <random>
 
 #include "rr/ExecutableModelFactory.h"
@@ -26,6 +26,7 @@ using namespace rr;
  * Use SET_CLOCK_SEED to set the random seed based on the current time or
  * SET_SEED(x) to set seed to x.
  */
+
 
 class RandomNetworkGeneratorTests : public ::testing::Test {
 public:
@@ -74,6 +75,17 @@ public:
     };
 };
 
+
+TEST_F(RandomNetworkGeneratorTests, TestCreRModelWithoutSBMLCore) {
+    RoadRunner rr;
+    rr.addCompartment("c1", 1);
+    rr.addSpecies("s1", "c1", 1);
+    rr.getSBML();
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setNFloatingSpecies(6);
+    RandomNetworkGenerator generator(&options);
+    ASSERT_EQ(6, generator.getRR()->getModel()->getNumFloatingSpecies());
+}
 
 TEST_F(RandomNetworkGeneratorTests, TestCreateRRModelWithoutSBMLCore) {
     RandomNetworkGeneratorOptions options(rateLaws);
@@ -164,7 +176,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateBoundarySpeciesSeeded) {
     std::vector<std::vector<double>> expected({{672099, 41611, 493558, 834295, 551567, 740876}});
     for (int i=0; i<expected.size(); i++){
         for (int j=0; j<expected[i].size(); j++) {
-            ASSERT_NEAR(expected[i][j], store[i][j], 1);
+            EXPECT_NEAR(expected[i][j], store[i][j], 1);
         }
     }
 }
@@ -187,7 +199,7 @@ TEST_F(RandomNetworkGeneratorTests, TestCreateFloatingSpeciesSeeded) {
             {{8.7572562648434999, 2.4358080117186298, 9.0125838738106498}});
     for (int i=0; i<expected.size(); i++){
         for (int j=0; j<expected[i].size(); j++) {
-            ASSERT_NEAR(expected[i][j], store[i][j], 1);
+            EXPECT_NEAR(expected[i][j], store[i][j], 1);
         }
     }
 }

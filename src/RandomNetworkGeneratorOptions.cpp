@@ -3,7 +3,6 @@
 //
 
 #include "evo/RandomNetworkGeneratorOptions.h"
-#include "evo/seed.h"
 
 #include <utility>
 #include "evogym_export.h"

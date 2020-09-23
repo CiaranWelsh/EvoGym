@@ -1,6 +1,8 @@
 
 add_subdirectory(googletest)
 
+include(GoogleTest)
+
 set(TEST_EXECUTABLES)
 
 macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
@@ -16,6 +18,8 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
         set(LINK_LIBRARIES ${LINK_LIBRARIES} gtest gtest_main)
     endif ()
 
+#    gtest_discover_tests(${BINARY})
+
 
     target_link_libraries(${BINARY} PRIVATE ${LINK_LIBRARIES})
 
@@ -28,14 +32,11 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
 
-add_test_executable(
-        RandomNetworksTests TRUE
-        RandomNetworkGenerationTest/RandomNetworkGeneratorTests.cpp
-        RandomNetworkGenerationTest/RateLawTests.cpp
-        RandomNetworkGenerationTest/NetworkGenerationOptionsTests.cpp
-        RandomNetworkGenerationTest/StoicCounterTests.cpp
-)
-#
+add_subdirectory(RandomNetworkGenerationTest)
+
+add_subdirectory(SOQuestions)
+
+
 ##add_test_executable(ProfileRandomNetwork OFF profile_random_network_test.cpp)
 ##add_test_executable(NumCppRNG ON NumCppRNGTest.cpp)
 #add_test_executable(HowLongDoesItTakeToCreate100Networks OFF HowLongDoesItTakeToCreate100Networks.cpp)
@@ -45,9 +46,6 @@ add_test_executable(
 #
 #
 #add_test_executable(quick_test OFF quick_test.cpp)
-
-
-
 
 
 
