@@ -16,10 +16,31 @@ using namespace rr;
 
 namespace evo {
 
-    class RandomNetworkGenerator {
 
-    private:
-        const RandomNetworkGeneratorOptions &options_;
+    struct Compartments {
+        std::vector<std::string> ids;
+        std::vector<double> values;
+    };
+
+    struct BoundarySpecies {
+        std::vector<std::string> ids;
+        std::vector<int> compartment_index;
+        std::vector<int> values;
+    };
+
+    struct FloatingSpecies {
+        std::vector<std::string> ids;
+        std::vector<int> compartment_index;
+        std::vector<double> values;
+    };
+
+    class RandomNetworkGenerator {
+        RandomNetworkGeneratorOptions* options_{};
+
+        Compartments compartments_;
+        BoundarySpecies boundary_species_;
+        FloatingSpecies floating_species_;
+
 
         void createCompartments();
 
@@ -27,13 +48,15 @@ namespace evo {
 
         void createBoundarySpecies();
 
-        std::string selectRandomCompartment();
+        int selectRandomCompartmentIndex();
 
 
     public:
         std::unique_ptr<RoadRunner> rr_;
 
-        explicit RandomNetworkGenerator(const RandomNetworkGeneratorOptions &options);
+        RandomNetworkGenerator() = default;
+
+        explicit RandomNetworkGenerator(RandomNetworkGeneratorOptions* options);
 
         /**
          *
@@ -41,17 +64,13 @@ namespace evo {
          * the instantiated roadrunner instance after its been created. We can
          * simply get a list/vector of pointers to networks.
          */
-        RoadRunner generate();
+        std::unique_ptr<RoadRunner> generate();
 
-        const RandomNetworkGeneratorOptions &getOptions() const;
+        [[nodiscard]] RandomNetworkGeneratorOptions *getOptions() const;
 
-        std::vector<std::string> selectRandomSpecies(int n);
+        [[nodiscard]] RateLaw getRandomRateLaw() const;
 
-        RateLaw getRandomRateLaw() const;
-
-        void createReactions();
-
-        const std::unique_ptr<RoadRunner> &getRR() const;
+        [[nodiscard]] const std::unique_ptr<RoadRunner> &getRR() const;
 
         /**
          * @brief create a roadrunner model.
@@ -74,6 +93,8 @@ namespace evo {
 
         string generateUniqueParameterID(int number, const string &base_name, std::vector<std::string> &exclusion_list) const;
 
+        std::vector<int> selectRandomSpeciesIndex(int n);
+        void assembleModel();
     };
 }// namespace evo
 

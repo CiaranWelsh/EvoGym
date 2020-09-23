@@ -7,6 +7,7 @@ set(
         Motif.cpp
         Population.cpp
         RandomNetworkGenerator.cpp
+        StoicCounter.cpp
 )
 
 set(
@@ -18,6 +19,7 @@ set(
         include/evo/Population.h
         include/evo/RandomNetworkGenerator.h
         include/evo/logger.h
+        include/evo/StoicCounter.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
@@ -49,7 +51,7 @@ target_compile_definitions(
         ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
 )
 
-add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/HowLongDoesItTakeToCreate100Networks.cpp ../test/hello_mpi.cpp)
+add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/ProfilingModelBuilding/HowLongDoesItTakeToCreate100Networks.cpp ../test/RandomNetworkGenerationTest/StoicCounterTests.cpp)
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)
 target_include_directories(
         ${target} PUBLIC

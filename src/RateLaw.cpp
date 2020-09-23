@@ -2,19 +2,19 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#include <regex>
 #include "sbml/SBMLTypes.h"
+#include <regex>
 
 #include "evo/RateLaw.h"
 #include "evo/evo_error.h"
 
 namespace evo {
 
-    RateLaw::RateLaw(std::string name, const std::string& rate_law_string, RoleMap roles)
-            : name_(std::move(name)),
-                rate_law_string_(rate_law_string),
-              rate_law_(libsbml::SBML_parseFormula(rate_law_string.c_str())),
-              roles_(std::move(roles)) {
+    RateLaw::RateLaw(std::string name, const std::string &rate_law_string, RoleMap roles)
+        : name_(std::move(name)),
+          rate_law_string_(rate_law_string),
+          rate_law_(libsbml::SBML_parseFormula(rate_law_string.c_str())),
+          roles_(std::move(roles)) {
         unpackRateLaw();
         validateRoleMap();
     }
@@ -53,17 +53,16 @@ namespace evo {
          * we construct a new rate_law_terms vector from the children of each element
          * of the current rate_law_terms vector.
          */
-        for (auto &rate_law_term: rate_law_terms) {
+        for (auto &rate_law_term : rate_law_terms) {
 
             if (rate_law_term->getNumChildren() == 0) {
                 std::string elementary_term_string = libsbml::SBML_formulaToString(rate_law_term);
 
                 // throw an error when user has given a variable name like S1 or K2. The parameters will
                 // be enumarated automatically.
-                if (std::regex_match(elementary_term_string, std::regex("\\d$"))){
-                    INVALID_ARGUMENT_ERROR("The elementary term of the rate law called \""
-                                           + getName() +"\" ends with a digit. Please rename this term "
-                                                         "so that it does not.");
+                if (std::regex_match(elementary_term_string, std::regex("\\d$"))) {
+                    INVALID_ARGUMENT_ERROR("The elementary term of the rate law called \"" + getName() + "\" ends with a digit. Please rename this term "
+                                                                                                         "so that it does not.");
                 }
                 rate_law_elements_.insert(libsbml::SBML_formulaToString(rate_law_term));
             } else {
@@ -72,7 +71,7 @@ namespace evo {
                     auto node_type = rate_law_term->getChild(i)->getType();
                     // exclude integers or doubles. These are parameters, like K
                     if (node_type == libsbml::AST_INTEGER ||
-                        node_type == libsbml::AST_REAL||
+                        node_type == libsbml::AST_REAL ||
                         node_type == libsbml::AST_REAL_E) {
                         continue;
                     }
@@ -87,17 +86,17 @@ namespace evo {
         return rate_law_elements_;
     }
 
-    void RateLaw::validateRoleMap(){
+    void RateLaw::validateRoleMap() {
         // this was an inaccurate error to throw
-//        for (auto &role: roles_){
-//            if(getRateLawElements().find(role.first) == getRateLawElements().end()){
-//                // role not found in rate law. This is an input error
-//                throw std::invalid_argument("Invalid role map: element name \"" + role.first +
-//                                            "\" is not in your role map. Please check your input "
-//                                            "to RateLaw.");
-//
-//            }
-//        }
+        //        for (auto &role: roles_){
+        //            if(getRateLawElements().find(role.first) == getRateLawElements().end()){
+        //                // role not found in rate law. This is an input error
+        //                throw std::invalid_argument("Invalid role map: element name \"" + role.first +
+        //                                            "\" is not in your role map. Please check your input "
+        //                                            "to RateLaw.");
+        //
+        //            }
+        //        }
     }
 
     const std::string &RateLaw::getName() const {
@@ -112,4 +111,39 @@ namespace evo {
         return roles_;
     }
 
-}
+    RateLaws massActionRateLaws() {
+        RateLaws rateLaws;
+        rateLaws["uni-uni"] = RateLaw("uni-uni", "k*A",
+                                      RoleMap({
+                                              {"k", EVO_PARAMETER},
+                                              {"A", EVO_SUBSTRATE},
+                                              {"B", EVO_PRODUCT},
+                                      }));
+
+        rateLaws["uni-bi"] = RateLaw("uni-bi", "k*A",
+                                     RoleMap({
+                                             {"k", EVO_PARAMETER},
+                                             {"A", EVO_SUBSTRATE},
+                                             {"B", EVO_PRODUCT},
+                                             {"C", EVO_PRODUCT},
+                                     }));
+
+        rateLaws["bi-uni"] = RateLaw("bi-uni", "k*A*B",
+                                     RoleMap({
+                                             {"k", EVO_PARAMETER},
+                                             {"A", EVO_SUBSTRATE},
+                                             {"B", EVO_SUBSTRATE},
+                                             {"C", EVO_PRODUCT},
+                                     }));
+        rateLaws["bi-bi"] = RateLaw("bi-bi", "k*A*B",
+                                    RoleMap({
+                                            {"k", EVO_PARAMETER},
+                                            {"A", EVO_SUBSTRATE},
+                                            {"B", EVO_SUBSTRATE},
+                                            {"C", EVO_PRODUCT},
+                                            {"D", EVO_PRODUCT},
+                                    }));
+        return rateLaws;
+    }
+
+}// namespace evo

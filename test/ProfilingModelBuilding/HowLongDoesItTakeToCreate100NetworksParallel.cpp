@@ -80,22 +80,6 @@ int main() {
 //                      << std::endl;
         }
     }
-
-    //
-    //    for (int i = 0; i < N; i++) {
-    //        RoadRunner rr;
-    //
-    //        rr.addCompartment("Comp", 1, false);
-    //        rr.addSpecies("S1", "Comp", 10.0, false, false, "", false);
-    //        rr.addSpecies("S2", "Comp", 0.0, false, false, "", false);
-    //        rr.addParameter("k1", 0.1, false);
-    //        rr.addReaction("R1", std::vector<std::string>({"S1"}), std::vector<std::string>({"S2"}), "k1*S1", true);
-    //
-    //        if (RUN_SIMULATION)
-    //            rr.simulate(&options);
-    //
-    //    }options
-    //It took : 2443 milliseconds to build 100 models --> build networks only
     MPI_Finalize();
     // It took : 2698 milliseconds to build 100 models --> plus simulation of 1000 steps
 

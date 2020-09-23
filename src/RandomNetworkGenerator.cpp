@@ -24,37 +24,36 @@
 
 namespace evo {
 
-    struct NetworkParameters {
 
-    };
-
-    RandomNetworkGenerator::RandomNetworkGenerator(const RandomNetworkGeneratorOptions &options)
+    RandomNetworkGenerator::RandomNetworkGenerator(RandomNetworkGeneratorOptions* options)
         : options_(options) {
-        if (options.getSeed() == 0){
+        if (options->getSeed() == 0) {
             nc::random::seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-        } else{
+        } else {
             // I suspect this will be a bug in the grans scheme of things
             // the seed will be set the same for every network generated.
             // so if we generate 10 networks we get 10 identical netowkrs.
             // solution woul dbe to seed at a level above this class.
             // todo reflect more on this when you have more code in place.
-            nc::random::seed(options.getSeed());
+            nc::random::seed(options->getSeed());
         }
 
         createRRModel();
         createCompartments();
         createBoundarySpecies();
         createFloatingSpecies();
-        createReactions();
-        }
+        assembleModel();
+        // regenerate the finished model.
+        getRR()->regenerate(true, false);
+    }
 
     void RandomNetworkGenerator::createRRModel() {
-        if (options_.getCoreSBML().empty()) {
-            auto* rr = new RoadRunner();
-            rr_ = std::unique_ptr<RoadRunner>(rr) ;
+        if (options_->getCoreSBML().empty()) {
+            auto *rr = new RoadRunner();
+            rr_ = std::unique_ptr<RoadRunner>(rr);
         } else {
-            auto* rr = new RoadRunner(options_.getCoreSBML());
-            rr_ = std::unique_ptr<RoadRunner>(rr) ;
+            auto *rr = new RoadRunner(options_->getCoreSBML());
+            rr_ = std::unique_ptr<RoadRunner>(rr);
         }
     }
 
@@ -63,13 +62,12 @@ namespace evo {
     }
 
 
-    const RandomNetworkGeneratorOptions &RandomNetworkGenerator::getOptions() const {
+    RandomNetworkGeneratorOptions *RandomNetworkGenerator::getOptions() const {
         return options_;
     }
 
-    std::string RandomNetworkGenerator::selectRandomCompartment() {
-        int random_index = nc::random::randInt<int>(0, options_.getNCompartments());
-        return getRR()->getCompartmentIds()[random_index];
+    int RandomNetworkGenerator::selectRandomCompartmentIndex() {
+        return nc::random::randInt<int>(0, options_->getNCompartments());
     }
 
     std::vector<int> RandomNetworkGenerator::sample_with_replacement(int nsamples, int npop) {
@@ -97,115 +95,97 @@ namespace evo {
         return out;
     }
 
-    std::vector<std::string> RandomNetworkGenerator::selectRandomSpecies(int n) {
-        std::vector<std::string> species = getRR()->getBoundarySpeciesIds();
-        std::vector<std::string> floating = getRR()->getFloatingSpeciesIds();
-
-        // all species
-        species.insert(species.end(), floating.begin(), floating.end());
+    std::vector<int> RandomNetworkGenerator::selectRandomSpeciesIndex(int n) {
+        int nspecies = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
 
         // check for the impossible
-        if (n > species.size()) {
+        if (n > nspecies) {
             std::ostringstream err;
             err << "Requested selecting "
                 << n
-                << " random species without replacement but only "
-                << species.size() << " species exist.";
+                << " random boundary species without replacement but only "
+                << nspecies << " species exist.";
             LOGIC_ERROR(err.str());
         }
         // do the sampling
-        std::vector<int> species_indices = sample_with_replacement(n, species.size());
-
-        // convert indices into the strings we need.
-        std::vector<std::string> out;
-        for (auto &i : species_indices) {
-            if (i < options_.getNBoundarySpecies()) {
-                out.push_back(getRR()->getBoundarySpeciesIds()[i]);
-            } else {
-                int idx = i - options_.getNBoundarySpecies();
-                out.push_back(getRR()->getFloatingSpeciesIds()[idx]);
-            }
-        }
-        return out;
+        std::vector<int> species_indices = sample_with_replacement(n, nspecies);
+        return species_indices;
     }
 
     void RandomNetworkGenerator::createCompartments() {
         std::ostringstream id;
-        for (int i = 0; i < options_.getNCompartments(); i++) {
-            double val = options_.getCompartmentUpperBound();
-            if (options_.getCompartmentLowerBound() != options_.getCompartmentUpperBound()) {
-                val = nc::random::uniform<double>(options_.getCompartmentLowerBound(),
-                                            options_.getCompartmentUpperBound());
+        for (int i = 0; i < options_->getNCompartments(); i++) {
+            double val = options_->getCompartmentUpperBound();
+            if (options_->getCompartmentLowerBound() != options_->getCompartmentUpperBound()) {
+                val = nc::random::uniform<double>(options_->getCompartmentLowerBound(),
+                                                  options_->getCompartmentUpperBound());
             }
             id << "C" << i;
-            getRR()->addCompartment(id.str(), val, false);
+            compartments_.ids.push_back(id.str());
+            compartments_.values.push_back(val);
             id.str(std::string());// clear the stream
         }
-        // regenerate so species have somewhere to be put into
-        getRR()->regenerate(false, false);
     }
 
     void RandomNetworkGenerator::createFloatingSpecies() {
         std::ostringstream id;
-        for (int i = 0; i < options_.getNFloatingSpecies(); i++) {
+        for (int i = 0; i < options_->getNFloatingSpecies(); i++) {
             id << "S" << i;
-            double val = options_.getSpeciesUpperBound();
-            if (options_.getSpeciesLowerBound() != options_.getSpeciesUpperBound()) {
-                val = nc::random::uniform<double>(options_.getSpeciesLowerBound(),
-                                            options_.getSpeciesUpperBound());
+            double val = options_->getSpeciesUpperBound();
+            if (options_->getSpeciesLowerBound() != options_->getSpeciesUpperBound()) {
+                val = nc::random::uniform<double>(options_->getSpeciesLowerBound(),
+                                                  options_->getSpeciesUpperBound());
             }
             // With single compartment models, go and get the compartment name
             // with multiple compartment models, random selection
-            std::string comp;
-            if (options_.getNCompartments() == 1) {
-                comp = getRR()->getCompartmentIds()[0];
+            int comp_index;
+            if (options_->getNCompartments() == 1) {
+                comp_index = 0;
             } else {
-                comp = selectRandomCompartment();
+                comp_index = selectRandomCompartmentIndex();
             }
-            getRR()->addSpecies(id.str(), comp, val, false, false, "", false);
+            floating_species_.ids.push_back(id.str());
+            floating_species_.values.push_back(val);
+            floating_species_.compartment_index.push_back(comp_index);
             id.str(std::string());
         }
-        // regenerate so reactions have some floating species to choose from
-        getRR()->regenerate(true, false);
     }
-
     void RandomNetworkGenerator::createBoundarySpecies() {
         std::ostringstream id;
-        for (int i = 0; i < options_.getNBoundarySpecies(); i++) {
+        for (int i = 0; i < options_->getNBoundarySpecies(); i++) {
             id << "I" << i;
-            int val = options_.getBoundarySpeciesUpperBound();
-            if (options_.getBoundarySpeciesLowerBound() != options_.getBoundarySpeciesUpperBound()) {
-                val = nc::random::randInt<int>(options_.getBoundarySpeciesLowerBound(),
-                                           options_.getBoundarySpeciesUpperBound()+1); // need +1 here to be open ended at large numbers
+            double val = options_->getBoundarySpeciesUpperBound();
+            if (options_->getBoundarySpeciesLowerBound() != options_->getBoundarySpeciesUpperBound()) {
+                val = nc::random::uniform<double>(options_->getBoundarySpeciesLowerBound(),
+                                                  options_->getBoundarySpeciesUpperBound());
             }
-
             // With single compartment models, go and get the compartment name
             // with multiple compartment models, random selection
-            std::string comp;
-            if (options_.getNCompartments() == 1) {
-                comp = getRR()->getCompartmentIds()[0];
+            int comp_index;
+            if (options_->getNCompartments() == 1) {
+                comp_index = 0;
             } else {
-                comp = selectRandomCompartment();
+                comp_index = selectRandomCompartmentIndex();
             }
-            getRR()->addSpecies(id.str(), comp, val, false, true, "", false);
+            boundary_species_.ids.push_back(id.str());
+            boundary_species_.values.push_back(val);
+            boundary_species_.compartment_index.push_back(comp_index);
             id.str(std::string());
         }
-        // regenerate so reactions have some boundary species to choose from
-        getRR()->regenerate(true, false);
     }
 
     RateLaw RandomNetworkGenerator::getRandomRateLaw() const {
         // select a rate law at random.
         std::vector<RateLaw> keys;
-        for (auto &it : options_.getRateLaws()) {
+        for (auto &it : options_->getRateLaws()) {
             keys.push_back(it.second);
         }
 
-        if (options_.getRateLaws().empty()) {
+        if (options_->getRateLaws().empty()) {
             INVALID_ARGUMENT_ERROR("The RateLaw field of RandomNetworkGeneratorOptions is "
                                    "empty. Please give some rate laws to continue");
         }
-        int random_rate_law_index = nc::random::randInt<int>(0, (int) options_.getRateLaws().size());
+        int random_rate_law_index = nc::random::randInt<int>(0, (int) options_->getRateLaws().size());
         return keys[random_rate_law_index];
     }
 
@@ -222,12 +202,53 @@ namespace evo {
         }
     }
 
-    void RandomNetworkGenerator::createReactions() {
+    void RandomNetworkGenerator::assembleModel() {
+        // first create compartments
+        for (int i = 0; i < compartments_.ids.size(); i++) {
+            rr_->addCompartment(
+                    compartments_.ids[i],
+                    compartments_.values[i],
+                    false);
+        }
+
+        // create boundary species
+        for (int i = 0; i < boundary_species_.ids.size(); i++){
+//            LOG("adding boundary species "<<boundary_species_.ids[i]);
+            rr_->addSpecies(
+                    boundary_species_.ids[i],
+                    compartments_.ids[boundary_species_.compartment_index[i]],
+                    boundary_species_.values[i],
+                    false,
+                    true,
+                    "",
+                    false
+                    );
+        }
+        // create floating species
+        for (int i = 0; i < floating_species_.ids.size(); i++){
+//            LOG("adding floating species "<<floating_species_.ids[i]);
+            rr_->addSpecies(
+                    floating_species_.ids[i],
+                    compartments_.ids[floating_species_.compartment_index[i]],
+                    floating_species_.values[i],
+                    false,
+                    false,
+                    "",
+                    false
+                    );
+        }
+
+        // now procede with creating reactions.
+        // since this is the final step - after which we will regenerate the model
+        // it is simpler not to create the intermediatary storage like we have done for
+        // other network components
+
         std::ostringstream reaction_name;
         std::vector<std::string> current_model_parameters = rr_->getGlobalParameterIds();
-        for (int reaction_number = 0; reaction_number < options_.getNReactions(); reaction_number++) {
+        for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
             // select a random rate law
             RateLaw rateLaw = getRandomRateLaw();
+//            LOG("creating reaction "<< reaction_number << " with rate law " << rateLaw.getName());
 
             const RoleMap &roles = rateLaw.getRoles();// from user input
             // count number of parameters
@@ -247,7 +268,7 @@ namespace evo {
 
             // work out how many randomly selected species we need
             int num_random_species = (int) roles.size() - parameter_count;
-            int num_species = options_.getNBoundarySpecies() + options_.getNFloatingSpecies();
+            int num_species = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
             if (num_random_species > num_species) {
                 std::ostringstream err;
                 err << "Rate law \"" << rateLaw.getName() << "\" requires " << num_random_species << " species ";
@@ -256,8 +277,21 @@ namespace evo {
             }
 
             // randomly sample without replacement
-            std::vector<std::string> species = selectRandomSpecies(num_random_species);
-            assert(species.size() == num_random_species);
+            std::vector<int> species = selectRandomSpeciesIndex(num_random_species);
+
+            // untangle boundary and non boundary and collect the species ids
+            std::vector<std::string> species_ids;
+            for (int i=0; i<species.size(); i++){
+                int species_idx = species[i];
+                if (species_idx < options_->getNBoundarySpecies())
+                    species_ids.push_back(boundary_species_.ids[species_idx]);
+                else {
+                    species_idx = species_idx - options_->getNBoundarySpecies();
+                    species_ids.push_back(floating_species_.ids[species_idx]);
+                }
+            }
+
+            assert(species_ids.size() == num_random_species);
             // some vectors to store Species by role
             std::vector<std::string> substrates;
             std::vector<std::string> products;
@@ -267,16 +301,18 @@ namespace evo {
             // as the rate law contains only place holders.
             std::string rate_law_string = rateLaw.getRateLawString();
             for (auto &it : roles) {
+                const std::string& rate_law_component = it.first;
+                const RoleType& role = it.second;
                 // Regex defined here as its the same expression for all cases.
                 // \b matches a word boundary (\\b escapes the first \)
                 std::regex reg(it.first + "\\b");//
-                switch (it.second) {
+                switch (role) {
                     case (EVO_PARAMETER): {
                         // sample between specified boundaries and add to the model
-                        auto val = nc::random::uniform<double>(options_.getParameterLowerBound(), options_.getParameterUpperBound());
+                        auto val = nc::random::uniform<double>(options_->getParameterLowerBound(), options_->getParameterUpperBound());
                         // ensure unique parameter name. We pass in reference to used parameter names
                         // so we do not have to reload the model each time we add a parameter (performance reasons).
-                        std::string parameter_name = generateUniqueParameterID(0, it.first, current_model_parameters);
+                        std::string parameter_name = generateUniqueParameterID(0, rate_law_component, current_model_parameters);
                         rr_->addParameter(parameter_name, val, false);
                         current_model_parameters.push_back(parameter_name);// add to list of parameter names
                         // now ensure the placeholder (it.first) contains the newly generated parameter name
@@ -284,40 +320,49 @@ namespace evo {
                         break;
                     }
                     case (EVO_SUBSTRATE): {
-                        std::string substrate = species[species.size() - 1];
+                        std::string substrate = species_ids[species_ids.size() - 1];
                         substrates.push_back(substrate);
-                        species.resize(species.size() - 1);
+                        species_ids.resize(species_ids.size() - 1);
                         // now ensure the placeholder (it.first) contains the species
                         rate_law_string = regex_replace(rate_law_string, reg, substrate);
                         break;
                     }
                     case (EVO_PRODUCT): {
-                        std::string product = species[species.size() - 1];
+                        std::string product = species_ids[species_ids.size() - 1];
                         products.push_back(product);
-                        species.resize(species.size() - 1);
+                        species_ids.resize(species_ids.size() - 1);
                         // now ensure the placeholder (it.first) contains the species
                         rate_law_string = regex_replace(rate_law_string, reg, product);
                         break;
                     }
                     case (EVO_MODIFIER): {
-                        std::string modifier = species[species.size() - 1];
+                        std::string modifier = species_ids[species_ids.size() - 1];
                         modifiers.push_back(modifier);
-                        species.resize(species.size() - 1);
+                        species_ids.resize(species_ids.size() - 1);
                         // now ensure the placeholder (it.first) contains the species
                         rate_law_string = regex_replace(rate_law_string, reg, modifier);
                         break;
                     }
                     default:
-                        LOGIC_ERROR("Unknown role specified");
+                        LOGIC_ERROR("Unknown it specified");
                 }
             }
             reaction_name << "R" << reaction_number;
             getRR()->addReaction(reaction_name.str(), substrates, products, rate_law_string, false);
             reaction_name.str("");// clear the stream
-            }
-        // regenerate the finished model.
-        getRR()->regenerate(true, false);
+        }
+
     }
+//    std::unique_ptr<RoadRunner> RandomNetworkGenerator::generate() {
+//        createRRModel();
+//        createCompartments();
+//        createBoundarySpecies();
+//        createFloatingSpecies();
+//        assembleModel();
+//        // regenerate the finished model.
+//        getRR()->regenerate(true, false);
+//        return std::move(rr_);
+//    }
 
 
 }// namespace evo

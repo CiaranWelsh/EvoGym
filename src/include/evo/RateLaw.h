@@ -59,16 +59,23 @@ namespace evo {
 
         libsbml::ASTNode *getRateLaw() const;
 
-        const RoleMap &getRoles() const;
+        [[nodiscard]] const RoleMap &getRoles() const;
         void setName(const std::string &name);
         void setRateLaw(libsbml::ASTNode *rateLaw);
-        const std::string &getRateLawString() const;
+        [[nodiscard]] const std::string &getRateLawString() const;
         void setRateLawString(const std::string &rateLawString);
         void setRoles(const RoleMap &roles);
         void setRateLawElements(const std::set<std::string> &rateLawElements);
     };
 
     typedef std::unordered_map<std::string, RateLaw> RateLaws;
+
+    /**
+     * @brief returns a RateLaws object containing mass action rate laws
+     * @details convenience function that returns uni-uni, uni-bi, bi-uni and
+     * bi-bi rate laws
+     */
+    RateLaws massActionRateLaws();
 
 }
 
