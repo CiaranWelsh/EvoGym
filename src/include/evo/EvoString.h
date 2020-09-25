@@ -5,8 +5,8 @@
 #ifndef EVOGEN_EVOSTRING_H
 #define EVOGEN_EVOSTRING_H
 
-#include <string>
 #include "evo/TypeDefs.h"
+#include <string>
 
 
 namespace evo {
@@ -16,7 +16,9 @@ namespace evo {
     class EvoString {
         std::string string_;
 
+
     public:
+
         /**
          * @brief construct a EvoString from a regular std::string @param string
          */
@@ -26,7 +28,7 @@ namespace evo {
          * @brief support for "put to" operator
          * @details just a wrapper around std::string operator<<
          */
-        friend std::ostream& operator<<(std::ostream& os, EvoString& string);
+        friend std::ostream &operator<<(std::ostream &os, EvoString &string);
 
         /**
          * @brief returns the string_ begin iterator;
@@ -41,7 +43,7 @@ namespace evo {
         /**
          * @brief split the string represented by EvoString by string contained in @param by
          */
-        StringVector split(const std::string& by);
+        StringVector split(const std::string &by);
 
         /**
          * @brief returns the underlying string object
@@ -51,15 +53,15 @@ namespace evo {
         /**
          * @brief check whether this EvoString contains @param other std::string
          */
-        bool contains(const std::string& other);
+        bool contains(const std::string &other);
 
         /**
          * @brief check whether this EvoString contains @param other std::string
          */
-        bool contains(const EvoString& other);
+        bool contains(const EvoString &other);
     };
 
 
-}
+}// namespace evo
 
 #endif//EVOGEN_EVOSTRING_H

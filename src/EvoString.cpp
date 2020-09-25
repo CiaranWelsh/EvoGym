@@ -11,7 +11,7 @@
 #include "evo/evo_error.h"
 
 namespace evo {
-    EvoString::EvoString(std::string string)
+    EvoString::EvoString(std::string  string)
         : string_(std::move(string)) {}
 
     StringVector EvoString::split(const std::string& by) {
@@ -57,5 +57,6 @@ namespace evo {
     bool EvoString::contains(const EvoString& other) {
         return string_.find(other.string()) != std::string::npos;
     }
+
 
 }

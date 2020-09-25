@@ -31,7 +31,7 @@ public:
         std::cout << "writing to " << fname_both.string() << std::endl;
         std::ofstream fstream_both;
         fstream_both.open(fname_both.string());
-        if( !fstream_both ) { // file couldn't be opened
+        if (!fstream_both) {// file couldn't be opened
             std::cerr << "Error: file could not be opened" << std::endl;
             exit(1);
         }
@@ -40,7 +40,7 @@ public:
 
         std::ofstream fstream_headers;
         fstream_headers.open(fname_headers_only.string());
-        if( !fstream_headers ) { // file couldn't be opened
+        if (!fstream_headers) {// file couldn't be opened
             std::cerr << "Error: file could not be opened" << std::endl;
             exit(1);
         }
@@ -49,7 +49,7 @@ public:
 
         std::ofstream fstream_neither;
         fstream_neither.open(fname_neither.string());
-        if( !fstream_neither ) { // file couldn't be opened
+        if (!fstream_neither) {// file couldn't be opened
             std::cerr << "Error: file could not be opened" << std::endl;
             exit(1);
         }
@@ -58,18 +58,67 @@ public:
     };
 
     ~CSVParserTests() override {
-//        if (std::filesystem::exists(fname_both))
-//            remove(fname_both.string().c_str());
-//
-//        if (std::filesystem::exists(fname_headers_only))
-//            remove(fname_headers_only.string().c_str());
-//
-//        if (std::filesystem::exists(fname_neither))
-//            remove(fname_neither.string().c_str());
+        bool CLEAN_UP = true;
+        if (CLEAN_UP) {
+            if (std::filesystem::exists(fname_both))
+                remove(fname_both.string().c_str());
+
+            if (std::filesystem::exists(fname_headers_only))
+                remove(fname_headers_only.string().c_str());
+
+            if (std::filesystem::exists(fname_neither))
+                remove(fname_neither.string().c_str());
+        }
     }
 };
 
 
-TEST_F(CSVParserTests, d) {
+TEST_F(CSVParserTests, TestParserDimensions) {
     CSVParser parser(fname_both);
+    ASSERT_EQ(2, parser.getNRows());
+    ASSERT_EQ(3, parser.getNCols());
+
 }
+
+TEST_F(CSVParserTests, TestParserData) {
+    CSVParser parser(fname_both);
+    const NdArray<double>&actual = parser.getData();
+    NdArray<double> expected = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
+    ASSERT_TRUE(nc::all(nc::equal(expected, actual))(0, 0));
+}
+
+TEST_F(CSVParserTests, TestColumns) {
+    CSVParser parser(fname_both);
+    const StringVector& actual = parser.colnames();
+    StringVector expected = {"R1", "R2"};
+    ASSERT_EQ(expected, actual);
+}
+
+TEST_F(CSVParserTests, TestRows) {
+    CSVParser parser(fname_both);
+    const StringVector& actual = parser.rownames();
+    StringVector expected = {"R1", "R2"};
+    ASSERT_EQ(expected, actual);
+}
+
+TEST_F(CSVParserTests, TestNRows) {
+    CSVParser parser(fname_both);
+    ASSERT_EQ(2, parser.getNRows());
+}
+
+TEST_F(CSVParserTests, TestNCols) {
+    CSVParser parser(fname_both);
+    ASSERT_EQ(3, parser.getNCols());
+}
+
+TEST_F(CSVParserTests, TestToCSV) {
+    CSVParser parser(fname_both);
+    std::string actual = parser.toCSV().str();
+    std::string expected = "idx,  C1,  C2,  C3\n"
+                           "R1, 1, 2, 3\n"
+                           "R2, 4, 5, 6\n";
+    ASSERT_STREQ(expected.c_str(), actual.c_str());
+}
+
+
+// remember to handle missing data

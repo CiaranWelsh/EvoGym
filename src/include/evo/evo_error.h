@@ -17,9 +17,13 @@
 namespace evo {
 
 
+
 #define INVALID_ARGUMENT_ERROR(msg) throwError<std::invalid_argument>(__FILE__, __func__, __LINE__, msg)
 #define RUNTIME_ERROR(msg) throwError<std::runtime_error>(__FILE__, __func__, __LINE__, msg)
 #define LOGIC_ERROR(msg) throwError<std::logic_error>(__FILE__, __func__, __LINE__, msg)
+
+    class NotImplementedError : public std::logic_error {};
+#define NOT_IMPLEMENTED_ERROR(msg) throwError<std::logic_error>(__FILE__, __func__, __LINE__, msg)
 
 
     /**
@@ -35,10 +39,13 @@ namespace evo {
                     unsigned int line,
                     const std::string &msg = "") {
         std::ostringstream errMsg;
-        errMsg << file << ":" << line<<":"<<function<<":"<<"\nError: " << msg << std::endl;
+        errMsg << file << ":" << line << ":" << function << ":"
+               << "\nError: " << msg << std::endl;
         std::cerr << errMsg.str();
         throw ErrorType(errMsg.str());
     }
+
+
 }// namespace evo
 
 #endif//EVOGYM_EVO_ERROR_H

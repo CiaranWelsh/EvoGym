@@ -27,7 +27,10 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     target_include_directories(
             ${BINARY} PRIVATE
             $<TARGET_PROPERTY:evo-gym-static,INCLUDE_DIRECTORIES>
-            "/usr/local/include")
+            "/usr/local/include"
+            ${NUMCPP_INCLUDE_DIR}
+
+    )
     add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
