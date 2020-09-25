@@ -10,7 +10,9 @@ namespace evo {
         EVO_SUBSTRATE,
         EVO_PRODUCT,
         EVO_PARAMETER,
-        EVO_MODIFIER
+        EVO_MODIFIER,
+        EVO_DEPENDENT_VARIABLE,
+        EVO_INDEPENDENT_VARIABLE,
     };
 }
 

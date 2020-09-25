@@ -7,6 +7,9 @@ set(
         Motif.cpp
         Population.cpp
         RandomNetworkGenerator.cpp
+        Experiment.cpp
+        CSVParser.cpp
+        EvoString.cpp
 )
 
 set(
@@ -19,6 +22,9 @@ set(
         include/evo/RandomNetworkGenerator.h
         include/evo/logger.h
         include/evo/StoicCounter.h
+        include/evo/Experiment.h
+        include/evo/CSVParser.h
+        include/evo/EvoString.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
@@ -27,6 +33,7 @@ target_link_libraries(
         ${target}-static
         PUBLIC
         roadrunner-static::roadrunner-static
+        DataFrame
 )
 
 message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
@@ -40,7 +47,7 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<BUILD_INTERFACE:$<TARGET_PROPERTY:DataFrame,INCLUDE_DIRECTORIES>>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 #add_sanitizers(${target}-static)
@@ -50,7 +57,7 @@ target_compile_definitions(
         ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
 )
 
-add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/ProfilingModelBuilding/HowLongDoesItTakeToCreate100Networks.cpp ../test/RandomNetworkGenerationTest/StoicCounterTests.cpp ../test/SOQuestions/WhyCanINotAccessThisArray.cpp ../test/RandomNetworkGenerationTest/CountInstancesOfStoichiometryMatrices.cpp)
+add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/ProfilingModelBuilding/HowLongDoesItTakeToCreate100Networks.cpp ../test/RandomNetworkGenerationTest/StoicCounterTests.cpp ../test/SOQuestions/WhyCanINotAccessThisArray.cpp ../test/RandomNetworkGenerationTest/CountInstancesOfStoichiometryMatrices.cpp include/evo/TypeDefs.h)
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)
 target_include_directories(
         ${target} PUBLIC
@@ -60,9 +67,11 @@ target_include_directories(
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+# we put the export header in current binary directory under evo so it'll match the install directory
 generate_export_header(
         ${target}
         BASE_NAME EVOGYM
+        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/evo/evogym_export.h"
 )
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/src/evogym_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/evo)
 

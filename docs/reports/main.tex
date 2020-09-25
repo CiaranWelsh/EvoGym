@@ -1,0 +1,45 @@
+%! Author = ciaranwelsh
+%! Date = 23/09/2020
+
+% Preamble
+\documentclass[12pt,twoside]{book} 	%%Book class
+
+% Packages
+\usepackage{amsmath}
+
+\usepackage[utf8]{inputenc} 		%% use utf8 encoding
+\usepackage[english]{babel}
+\usepackage{graphicx}				%%advanced graphics features
+\pagenumbering{arabic}
+\usepackage{setspace}				%%1.5 line spacing package
+\usepackage{subfiles}
+\usepackage[sectionbib]{natbib}
+\usepackage{upgreek} %% for upright greek letters in math mode
+\usepackage[a4paper,inner=3cm,outer=2cm,top=2cm,bottom=2cm]{geometry} %%margins
+\graphicspath{{.Chapter1/Images/}{./Chapter2/Images/}} 			%%manage image/figure directories
+\usepackage{cleveref}
+\usepackage{chapterbib}
+\bibliographystyle{humannat}
+% Document
+\begin{document}
+    \frontmatter
+    \begin{titlepage}
+        \maketitle
+    \end{titlepage}
+    \clearpage
+
+
+
+    \addcontentsline{toc}{chapter}{Prefix}
+    \addcontentsline{toc}{chapter}{Acknowledgements}
+    \addcontentsline{toc}{chapter}{Overview}
+    \tableofcontents
+
+    \mainmatter
+
+    %Insert Chapter 2 (switching order of ch1 and 2)
+
+    \subfile{./RandomNetworkGeneration/random_network_generation.tex}
+
+
+\end{document}

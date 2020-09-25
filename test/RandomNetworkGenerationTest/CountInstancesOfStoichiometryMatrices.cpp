@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
 
     RandomNetworkGeneratorOptions options(rateLaws);
     options.setNReactions(2);
-    options.setNFloatingSpecies(3);
+    options.setNFloatingSpecies(2);
     options.setNBoundarySpecies(1);
 
     VectorOfMatrices<double> stoic;
@@ -38,8 +38,8 @@ int main(int argc, char **argv) {
         stoic.push_back( generator.getRR()->getFullStoichiometryMatrix().getValues());
         auto t2 = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-        // New average = old average * (n-1)/n + new value /n
-//        avg_duration = avg_duration * (i-1)/i + duration/i;
+
+
         sum_of_durations += duration;
         long long target = (1/(N-1)) *sum_of_durations;
         avg_duration = duration + (1/N)*(target - duration);

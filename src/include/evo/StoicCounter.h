@@ -5,19 +5,10 @@
 #ifndef EVOGYM_STOICCOUNTER_H
 #define EVOGYM_STOICCOUNTER_H
 
+#include "evo/TypeDefs.h"
 #include "rr/rrRoadRunner.h"
 
 namespace evo {
-
-    template<typename T>
-    using SetOfMatrices = std::set<std::vector<std::vector<T>>>;
-
-    template<typename T>
-    using VectorOfMatrices = std::vector<std::vector<std::vector<T>>>;
-
-
-    template<typename T>
-    using Vector2D = std::vector<std::vector<T>>;
 
 
     template<class T>
@@ -31,7 +22,7 @@ namespace evo {
             : vector_of_matrices_(vec) {
             set_of_matrices_ = convertToSet();
         }
-        const SetOfMatrices<T> &getSetOfMatrices() const {
+        [[nodiscard]] const SetOfMatrices<T> &getSetOfMatrices() const {
             return set_of_matrices_;
         }
 
@@ -79,31 +70,6 @@ namespace evo {
         return os;
     }
 
-    std::ostream &operator<<(std::ostream &os, const StoicCounter<int> &stoicCounter) {
-        const std::vector<int> &count = stoicCounter.count();
-        os << "{" << std::endl;
-        for (int i = 0; i < count.size() - 1; i++) {
-            os <<"\t" << i << ": " << count[i] << ",\n";
-        }
-        os << "\t"<< count.size() - 1 << ": " << count[count.size() - 1] << std::endl;
-        os << "}" << std::endl;
-
-        os << std::endl;
-//        auto stoic_matrix = stoicCounter.getSetOfMatrices().begin();
-//        for (int i = 0; i < stoicCounter.getSetOfMatrices().size(); i++){
-//            os << "Stoiciometry matrix "<< i << std::endl;
-////            os << "{" << std::endl;
-////            for (int j=0; j< stoic_matrix->size(); j++){
-////                for (int k=0; k<(*stoic_matrix)[j].size(); j++){
-////                    os << "\t" << (*stoic_matrix)[j][k] << ", ";
-////                }
-////                os << std::endl;
-////            }
-////            os << "}" << std::endl;
-//            std::advance(stoic_matrix, 1);
-//        }
-        return os;
-    }
 }// namespace evo
 
 

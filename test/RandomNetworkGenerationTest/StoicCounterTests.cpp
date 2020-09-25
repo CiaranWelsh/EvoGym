@@ -25,6 +25,7 @@ TEST(StoicCounterTests, TestConvertVectorToSet) {
 
     StoicCounter counter(v);
     ASSERT_EQ(3, counter.getSetOfMatrices().size());
+
 }
 
 TEST(StoicCounterTests, TestCount) {

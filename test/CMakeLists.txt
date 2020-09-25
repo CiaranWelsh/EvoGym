@@ -36,6 +36,8 @@ add_subdirectory(RandomNetworkGenerationTest)
 
 add_subdirectory(SOQuestions)
 
+add_subdirectory(ExperimentTests)
+
 
 ##add_test_executable(ProfileRandomNetwork OFF profile_random_network_test.cpp)
 ##add_test_executable(NumCppRNG ON NumCppRNGTest.cpp)
@@ -45,7 +47,9 @@ add_subdirectory(SOQuestions)
 #add_test_executable(HowLongDoesItTakeToCreateNRandomNetworksParallel OFF HowLongDoesItTakeToCreateNRandomNetworksParallel.cpp)
 #
 #
-#add_test_executable(quick_test OFF quick_test.cpp)
+add_test_executable(quick_test OFF quick_test.cpp)
+
+add_test_executable(StringTest ON EvoStringTests.cpp)
 
 
 

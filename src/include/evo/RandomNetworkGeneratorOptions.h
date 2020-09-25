@@ -12,7 +12,7 @@
 
 #include "evo/Motif.h"
 #include "evo/RateLaw.h"
-#include "evogym_export.h"
+#include "evo/evogym_export.h"
 
 namespace evo {
 

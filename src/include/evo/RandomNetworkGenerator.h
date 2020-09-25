@@ -11,8 +11,23 @@
 #include "rr/rrExecutableModel.h"
 #include "rr/rrRoadRunner.h"
 
-
 using namespace rr;
+
+/**
+ *  todo turn random network generator into an interface
+ *  create a "generate" method which will actually produce a roadrunner model Individual
+ *  Maybe have MPI functionailty built in?
+ *  I need to create a Reaction struct for the inheritance
+ *  virtual methods become createCompartment, createFloatingSpecies, createBoundarySpecies
+ *  and createReactions. Then generate will call these methods and generate a network.
+ *  This is the plan, but will not be implemented just yet. Instead I'll try and work out
+ *  more of the program before perfecting the implementation.
+ *
+ *  Next I need an Individual and a population data structure.
+ *
+ *  We need to implement a RandomNetworkGenerator that doesn't allow duplicate reactions
+ *  It would be cool to have a reinforcement learning selected RandomNetworkGenerator
+ */
 
 namespace evo {
 
@@ -58,13 +73,16 @@ namespace evo {
 
         explicit RandomNetworkGenerator(RandomNetworkGeneratorOptions* options);
 
+        ~RandomNetworkGenerator();
+
         /**
          *
          * @details We return a pointer so that we do not need to copy or move
          * the instantiated roadrunner instance after its been created. We can
          * simply get a list/vector of pointers to networks.
          */
-        std::unique_ptr<RoadRunner> generate();
+//        std::unique_ptr<RoadRunner> generate();
+
 
         [[nodiscard]] RandomNetworkGeneratorOptions *getOptions() const;
 

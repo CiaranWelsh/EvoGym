@@ -353,7 +353,8 @@ namespace evo {
         }
 
     }
-//    std::unique_ptr<RoadRunner> RandomNetworkGenerator::generate() {
+    RandomNetworkGenerator::~RandomNetworkGenerator() = default;
+    //    std::unique_ptr<RoadRunner> RandomNetworkGenerator::generate() {
 //        createRRModel();
 //        createCompartments();
 //        createBoundarySpecies();

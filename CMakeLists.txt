@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15..3.18)
-project(EvoGym)
+project(Evogen)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -64,21 +64,29 @@ find_package(Sanitizers)
 #######################################################################
 #   options
 #
-
-option(WITH_ADDRESS_SANITIZER "Compile with address sanitizer" OFF)
-if (${WITH_ADDRESS_SANITIZER})
+option(WITH_SANITIZER "Compiler with sanitizers" ON)
+set(WHICH_SANITIZER "address" CACHE STRING "Which sanitizer to use")
+if (${WITH_SANITIZER})
     find_package(Sanitizers)
 endif ()
+
 
 # Hide things by default
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 set(CMAKE_CXX_STANDARD 20)
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+if ((${CMAKE_BUILD_TYPE} STREQUAL "Debug") AND ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"))
     #turn off optimizations for debug builds so profiler results do not get skewed
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+
+    if (WITH_SANITIZER)
+        message(STATUS "using \"${WHICH_SANITIZER}\" sanitizer")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+        set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fsanitize=address")
+    endif ()
+
 endif ()
 
 #######################################################################
@@ -86,8 +94,6 @@ endif ()
 #
 
 # when not windows, add sanitizer flags to debug configuration
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
 
 
 
@@ -112,14 +118,14 @@ add_subdirectory(src)
 add_subdirectory(test)
 
 
-
-
 message(STATUS "
 Configuration Summary
 ----------------------
 CMAKE_CXX_COMPILER          ${CMAKE_CXX_COMPILER}
 CMAKE_CXX_COMPILER_ID       ${CMAKE_CXX_COMPILER_ID}
 CMAKE_CXX_STANDARD          ${CMAKE_CXX_STANDARD}
+WITH_SANITIZER              ${WITH_SANITIZER}
+WHICH_SANITIZER             ${WHICH_SANITIZER}
 
 ")
 

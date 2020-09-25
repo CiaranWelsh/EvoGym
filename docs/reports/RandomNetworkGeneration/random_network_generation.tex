@@ -1,0 +1,55 @@
+\documentclass[../Thesis.tex]{subfiles}
+
+
+
+
+
+\begin{document}
+    \chapter{Generating Random Networks}
+%    \begin{centering}
+%        \abstractname
+%    \end{centering}
+
+    \section{Purpose}
+    Why do we need random networks?
+
+    We plan on using random networks as a basis for evolution of models
+
+    \section{Requirements}
+    What are the requirements for a random network generator?
+
+    Properties such as steady state?
+
+    \section{Implementation}
+    The current implementation of RandomNetworkGenerator requires a single argument,
+    and thats an instance of a RandomNetworkGeneratorOptions object, which holds
+    all the options. These options include
+    \begin{itemize}
+        \item nCompartments: The number of compartments. Initialized from contineous uniform distribution
+        between "compartmentLowerBound" and "compartmentUpperBound"
+        \item nFloatingSpecies.
+        These are initialized with a random variable draw from continueous uniform
+        distribution between "speciesLowerBound and "speciesUpperBound".
+        \item nBoundarySpecies.
+        These are initialized with a random variable drawn from a discrete uniform distribution between
+        "boundarySpeciesLowerBound" and "boundarySpeciesUpperBound"
+        \item rateLaws.
+        Define the rate laws that are randomly selected during network generation.
+        See below for more details.
+        \item motifs. Not yet implemented. The idea is a placeholder for randomly selecting entire motifs or sets of reactions with a predefined structure.
+        \item seed. For achieving deterministic results.
+    \end{itemize}
+
+    The rate law argument requires a bit more detail.
+
+
+
+    First a Roadrunner instance is created. This can optionally be seeded with an existing SBML model.
+    Then compartments are created if there are more than
+
+    \section{Problems}
+
+
+
+
+\end{document}

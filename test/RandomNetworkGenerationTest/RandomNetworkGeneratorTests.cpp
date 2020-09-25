@@ -76,6 +76,16 @@ public:
 };
 
 
+TEST_F(RandomNetworkGeneratorTests, TestLeak) {
+    RoadRunner rr;
+//    rr.addCompartment("c1", 1);
+//    rr.addSpecies("s1", "c1", 1);
+//    rr.getSBML();
+//    RandomNetworkGeneratorOptions options(rateLaws);
+//    options.setNFloatingSpecies(6);
+//    RandomNetworkGenerator generator(&options);
+//    ASSERT_EQ(6, generator.getRR()->getModel()->getNumFloatingSpecies());
+}
 TEST_F(RandomNetworkGeneratorTests, TestCreRModelWithoutSBMLCore) {
     RoadRunner rr;
     rr.addCompartment("c1", 1);

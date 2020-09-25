@@ -8,13 +8,14 @@
 #include <unordered_map>
 #include <set>
 
-#include "sbml/SBMLTypes.h"
+#include "TypeDefs.h"
 #include "evo/RoleTypes.h"
 #include "evo/evogym_export.h"
+#include "sbml/SBMLTypes.h"
 
 namespace evo {
 
-    typedef std::unordered_map<std::string, RoleType> RoleMap;
+
 
     class EVOGYM_EXPORT RateLaw {
         std::string name_;
