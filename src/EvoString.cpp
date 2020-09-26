@@ -19,7 +19,8 @@ namespace evo {
 
         // first try and find by in string_
         if (!contains(by))
-            INVALID_ARGUMENT_ERROR("There are no substrings \"" + by +"\" in \""+string_+"\"");
+            INVALID_ARGUMENT_ERROR << "There are no substrings \""
+                << by << "\" in \"" << string_ << "\"";
 
         size_t prev = 0, pos = 0;
         do

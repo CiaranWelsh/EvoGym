@@ -2,8 +2,8 @@
 // Created by Ciaran Welsh on 25/09/2020.
 //
 
-#ifndef EVOGEN_CSVPARSER_H
-#define EVOGEN_CSVPARSER_H
+#ifndef EVOGEN_CSV_H
+#define EVOGEN_CSV_H
 
 #include "evo/TypeDefs.h"
 #include "NumCpp.hpp"
@@ -13,7 +13,7 @@ namespace evo {
     /**
      * @brief Read and write to csv, accounting for column and rownames
      */
-    class CSVParser {
+    class CSV {
         bool use_index = false;
         bool use_headers = false;
 
@@ -38,13 +38,13 @@ namespace evo {
          * @brief Create a CSV parser object from a csv file on disk
          * @param filename location of csv file on disk
          */
-        explicit CSVParser(const std::string& filename);
+        explicit CSV(const std::string& filename);
 
         /**
          * @brief Create a CSV parser object from a csv file on disk
          * @param filename location of csv file on disk
          */
-        explicit CSVParser(const std::filesystem::path& filename);
+        explicit CSV(const std::filesystem::path& filename);
 
         /**
          * @brief create a CSVParser directly from data in memory. Both header and index required.
@@ -52,7 +52,7 @@ namespace evo {
          * @param headers a vector of strings containing headers for data
          * @param index a vector of strings containing index for data
          */
-        CSVParser(NdArray<double> data, const StringVector& headers, const StringVector& index);
+        CSV(NdArray<double> data, const StringVector& headers, const StringVector& index);
 
 
         /**
@@ -60,7 +60,7 @@ namespace evo {
          * @param data a NdArray<double> containing data to parse
          * @param index a vector of strings containing index for data
          */
-        explicit CSVParser(NdArray<double> data);
+        explicit CSV(NdArray<double> data);
 
         /**
          * @brief write csv to a stream
@@ -73,12 +73,12 @@ namespace evo {
         /**
          * @brief return the rownames for this csv file
          */
-        [[nodiscard]] const StringVector &rownames() const;
+        [[nodiscard]] const StringVector &rowNames() const;
 
         /**
          * @brief return the column names for this csv file
          */
-        [[nodiscard]] const StringVector &colnames() const;
+        [[nodiscard]] const StringVector &colNames() const;
 
         /**
          * @brief return the number of rows in csv file
@@ -99,4 +99,4 @@ namespace evo {
 
 }
 
-#endif//EVOGEN_CSVPARSER_H
+#endif//EVOGEN_CSV_H

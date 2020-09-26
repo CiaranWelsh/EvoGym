@@ -16,14 +16,12 @@
 
 namespace evo {
 
+#define THROW_HELPER(ex_type)                                       \
+    for (std::stringstream ss; true; throwError<ex_type>(__FILE__, __func__, __LINE__, ss.str())) \
+        ss
 
-
-#define INVALID_ARGUMENT_ERROR(msg) throwError<std::invalid_argument>(__FILE__, __func__, __LINE__, msg)
-#define RUNTIME_ERROR(msg) throwError<std::runtime_error>(__FILE__, __func__, __LINE__, msg)
-#define LOGIC_ERROR(msg) throwError<std::logic_error>(__FILE__, __func__, __LINE__, msg)
-
-    class NotImplementedError : public std::logic_error {};
-#define NOT_IMPLEMENTED_ERROR(msg) throwError<std::logic_error>(__FILE__, __func__, __LINE__, msg)
+    using FileNotFoundError = std::logic_error;
+    using NotImplementedError = std::logic_error;
 
 
     /**
@@ -45,6 +43,12 @@ namespace evo {
         throw ErrorType(errMsg.str());
     }
 
+
+#define INVALID_ARGUMENT_ERROR          THROW_HELPER(std::invalid_argument)
+#define LOGIC_ERROR                     THROW_HELPER(std::logic_error)
+#define RUNTIME_ERROR                   THROW_HELPER(std::runtime_error)
+#define NOT_IMPLEMENTED_ERROR           THROW_HELPER(NotImplementedError)
+#define FILE_NOT_FOUND_ERROR            THROW_HELPER(FileNotFoundError)
 
 }// namespace evo
 

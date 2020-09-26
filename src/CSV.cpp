@@ -2,7 +2,7 @@
 // Created by Ciaran Welsh on 25/09/2020.
 //
 
-#include "include/evo/CSVParser.h"
+#include "include/evo/CSV.h"
 #include "evo/EvoString.h"
 #include "evo/evo_error.h"
 #include <filesystem>
@@ -18,26 +18,26 @@
 
 namespace evo {
 
-    CSVParser::CSVParser(const std::filesystem::path &filename) : CSVParser(filename.string()){}
+    CSV::CSV(const std::filesystem::path &filename) : CSV(filename.string()){}
 
-    CSVParser::CSVParser(const std::string &filename) : nRows_(0), nCols_(0){
+    CSV::CSV(const std::string &filename) : nRows_(0), nCols_(0){
         EvoString content(readFromFile(filename).str());
 
         parseFromString(content.string());
 
         if (colnames_.size() != nCols_)
-            LOGIC_ERROR("Columns size != nCols --> ");
+            LOGIC_ERROR << "Columns size != nCols --> ";
         if (rownames_.size() != nRows_)
-            LOGIC_ERROR("Rows size != nRols --> ");
+            LOGIC_ERROR << "Rows size != nRols --> ";
     }
 
-    std::ostringstream CSVParser::readFromFile(const std::string &fname) {
+    std::ostringstream CSV::readFromFile(const std::string &fname) {
         if (!std::filesystem::exists(fname)) {
-            INVALID_ARGUMENT_ERROR("The file \"" + fname + "\" does not exist.");
+            INVALID_ARGUMENT_ERROR << "The file \"" + fname + "\" does not exist.";
         }
         std::ifstream f(fname);
         if (!f)
-            LOGIC_ERROR("File stream could not be opened");
+            LOGIC_ERROR << "File stream could not be opened";
 
         std::string csv_content;
         std::ostringstream os;
@@ -48,7 +48,7 @@ namespace evo {
         return os;
     }
 
-    void CSVParser::parseFromString(const std::string &csv_string) {
+    void CSV::parseFromString(const std::string &csv_string) {
         // split string by newlines
         StringVector row_vectors = EvoString(csv_string).split("\n");
         assert(row_vectors.size() > 1);
@@ -87,44 +87,44 @@ namespace evo {
         rownames_.erase(rownames_.begin());
     }
 
-    const StringVector &CSVParser::rownames() const {
+    const StringVector &CSV::rowNames() const {
         return rownames_;
     }
 
-    const StringVector &CSVParser::colnames() const {
+    const StringVector &CSV::colNames() const {
         return colnames_;
     }
 
-    int CSVParser::getNRows() const {
+    int CSV::getNRows() const {
         return nRows_;
     }
 
-    int CSVParser::getNCols() const {
+    int CSV::getNCols() const {
         return nCols_;
     }
 
-    const nc::NdArray<double> &CSVParser::getData() const {
+    const nc::NdArray<double> &CSV::getData() const {
         return data_;
     }
 
-    CSVParser::CSVParser(NdArray<double> data, const StringVector &rownames, const StringVector &colnames)
+    CSV::CSV(NdArray<double> data, const StringVector &rownames, const StringVector &colnames)
             :
             data_(std::move(data)), rownames_(rownames), colnames_(colnames),
             nRows_(rownames.size()), nCols_(colnames.size()) {}
 
-    CSVParser::CSVParser(NdArray<double> data)
+    CSV::CSV(NdArray<double> data)
             : data_(std::move(data)), nRows_(data.shape().rows), nCols_(data.shape().cols) {
     }
 
-    std::ostringstream CSVParser::toCSV() const {
+    std::ostringstream CSV::toCSV() const {
         // first construct the rows.
         std::ostringstream os;
         os << "idx, ";
         for (int i = 0; i < nCols_; i++) {
             if (i == nCols_ - 1)
-                os << colnames()[i] << "\n";
+                os << colNames()[i] << "\n";
             else
-                os << colnames()[i] << ", ";
+                os << colNames()[i] << ", ";
         }
         for (int i = 0; i < nRows_; i++) {
             os << rownames_[i] << ", ";

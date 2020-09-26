@@ -72,8 +72,8 @@ namespace evo {
 
     std::vector<int> RandomNetworkGenerator::sample_with_replacement(int nsamples, int npop) {
         if (nsamples > npop) {
-            LOGIC_ERROR("The number of samples cannot be more than the size of the population when sampling"
-                        "with replacement");
+            LOGIC_ERROR <<"The number of samples cannot be more than the size of the population when sampling"
+                        "with replacement";
         }
 
         std::vector<int> out;
@@ -105,7 +105,7 @@ namespace evo {
                 << n
                 << " random boundary species without replacement but only "
                 << nspecies << " species exist.";
-            LOGIC_ERROR(err.str());
+            LOGIC_ERROR << err.str();
         }
         // do the sampling
         std::vector<int> species_indices = sample_with_replacement(n, nspecies);
@@ -182,8 +182,8 @@ namespace evo {
         }
 
         if (options_->getRateLaws().empty()) {
-            INVALID_ARGUMENT_ERROR("The RateLaw field of RandomNetworkGeneratorOptions is "
-                                   "empty. Please give some rate laws to continue");
+            INVALID_ARGUMENT_ERROR << "The RateLaw field of RandomNetworkGeneratorOptions is "
+                                   "empty. Please give some rate laws to continue";
         }
         int random_rate_law_index = nc::random::randInt<int>(0, (int) options_->getRateLaws().size());
         return keys[random_rate_law_index];
@@ -258,12 +258,12 @@ namespace evo {
                     parameter_count += 1;
             }
             if (parameter_count > roles.size()) {
-                LOGIC_ERROR("Number of parameters counted is larger than the number of roles "
-                            "in your rate law, this is weird.");
+                LOGIC_ERROR << "Number of parameters counted is larger than the number of roles "
+                            "in your rate law, this is weird.";
             }
             if (parameter_count == 0) {
-                LOGIC_ERROR("Counted 0 kinetic parameters in your rate law. This"
-                            "is highly unusual and probably wrong.");
+                LOGIC_ERROR  << "Counted 0 kinetic parameters in your rate law. This"
+                            "is highly unusual and probably wrong.";
             }
 
             // work out how many randomly selected species we need
@@ -273,7 +273,7 @@ namespace evo {
                 std::ostringstream err;
                 err << "Rate law \"" << rateLaw.getName() << "\" requires " << num_random_species << " species ";
                 err << "but your configurations only allow for " << num_species << ". Please change your configuration options.";
-                LOGIC_ERROR(err.str());
+                LOGIC_ERROR << err.str();
             }
 
             // randomly sample without replacement
@@ -344,7 +344,7 @@ namespace evo {
                         break;
                     }
                     default:
-                        LOGIC_ERROR("Unknown it specified");
+                        LOGIC_ERROR << "Unknown it specified";
                 }
             }
             reaction_name << "R" << reaction_number;

@@ -1,4 +1,4 @@
-#include "evo/CSVParser.h"
+#include "evo/CSV.h"
 #include "gtest/gtest.h"
 #include <filesystem>
 
@@ -74,45 +74,45 @@ public:
 
 
 TEST_F(CSVParserTests, TestParserDimensions) {
-    CSVParser parser(fname_both);
+    CSV parser(fname_both);
     ASSERT_EQ(2, parser.getNRows());
     ASSERT_EQ(3, parser.getNCols());
 
 }
 
 TEST_F(CSVParserTests, TestParserData) {
-    CSVParser parser(fname_both);
+    CSV parser(fname_both);
     const NdArray<double>&actual = parser.getData();
     NdArray<double> expected = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
     ASSERT_TRUE(nc::all(nc::equal(expected, actual))(0, 0));
 }
 
 TEST_F(CSVParserTests, TestColumns) {
-    CSVParser parser(fname_both);
-    const StringVector& actual = parser.colnames();
+    CSV parser(fname_both);
+    const StringVector& actual = parser.colNames();
     StringVector expected = {"R1", "R2"};
     ASSERT_EQ(expected, actual);
 }
 
 TEST_F(CSVParserTests, TestRows) {
-    CSVParser parser(fname_both);
-    const StringVector& actual = parser.rownames();
+    CSV parser(fname_both);
+    const StringVector& actual = parser.rowNames();
     StringVector expected = {"R1", "R2"};
     ASSERT_EQ(expected, actual);
 }
 
 TEST_F(CSVParserTests, TestNRows) {
-    CSVParser parser(fname_both);
+    CSV parser(fname_both);
     ASSERT_EQ(2, parser.getNRows());
 }
 
 TEST_F(CSVParserTests, TestNCols) {
-    CSVParser parser(fname_both);
+    CSV parser(fname_both);
     ASSERT_EQ(3, parser.getNCols());
 }
 
 TEST_F(CSVParserTests, TestToCSV) {
-    CSVParser parser(fname_both);
+    CSV parser(fname_both);
     std::string actual = parser.toCSV().str();
     std::string expected = "idx,  C1,  C2,  C3\n"
                            "R1, 1, 2, 3\n"

@@ -8,7 +8,7 @@ set(
         Population.cpp
         RandomNetworkGenerator.cpp
         Experiment.cpp
-        CSVParser.cpp
+        CSV.cpp
         EvoString.cpp
 )
 
@@ -23,7 +23,7 @@ set(
         include/evo/logger.h
         include/evo/StoicCounter.h
         include/evo/Experiment.h
-        include/evo/CSVParser.h
+        include/evo/CSV.h
         include/evo/EvoString.h
 )
 

@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 #include "evo/Experiment.h"
-
+#include "evo/evo_error.h"
 #include "DataFrame/DataFrame.h"
 #include <filesystem>
 
@@ -12,22 +12,53 @@ using namespace evo;
 using namespace rr;
 
 
-class ExperimentTests : public ::testing::Test {
+class PerturbationExperimentTests : public ::testing::Test {
 
 public:
-    using DataFrame = hmdf::StdDataFrame<std::string>;
+
+
     RoadRunner rr;
 
-    double DELTA = 0.05;
+    double DELTA = 0.05; // perturbation amount
+    double T = 30; // time of measurement
+
     double k1 = 0.1;
     double k2 = 0.5;
     double k3 = 0.6;
 
-    NdArray<double> true_perturbation_matrix = NdArray<double>(3, 2);
+    NdArray<double> data1 = {
+            {1.8, 2.9, 3.2},
+            {3.4, 3, 3.4},
+            {12.6, 1.95, 3.8},
+    };
+
+    NdArray<double> data2 = {
+            {2.0, 3.4, 2.5},
+            {3.5, 7.3, 2.5},
+            {12.8, 1.9, 3.8},
+    };
+
+    NdArray<double> data3 = {
+            {1.6, 2.6, 3.6},
+            {3.6, 3.7, 3.9},
+            {1.4, 2.59, 3.9},
+    };
 
     std::filesystem::path csv_file = std::filesystem::current_path() /= "perturbation_matrix.csv";
 
-    ExperimentTests() {
+};
+
+
+TEST_F(PerturbationExperimentTests, t) {
+//    PerturbationExperiment experiment
+    INVALID_ARGUMENT_ERROR << "invalid" ;
+}
+
+
+
+
+/*
+ *     PerturbationExperimentTests() {
 
         // configure a model
         rr.addCompartment("C1", 1.0, false);
@@ -72,10 +103,4 @@ public:
 
 
     }
-
-};
-
-
-TEST_F(ExperimentTests, t) {
-    int x;
-}
+ */

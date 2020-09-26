@@ -61,8 +61,9 @@ namespace evo {
                 // throw an error when user has given a variable name like S1 or K2. The parameters will
                 // be enumarated automatically.
                 if (std::regex_match(elementary_term_string, std::regex("\\d$"))) {
-                    INVALID_ARGUMENT_ERROR("The elementary term of the rate law called \"" + getName() + "\" ends with a digit. Please rename this term "
-                                                                                                         "so that it does not.");
+                    INVALID_ARGUMENT_ERROR << "The elementary term of the rate law called \""
+                        << getName()
+                        << "\" ends with a digit. Please rename this term so that it does not.";
                 }
                 rate_law_elements_.insert(libsbml::SBML_formulaToString(rate_law_term));
             } else {

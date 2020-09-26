@@ -11,9 +11,10 @@
 
 namespace evo {
 
-    enum DataSetType {
-        EVO_TIMESERIES_DATASET,
-        EVO_PERTURBATION_DATASET,
+    enum ExperimentType {
+        EVO_TIMESERIES_EXPERIMENT,
+        EVO_PERTURBATION_EXPERIMENT,
+        EVO_PERTURBATION_UNKNOWN,
     };
 
     /**
@@ -48,13 +49,12 @@ namespace evo {
         VectorOfNdArrays<double> datasets_; /* dataset repeats*/
         NdArray<double> average_;
         NdArray<double> error_;
-        DataSetType dataSetType;
+        ExperimentType experimentType = EVO_PERTURBATION_UNKNOWN;
         StringVector rowNames_;
         StringVector colNames_;
         RoleMap roles_;
 
-
-
+    private:
         /**
          * @brief returns EVO_TIMESERIES_DATASET
          * if the data in `datasets_` looks like a timeseries
@@ -64,7 +64,7 @@ namespace evo {
          * timeseries data needs to be handled differently to
          * perturbation data.
          */
-        virtual DataSetType getDataSetType() = 0;
+        virtual ExperimentType getDataSetType();
 
         /**
          * @brief calculate the average of datasets_ and populates
@@ -85,20 +85,56 @@ namespace evo {
         void validateUserInput();
 
     public:
+        // public attributes
+        int nRows = 0;
+        int nCols = 0;
+
         /**
          * @brief construct a DataSet by reading in a properly formatted csv file
          */
-        Experiment(std::string filepath);
+        explicit Experiment(const std::string& filepath);
+
+        /**
+         * @brief construct a DataSet by reading in a properly vector of formatted csv file
+         */
+        explicit Experiment(const StringVector& filepaths);
 
         /**
          * @brief construct a DataSet directly from a NdArray<double> object
+         * @param ndArray a single dataset in the form of an nc::NdArray
+         * @param rownames a vector of strings to use for rownames
+         * @param colnames a vector of strings to use for colnames
          */
-        Experiment(NdArray<double> ndArray);
+        Experiment(const NdArray<double>& ndArray, StringVector  rownames, StringVector  colnames);
 
         /**
           * @brief construct a DataSet from a vector of NdArray objects
+          * @param ndArray a single dataset in the form of an nc::NdArray
+          * @param rownames a vector of strings to use for rownames
+          * @param colnames a vector of strings to use for colnames
           */
-        Experiment(VectorOfNdArrays<double> vectorOfNdArrays);
+        Experiment(VectorOfNdArrays<double> vectorOfNdArrays, StringVector  rownames, StringVector  colnames);
+
+        /**
+         * @brief add an experiment to the existing data contained in this
+         * Experiment object
+         * @param data the data to add to your experiment
+         * @details data must be of the same shape as the existing data
+         */
+        void addExperiment(const NdArray<double>& data);
+
+        /**
+         * @brief add an experiment to the existing data contained in this
+         * Experiment object
+         * @param data the data to add to your experiment
+         * @details data must be of the same shape as the existing data
+         */
+        void addExperiment(const std::string& filename);
+
+        /**
+         * @brief returns the number of experiments in this Experiment object.
+         */
+        int size();
 
         /**
           * @brief override the default error matrix using an
@@ -107,7 +143,7 @@ namespace evo {
           * when >1 matrices given or 1 otherwise. The error matrix is
           * used to normalize any objective function by experimental error.
           */
-        void setErrorMatrix(NdArray<double> matrix);
+        void setErrorMatrix(const NdArray<double>& matrix);
 
         /**
          * @brief override the default error matrix using an
@@ -116,27 +152,97 @@ namespace evo {
          * when >1 matrices given or 1 otherwise. The error matrix is
          * used to normalize any objective function by experimental error.
          */
-        void setErrorMatrix(std::string filename);
+        void setErrorMatrix(const std::string& filename);
 
         /**
          * @brief getter for the rowNames attribute
          */
-        StringVector getRowNames() const;
+        [[nodiscard]] StringVector getRowNames() const;
 
         /**
          * @brief getter for the rowNames attribute
          */
-        StringVector getColNames() const;
+        [[nodiscard]] StringVector getColNames() const;
 
         /**
          * @brief setter for the rowNames attribute
          */
-        void setRowNames(StringVector rowNames) const;
+        void setRowNames(const StringVector& rowNames);
 
         /**
          * @brief getter for the rowNames attribute
          */
-        void setColNames(StringVector colNames) const;
+        void setColNames(const StringVector& colNames);
+
+        /**
+         * @brief support for += operator. This method will
+         * concatenate two Experiment objects together
+         * @param rhs Another Experiment object
+         * @details The end result is that the two VectorOfNdArray
+         * objects from the two experiments will become one.
+         * If the @param rhs Experiment dimensions and data labels
+         * do not conform to the current Experiment object
+         * an error is thrown.
+         */
+        Experiment& operator+=(Experiment& rhs);
+
+        /**
+         * @brief test whether the @param rhs Experiment
+         * has the same dimensions and data labels
+         * as this Experiment.
+         * @returns true when rownames and colnames
+         * of this and rhs Experiment are equal
+         */
+        bool isSimilar(const Experiment& rhs);
+
+        /**
+         * @brief getter for the datasets in the Experiment
+         * @returns a vector of NdArray<double> objects (VectorOfNdArrays<double>)
+         */
+        const VectorOfNdArrays<double> &getDatasets() const;
+
+
+        /**
+         * @brief getter for the average matrix
+         * @returns an NdArray object containing the average of datasets in this experiment
+         */
+        const NdArray<double> &getAverage() const;
+
+        /**
+         * @brief getter for the error matrix
+         * @returns an NdArray object containing the error of datasets in this experiment
+         * @details the error matrix is used for normalizing the objective function.
+         */
+        const NdArray<double> &getError() const;
+
+        /**
+         * @brief returns the ExperimentType of this experiment.
+         * @details must be overridden by subclasses
+         */
+        virtual ExperimentType getExperimentType() const = 0;
+
+        /**
+         * @brief return the number of rows in this experiment
+         */
+        int getNRows() const;
+
+        /**
+         * @brief return the number of columns in this experiment
+         */
+        int getNCols() const;
+    };
+
+
+    /**
+     * @brief Data structure to encase the results of a perturbation experiment
+     * @details Perturbation experiments measure the system at baseline which are assumed to
+     * be a steady state. Then, the amounts of system components (enzymes, signalling molecules etc)
+     * are increased or decreased (perturbed) and another measurement is taken at a predefined (@param duration) time later.
+     */
+    class PerturbationExperiment : public Experiment{
+
+        int duration; /*Perturbation */
+
     };
 
 }// namespace evo
