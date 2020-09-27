@@ -25,6 +25,17 @@ TEST(EvoStringTests, TestSplit){
 }
 
 
+TEST(EvoStringTests, TestReplace){
+    std::string x = "aString";
+    EvoString ex(x);
+    std::cout << ex << std::endl;
+
+    auto actual = ex.replace("St", "QWERTY");
+    std::string expected = "aQWERTYring";
+    ASSERT_EQ(expected, actual);
+}
+
+
 
 
 

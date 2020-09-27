@@ -58,6 +58,33 @@ namespace evo {
     bool EvoString::contains(const EvoString& other) {
         return string_.find(other.string()) != std::string::npos;
     }
+    void findAndReplaceAll(std::string & data, std::string toSearch, std::string replaceStr)
+    {
+        // Get the first occurrence
+        size_t pos = data.find(toSearch);
+        // Repeat till end is reached
+        while( pos != std::string::npos)
+        {
+            // Replace this occurrence of Sub String
+            data.replace(pos, toSearch.size(), replaceStr);
+            // Get the next occurrence from the current position
+            pos =data.find(toSearch, pos + replaceStr.size());
+        }
+    }
+    EvoString EvoString::replace(const std::string& what, const std::string& with) {
+        std::string string = string_; // make copy so we don't mutate inplcae
+        // Get the first occurrence
+        size_t pos = string.find(what);
+        // Repeat till end is reached
+        while( pos != std::string::npos)
+        {
+            // Replace this occurrence of Sub String
+            string.replace(pos, what.size(), with);
+            // Get the next occurrence from the current position
+            pos = string.find(what, pos + with.size());
+        }
+        return EvoString(string);
+    }
 
 
 }

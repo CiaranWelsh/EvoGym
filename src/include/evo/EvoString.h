@@ -59,6 +59,8 @@ namespace evo {
          * @brief check whether this EvoString contains @param other std::string
          */
         bool contains(const EvoString &other);
+
+        EvoString replace(const std::string& what, const std::string& with);
     };
 
 

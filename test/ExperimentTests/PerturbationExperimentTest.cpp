@@ -1,23 +1,19 @@
 #include "NumCpp.hpp"
 
-#include "rr/rrRoadRunner.h"
 #include "gtest/gtest.h"
 
 #include "evo/Experiment.h"
 #include "evo/evo_error.h"
-#include "DataFrame/DataFrame.h"
+#include "evo/logger.h"
+
 #include <filesystem>
 
 using namespace evo;
-using namespace rr;
 
 
 class PerturbationExperimentTests : public ::testing::Test {
 
 public:
-
-
-    RoadRunner rr;
 
     double DELTA = 0.05; // perturbation amount
     double T = 30; // time of measurement
@@ -43,15 +39,93 @@ public:
             {3.6, 3.7, 3.9},
             {1.4, 2.59, 3.9},
     };
+    NdArray<double> data4 = {
+            {1.8, 2.36, 3.56},
+            {4.6, nc::constants::nan, 3.69},
+            {1.74, 5.59, 3.79},
+    };
 
     std::filesystem::path csv_file = std::filesystem::current_path() /= "perturbation_matrix.csv";
 
 };
 
+TEST_F(PerturbationExperimentTests, TestCountsMatrix) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+            .addExperiment(data2, false)
+            .addExperiment(data3)
+            .setRowNames({"A", "B", "C"})
+            .setColNames({"A", "B", "C"});
 
-TEST_F(PerturbationExperimentTests, t) {
-//    PerturbationExperiment experiment
-    INVALID_ARGUMENT_ERROR << "invalid" ;
+    // the whole counts matrix should be 3, as t
+    ASSERT_TRUE(nc::all(experiment.getCounts() == 3)(0, 0));
+}
+
+TEST_F(PerturbationExperimentTests, TestCountsMatrixMissingData) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+            .addExperiment(data2, false)
+            .addExperiment(data3, false)
+            .addExperiment(data4)
+            .setRowNames({"A", "B", "C"})
+            .setColNames({"A", "B", "C"});
+
+    // the whole counts matrix should be 3, as t
+    std::cout << experiment << std::endl;
+    ASSERT_FALSE(nc::all(experiment.getCounts() == 4)(0, 0));
+    ASSERT_EQ(3 , experiment.getCounts()(1, 1));
+
+}
+
+TEST_F(PerturbationExperimentTests, TestThatAveragesAreCalculateCorrectly) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+        .addExperiment(data2, false)
+        .addExperiment(data3)
+        .setRowNames({"A", "B", "C"})
+        .setColNames({"A", "B", "C"});
+    std::cout << experiment << std::endl;
+    double expected = (data1(0, 0) + data2(0, 0) + data3(0, 0) ) / 3;
+    ASSERT_DOUBLE_EQ(expected, experiment.getAverages()(0, 0));
+}
+
+TEST_F(PerturbationExperimentTests, TestThatAveragesAreCalculateCorrectlyWithMissingData) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+        .addExperiment(data2, false)
+        .addExperiment(data3, false)
+        .addExperiment(data4)
+        .setRowNames({"A", "B", "C"})
+        .setColNames({"A", "B", "C"});
+
+    double expected = (3.7 + 7.3 + 3) / 3;
+    ASSERT_DOUBLE_EQ(expected, experiment.getAverages()(1, 1));
+}
+
+TEST_F(PerturbationExperimentTests, TestThatStdevAreCalculateCorrectly) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+        .addExperiment(data2, false)
+        .addExperiment(data3, true)
+        .setRowNames({"A", "B", "C"})
+        .setColNames({"A", "B", "C"});
+    std::cout << experiment << std::endl;
+    NdArray<double> a = {1.8, 2, 1.6};
+    double expected = nc::stdev(a)(0, 0);
+    ASSERT_DOUBLE_EQ(expected, experiment.getErrors()(0, 0));
+}
+
+TEST_F(PerturbationExperimentTests, TestThatStdevAreCalculateCorrectlyWithMissingData) {
+    PerturbationExperiment experiment;
+    experiment.addExperiment(data1, false)
+        .addExperiment(data2, false)
+        .addExperiment(data3, false)
+        .addExperiment(data4)
+        .setRowNames({"A", "B", "C"})
+        .setColNames({"A", "B", "C"});
+    NdArray<double> a = {3.7, 7.3,  3.0};
+    double expected = nc::stdev(a)(0, 0);
+    ASSERT_DOUBLE_EQ(expected, experiment.getErrors()(1, 1));
 }
 
 

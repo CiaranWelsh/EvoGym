@@ -47,9 +47,9 @@ namespace evo {
      */
     class EVOGYM_EXPORT Experiment {
         VectorOfNdArrays<double> datasets_; /* dataset repeats*/
+        NdArray<int> counts_;
         NdArray<double> average_;
         NdArray<double> error_;
-        ExperimentType experimentType = EVO_PERTURBATION_UNKNOWN;
         StringVector rowNames_;
         StringVector colNames_;
         RoleMap roles_;
@@ -64,19 +64,24 @@ namespace evo {
          * timeseries data needs to be handled differently to
          * perturbation data.
          */
-        virtual ExperimentType getDataSetType();
+        virtual ExperimentType experimentType() const = 0;
 
         /**
          * @brief calculate the average of datasets_ and populates
          * the average_ field.
          */
-        void calculateAverage();
+        void calculateAverages();
 
         /**
          * @brief calculate the stdev of datasets_ and populates
          * the error_ field.
          */
         void calculateStdev();
+
+        /**
+         * @brief count the number of repeats for each data point
+         */
+        void calculateCounts();
 
         /**
          * @brief ensure user input makes sense
@@ -88,6 +93,12 @@ namespace evo {
         // public attributes
         int nRows = 0;
         int nCols = 0;
+
+        /**
+         * @brief default constructor for Experiment.
+         * @details user must add the data and set row and column names.
+         */
+        Experiment() = default;
 
         /**
          * @brief construct a DataSet by reading in a properly formatted csv file
@@ -120,8 +131,9 @@ namespace evo {
          * Experiment object
          * @param data the data to add to your experiment
          * @details data must be of the same shape as the existing data
+         * @returns a referene to iteslf so calls to addExperiment can be chained.
          */
-        void addExperiment(const NdArray<double>& data);
+        Experiment& addExperiment(const NdArray<double>& data, bool recalculate = true);
 
         /**
          * @brief add an experiment to the existing data contained in this
@@ -129,7 +141,7 @@ namespace evo {
          * @param data the data to add to your experiment
          * @details data must be of the same shape as the existing data
          */
-        void addExperiment(const std::string& filename);
+        Experiment& addExperiment(const std::string& filename);
 
         /**
          * @brief returns the number of experiments in this Experiment object.
@@ -143,7 +155,7 @@ namespace evo {
           * when >1 matrices given or 1 otherwise. The error matrix is
           * used to normalize any objective function by experimental error.
           */
-        void setErrorMatrix(const NdArray<double>& matrix);
+        Experiment& setErrorMatrix(const NdArray<double>& matrix);
 
         /**
          * @brief override the default error matrix using an
@@ -152,7 +164,7 @@ namespace evo {
          * when >1 matrices given or 1 otherwise. The error matrix is
          * used to normalize any objective function by experimental error.
          */
-        void setErrorMatrix(const std::string& filename);
+        Experiment& setErrorMatrix(const std::string& filename);
 
         /**
          * @brief getter for the rowNames attribute
@@ -167,12 +179,12 @@ namespace evo {
         /**
          * @brief setter for the rowNames attribute
          */
-        void setRowNames(const StringVector& rowNames);
+        Experiment& setRowNames(const StringVector& rowNames);
 
         /**
          * @brief getter for the rowNames attribute
          */
-        void setColNames(const StringVector& colNames);
+        Experiment& setColNames(const StringVector& colNames);
 
         /**
          * @brief support for += operator. This method will
@@ -196,40 +208,58 @@ namespace evo {
         bool isSimilar(const Experiment& rhs);
 
         /**
+         * @brief set the number of rows for experiment
+         * @returns reference to this Experiment object
+         */
+        Experiment& setNRows(int nRows);
+
+        /**
+         * @brief set the number of columns for experiment
+         * @returns reference to this Experiment object
+         */
+        Experiment& setNCols(int nCols);
+
+        /**
          * @brief getter for the datasets in the Experiment
          * @returns a vector of NdArray<double> objects (VectorOfNdArrays<double>)
          */
-        const VectorOfNdArrays<double> &getDatasets() const;
+        [[nodiscard]] const VectorOfNdArrays<double> &getDatasets() const;
 
 
         /**
          * @brief getter for the average matrix
          * @returns an NdArray object containing the average of datasets in this experiment
          */
-        const NdArray<double> &getAverage() const;
+        [[nodiscard]] const NdArray<double> &getAverages() const;
 
         /**
          * @brief getter for the error matrix
          * @returns an NdArray object containing the error of datasets in this experiment
          * @details the error matrix is used for normalizing the objective function.
          */
-        const NdArray<double> &getError() const;
+        [[nodiscard]] const NdArray<double> &getErrors() const;
 
         /**
-         * @brief returns the ExperimentType of this experiment.
-         * @details must be overridden by subclasses
+         * @brief get the number of repeats for each data point
          */
-        virtual ExperimentType getExperimentType() const = 0;
+        [[nodiscard]] const NdArray<int> &getCounts() const;
 
         /**
          * @brief return the number of rows in this experiment
          */
-        int getNRows() const;
+        [[nodiscard]] int getNRows() const;
 
         /**
          * @brief return the number of columns in this experiment
          */
-        int getNCols() const;
+        [[nodiscard]] int getNCols() const;
+
+        /**
+         * @brief recompute the average, stdev and count matrices
+         */
+        void recalculate();
+
+        friend std::ostream& operator<<(std::ostream& os, Experiment& experiment);
     };
 
 
@@ -240,9 +270,16 @@ namespace evo {
      * are increased or decreased (perturbed) and another measurement is taken at a predefined (@param duration) time later.
      */
     class PerturbationExperiment : public Experiment{
-
         int duration; /*Perturbation */
 
+        /**
+         * @brief returns the EVO_PERTURBATION_EXPERIMENT enum
+         */
+        [[nodiscard]] ExperimentType experimentType() const override;
+
+    public:
+
+        using Experiment::Experiment; // forwarding constructors to superclass
     };
 
 }// namespace evo
