@@ -15,7 +15,9 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
             /usr/local/lib/libmpi.dylib
             )
     if (${LINK_WITH_GOOGLETEST})
-        set(LINK_LIBRARIES ${LINK_LIBRARIES} gtest gtest_main)
+        set(LINK_LIBRARIES ${LINK_LIBRARIES}
+                gtest gtest_main
+                gmock gmock_main)
     endif ()
 
 #    gtest_discover_tests(${BINARY})
@@ -23,23 +25,34 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
 
     target_link_libraries(${BINARY} PRIVATE ${LINK_LIBRARIES})
 
-
+    message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
     target_include_directories(
             ${BINARY} PRIVATE
             $<TARGET_PROPERTY:evo-gym-static,INCLUDE_DIRECTORIES>
             "/usr/local/include"
-            ${NUMCPP_INCLUDE_DIR}
-
+            "${CMAKE_CURRENT_SOURCE_DIR}/Mockups"
+            "/Users/ciaranwelsh/Documents/Evogen/test/Mockups"
+            "${NUMCPP_INCLUDE_DIR}"
     )
     add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
+
+add_subdirectory(Mockups)
 
 add_subdirectory(RandomNetworkGenerationTest)
 
 add_subdirectory(SOQuestions)
 
 add_subdirectory(ExperimentTests)
+
+
+add_test_executable(quick_test OFF quick_test.cpp)
+
+add_test_executable(StringTest ON EvoStringTests.cpp)
+
+add_test_executable(MockingExampe ON MockingExample.cpp)
+
 
 
 ##add_test_executable(ProfileRandomNetwork OFF profile_random_network_test.cpp)
@@ -50,11 +63,5 @@ add_subdirectory(ExperimentTests)
 #add_test_executable(HowLongDoesItTakeToCreateNRandomNetworksParallel OFF HowLongDoesItTakeToCreateNRandomNetworksParallel.cpp)
 #
 #
-add_test_executable(quick_test OFF quick_test.cpp)
-
-add_test_executable(StringTest ON EvoStringTests.cpp)
-
-
-
 
 

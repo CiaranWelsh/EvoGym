@@ -10,6 +10,9 @@ set(
         Experiment.cpp
         CSV.cpp
         EvoString.cpp
+        Individual.cpp
+        ExperimentSet.cpp
+        ObjectiveFunction.cpp
 )
 
 set(
@@ -25,6 +28,9 @@ set(
         include/evo/Experiment.h
         include/evo/CSV.h
         include/evo/EvoString.h
+        include/evo/Individual.h
+        include/evo/ExperimentSet.h
+        include/evo/ObjectiveFunction.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
@@ -57,7 +63,7 @@ target_compile_definitions(
         ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
 )
 
-add_library(${target} SHARED ${SOURCES} ${HEADERS} ../test/ProfilingModelBuilding/HowLongDoesItTakeToCreate100Networks.cpp ../test/RandomNetworkGenerationTest/StoicCounterTests.cpp ../test/SOQuestions/WhyCanINotAccessThisArray.cpp ../test/RandomNetworkGenerationTest/CountInstancesOfStoichiometryMatrices.cpp include/evo/TypeDefs.h)
+add_library(${target} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)
 target_include_directories(
         ${target} PUBLIC

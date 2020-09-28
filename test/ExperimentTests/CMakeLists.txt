@@ -1,2 +1,3 @@
 add_test_executable(DataSetTest ON PerturbationExperimentTest.cpp)
 add_test_executable(CSVParser ON CSVParserTests.cpp)
+add_test_executable(ExperimentSetTests ON ExperimentSetTests.cpp)
