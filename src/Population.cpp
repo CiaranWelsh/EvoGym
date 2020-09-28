@@ -6,4 +6,7 @@
 
 namespace evo{
 
+    int Population::size() {
+        return population_.size();
+    }
 }
