@@ -70,18 +70,18 @@ namespace evo {
          * @brief calculate the average of datasets_ and populates
          * the average_ field.
          */
-        void calculateAverages();
+        virtual void calculateAverages();
 
         /**
          * @brief calculate the stdev of datasets_ and populates
          * the error_ field.
          */
-        void calculateStdev();
+        virtual void calculateStdev();
 
         /**
          * @brief count the number of repeats for each data point
          */
-        void calculateCounts();
+        virtual void calculateCounts();
 
         /**
          * @brief ensure user input makes sense
@@ -126,6 +126,8 @@ namespace evo {
           */
         Experiment(VectorOfNdArrays<double> vectorOfNdArrays, StringVector  rownames, StringVector  colnames);
 
+        virtual ~Experiment() = default;
+
         /**
          * @brief add an experiment to the existing data contained in this
          * Experiment object
@@ -133,7 +135,7 @@ namespace evo {
          * @details data must be of the same shape as the existing data
          * @returns a referene to iteslf so calls to addExperiment can be chained.
          */
-        Experiment& addExperiment(const NdArray<double>& data, bool recalculate = true);
+        virtual Experiment& addExperiment(const NdArray<double>& data, bool recalculate = true);
 
         /**
          * @brief add an experiment to the existing data contained in this
@@ -141,12 +143,12 @@ namespace evo {
          * @param data the data to add to your experiment
          * @details data must be of the same shape as the existing data
          */
-        Experiment& addExperiment(const std::string& filename);
+        virtual Experiment& addExperiment(const std::string& filename);
 
         /**
          * @brief returns the number of experiments in this Experiment object.
          */
-        int size();
+        virtual int size();
 
         /**
           * @brief override the default error matrix using an
@@ -155,7 +157,7 @@ namespace evo {
           * when >1 matrices given or 1 otherwise. The error matrix is
           * used to normalize any objective function by experimental error.
           */
-        Experiment& setErrorMatrix(const NdArray<double>& matrix);
+        virtual Experiment& setErrorMatrix(const NdArray<double>& matrix);
 
         /**
          * @brief override the default error matrix using an
@@ -169,7 +171,7 @@ namespace evo {
         /**
          * @brief getter for the rowNames attribute
          */
-        [[nodiscard]] StringVector getRowNames() const;
+        [[nodiscard]] virtual StringVector getRowNames() const;
 
         /**
          * @brief getter for the rowNames attribute
@@ -269,7 +271,7 @@ namespace evo {
      * be a steady state. Then, the amounts of system components (enzymes, signalling molecules etc)
      * are increased or decreased (perturbed) and another measurement is taken at a predefined (@param duration) time later.
      */
-    class PerturbationExperiment : public Experiment{
+    class PerturbationExperiment : public Experiment {
         int duration; /*Perturbation */
 
         /**
