@@ -5,38 +5,39 @@
 #include "sbml/SBMLTypes.h"
 #include <regex>
 
-#include "evo/RateLaw.h"
+#include "evo/EvoRateLaw.h"
 #include "evo/evo_error.h"
-
+#include "evo/logger.h"
 namespace evo {
 
-    RateLaw::RateLaw(std::string name, const std::string &rate_law_string, RoleMap roles)
+    EvoRateLaw::EvoRateLaw(std::string name, const std::string &rate_law_string, RoleMap roles)
         : name_(std::move(name)),
           rate_law_string_(rate_law_string),
           rate_law_(libsbml::SBML_parseFormula(rate_law_string.c_str())),
           roles_(std::move(roles)) {
         unpackRateLaw();
-        validateRoleMap();
     }
-    void RateLaw::setName(const std::string &name) {
+
+    void EvoRateLaw::setName(const std::string &name) {
         name_ = name;
     }
-    void RateLaw::setRateLaw(libsbml::ASTNode *rateLaw) {
+    void EvoRateLaw::setRateLaw(libsbml::ASTNode *rateLaw) {
         rate_law_ = rateLaw;
     }
-    const std::string &RateLaw::getRateLawString() const {
+    const std::string &EvoRateLaw::getRateLawString() const {
         return rate_law_string_;
     }
-    void RateLaw::setRateLawString(const std::string &rateLawString) {
+    void EvoRateLaw::setRateLawString(const std::string &rateLawString) {
         rate_law_string_ = rateLawString;
     }
-    void RateLaw::setRoles(const RoleMap &roles) {
+    void EvoRateLaw::setRoles(const RoleMap &roles) {
         roles_ = roles;
     }
-    void RateLaw::setRateLawElements(const std::set<std::string> &rateLawElements) {
+    void EvoRateLaw::setRateLawElements(const std::set<std::string> &rateLawElements) {
         rate_law_elements_ = rateLawElements;
     }
-    void RateLaw::unpackRateLaw(std::vector<libsbml::ASTNode *> rate_law_terms) {
+
+    void EvoRateLaw::unpackRateLaw(std::vector<libsbml::ASTNode *> rate_law_terms) {
         /*
          * When rate_law_terms is empty, the recursive function is being called for the first time
          * so we need to populate the rate_law_terms with the parent equation that we
@@ -54,17 +55,8 @@ namespace evo {
          * of the current rate_law_terms vector.
          */
         for (auto &rate_law_term : rate_law_terms) {
-
             if (rate_law_term->getNumChildren() == 0) {
                 std::string elementary_term_string = libsbml::SBML_formulaToString(rate_law_term);
-
-                // throw an error when user has given a variable name like S1 or K2. The parameters will
-                // be enumarated automatically.
-                if (std::regex_match(elementary_term_string, std::regex("\\d$"))) {
-                    INVALID_ARGUMENT_ERROR << "The elementary term of the rate law called \""
-                        << getName()
-                        << "\" ends with a digit. Please rename this term so that it does not.";
-                }
                 rate_law_elements_.insert(libsbml::SBML_formulaToString(rate_law_term));
             } else {
                 std::vector<libsbml::ASTNode *> new_rate_law_terms;
@@ -83,45 +75,32 @@ namespace evo {
         }
     }
 
-    const std::set<std::string> &RateLaw::getRateLawElements() const {
+    const std::set<std::string> &EvoRateLaw::getRateLawElements() const {
         return rate_law_elements_;
     }
 
-    void RateLaw::validateRoleMap() {
-        // this was an inaccurate error to throw
-        //        for (auto &role: roles_){
-        //            if(getRateLawElements().find(role.first) == getRateLawElements().end()){
-        //                // role not found in rate law. This is an input error
-        //                throw std::invalid_argument("Invalid role map: element name \"" + role.first +
-        //                                            "\" is not in your role map. Please check your input "
-        //                                            "to RateLaw.");
-        //
-        //            }
-        //        }
-    }
-
-    const std::string &RateLaw::getName() const {
+    const std::string &EvoRateLaw::getName() const {
         return name_;
     }
 
-    libsbml::ASTNode *RateLaw::getRateLaw() const {
+    libsbml::ASTNode *EvoRateLaw::getRateLaw() const {
         return rate_law_;
     }
 
-    const RoleMap &RateLaw::getRoles() const {
+    const RoleMap &EvoRateLaw::getRoles() const {
         return roles_;
     }
 
     RateLaws massActionRateLaws() {
         RateLaws rateLaws;
-        rateLaws["uni-uni"] = RateLaw("uni-uni", "k*A",
+        rateLaws["uni-uni"] = EvoRateLaw("uni-uni", "k*A",
                                       RoleMap({
                                               {"k", EVO_PARAMETER},
                                               {"A", EVO_SUBSTRATE},
                                               {"B", EVO_PRODUCT},
                                       }));
 
-        rateLaws["uni-bi"] = RateLaw("uni-bi", "k*A",
+        rateLaws["uni-bi"] = EvoRateLaw("uni-bi", "k*A",
                                      RoleMap({
                                              {"k", EVO_PARAMETER},
                                              {"A", EVO_SUBSTRATE},
@@ -129,14 +108,14 @@ namespace evo {
                                              {"C", EVO_PRODUCT},
                                      }));
 
-        rateLaws["bi-uni"] = RateLaw("bi-uni", "k*A*B",
+        rateLaws["bi-uni"] = EvoRateLaw("bi-uni", "k*A*B",
                                      RoleMap({
                                              {"k", EVO_PARAMETER},
                                              {"A", EVO_SUBSTRATE},
                                              {"B", EVO_SUBSTRATE},
                                              {"C", EVO_PRODUCT},
                                      }));
-        rateLaws["bi-bi"] = RateLaw("bi-bi", "k*A*B",
+        rateLaws["bi-bi"] = EvoRateLaw("bi-bi", "k*A*B",
                                     RoleMap({
                                             {"k", EVO_PARAMETER},
                                             {"A", EVO_SUBSTRATE},

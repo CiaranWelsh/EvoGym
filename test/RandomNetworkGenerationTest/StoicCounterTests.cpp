@@ -1,4 +1,4 @@
-#include "evo/RateLaw.h"
+#include "evo/EvoRateLaw.h"
 #include "evo/StoicCounter.h"
 
 #include "rr/rrRoadRunner.h"

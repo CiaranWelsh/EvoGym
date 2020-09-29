@@ -5,7 +5,7 @@
 #include "rr/rrRoadRunner.h"
 #include "evo/RandomNetworkGenerator.h"
 #include "evo/RandomNetworkGeneratorOptions.h"
-#include "evo/RateLaw.h"
+#include "evo/EvoRateLaw.h"
 
 using namespace rr;
 using namespace evo;

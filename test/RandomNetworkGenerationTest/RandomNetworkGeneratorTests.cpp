@@ -86,6 +86,7 @@ TEST_F(RandomNetworkGeneratorTests, TestLeak) {
 //    RandomNetworkGenerator generator(&options);
 //    ASSERT_EQ(6, generator.getRR()->getModel()->getNumFloatingSpecies());
 }
+
 TEST_F(RandomNetworkGeneratorTests, TestCreRModelWithoutSBMLCore) {
     RoadRunner rr;
     rr.addCompartment("c1", 1);

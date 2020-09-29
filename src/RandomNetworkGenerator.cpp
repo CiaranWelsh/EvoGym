@@ -174,9 +174,9 @@ namespace evo {
         }
     }
 
-    RateLaw RandomNetworkGenerator::getRandomRateLaw() const {
+    EvoRateLaw RandomNetworkGenerator::getRandomRateLaw() const {
         // select a rate law at random.
-        std::vector<RateLaw> keys;
+        std::vector<EvoRateLaw> keys;
         for (auto &it : options_->getRateLaws()) {
             keys.push_back(it.second);
         }
@@ -247,7 +247,7 @@ namespace evo {
         std::vector<std::string> current_model_parameters = rr_->getGlobalParameterIds();
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
             // select a random rate law
-            RateLaw rateLaw = getRandomRateLaw();
+            EvoRateLaw rateLaw = getRandomRateLaw();
 //            LOG("creating reaction "<< reaction_number << " with rate law " << rateLaw.getName());
 
             const RoleMap &roles = rateLaw.getRoles();// from user input

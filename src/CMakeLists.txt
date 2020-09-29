@@ -3,7 +3,7 @@ set(target evo-gym)
 set(
         SOURCES
         RandomNetworkGeneratorOptions.cpp
-        RateLaw.cpp
+        EvoRateLaw.cpp
         Motif.cpp
         Population.cpp
         RandomNetworkGenerator.cpp
@@ -19,7 +19,7 @@ set(
         HEADERS
         include/evo/RandomNetworkGeneratorOptions.h
         include/evo/RoleTypes.h
-        include/evo/RateLaw.h
+        include/evo/EvoRateLaw.h
         include/evo/Motif.h
         include/evo/Population.h
         include/evo/RandomNetworkGenerator.h
@@ -31,6 +31,7 @@ set(
         include/evo/Individual.h
         include/evo/ExperimentSet.h
         include/evo/ObjectiveFunction.h
+        include/evo/TypeDefs.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})
@@ -39,7 +40,6 @@ target_link_libraries(
         ${target}-static
         PUBLIC
         roadrunner-static::roadrunner-static
-        DataFrame
 )
 
 message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
@@ -53,7 +53,6 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:$<TARGET_PROPERTY:DataFrame,INCLUDE_DIRECTORIES>>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 #add_sanitizers(${target}-static)

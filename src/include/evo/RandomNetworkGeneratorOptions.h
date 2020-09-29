@@ -11,7 +11,7 @@
 #include "sbml/SBMLTypes.h"
 
 #include "evo/Motif.h"
-#include "evo/RateLaw.h"
+#include "evo/EvoRateLaw.h"
 #include "evo/evogym_export.h"
 
 namespace evo {
@@ -53,74 +53,74 @@ namespace evo {
 
         RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs);
 
-        const std::string &getCoreSbml() const;
+        [[nodiscard]] const std::string &getCoreSbml() const;
 
         RandomNetworkGeneratorOptions &setCoreSbml(const std::string &coreSbml);
 
-        unsigned long long int getSeed() const;
+        [[nodiscard]] unsigned long long int getSeed() const;
 
         RandomNetworkGeneratorOptions &setSeed(unsigned long long int seed);
 
-        int getBoundarySpeciesLowerBound() const;
+        [[nodiscard]] int getBoundarySpeciesLowerBound() const;
 
         RandomNetworkGeneratorOptions &setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound);
 
-        int getBoundarySpeciesUpperBound() const;
+        [[nodiscard]] int getBoundarySpeciesUpperBound() const;
 
         RandomNetworkGeneratorOptions &setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
 
-        const Motifs &getMotifs() const;
+        [[nodiscard]] const Motifs &getMotifs() const;
 
         RandomNetworkGeneratorOptions &setMotifs(const Motifs &motifs);
 
-        int getNMotifs() const;
+        [[nodiscard]] int getNMotifs() const;
 
         RandomNetworkGeneratorOptions &setNMotifs(int nMotifs);
 
-        int getNFloatingSpecies() const;
+        [[nodiscard]] int getNFloatingSpecies() const;
 
         RandomNetworkGeneratorOptions &setNFloatingSpecies(int nFloatingSpecies);
 
-        int getNBoundarySpecies() const;
+        [[nodiscard]] int getNBoundarySpecies() const;
 
         RandomNetworkGeneratorOptions &setNBoundarySpecies(int nBoundarySpecies);
 
-        int getNReactions() const;
+        [[nodiscard]] int getNReactions() const;
 
         RandomNetworkGeneratorOptions &setNReactions(int nReactions);
 
-        int getNCompartments() const;
+        [[nodiscard]] int getNCompartments() const;
 
         RandomNetworkGeneratorOptions &setNCompartments(int nCompartments);
 
-        double getSpeciesLowerBound() const;
+        [[nodiscard]] double getSpeciesLowerBound() const;
 
         RandomNetworkGeneratorOptions &setSpeciesLowerBound(double speciesLowerBound);
 
-        double getSpeciesUpperBound() const;
+        [[nodiscard]] double getSpeciesUpperBound() const;
 
         RandomNetworkGeneratorOptions &setSpeciesUpperBound(double speciesUpperBound);
 
-        double getParameterLowerBound() const;
+        [[nodiscard]] double getParameterLowerBound() const;
 
         RandomNetworkGeneratorOptions &setParameterLowerBound(double parameterLowerBound);
 
-        double getParameterUpperBound() const;
+        [[nodiscard]] double getParameterUpperBound() const;
 
         RandomNetworkGeneratorOptions &setParameterUpperBound(double parameterUpperBound);
 
-        double getCompartmentLowerBound() const;
+        [[nodiscard]] double getCompartmentLowerBound() const;
 
         RandomNetworkGeneratorOptions &setCompartmentLowerBound(double compartmentLowerBound);
 
-        double getCompartmentUpperBound() const;
+        [[nodiscard]] double getCompartmentUpperBound() const;
 
         RandomNetworkGeneratorOptions &setCompartmentUpperBound(double compartmentUpperBound);
 
-        const RateLaws &getRateLaws() const;
+        [[nodiscard]] const RateLaws &getRateLaws() const;
 
         RandomNetworkGeneratorOptions &setRateLaws(const RateLaws &rateLaws);
-        const std::string &getCoreSBML() const;
+        [[nodiscard]] const std::string &getCoreSBML() const;
         void setCoreSBML(const std::string &coreSbml);
     };
 }// namespace evo

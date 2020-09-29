@@ -24,7 +24,12 @@ namespace evo{
         std::list<std::unique_ptr<Individual>> population_;
 
     public:
+        /**
+         * @brief default constructor for Population
+         */
         Population() = default;
+
+//        Population(int size, int ncores, )
 
         int size();
 

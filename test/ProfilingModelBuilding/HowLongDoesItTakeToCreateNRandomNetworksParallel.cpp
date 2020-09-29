@@ -14,7 +14,7 @@
 
 #include "evo/RandomNetworkGenerator.h"
 #include "evo/RandomNetworkGeneratorOptions.h"
-#include "evo/RateLaw.h"
+#include "evo/EvoRateLaw.h"
 #include "mpi.h"
 #include "rr/rrRoadRunner.h"
 

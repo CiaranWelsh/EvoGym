@@ -86,7 +86,7 @@ namespace evo {
 
         [[nodiscard]] RandomNetworkGeneratorOptions *getOptions() const;
 
-        [[nodiscard]] RateLaw getRandomRateLaw() const;
+        [[nodiscard]] EvoRateLaw getRandomRateLaw() const;
 
         [[nodiscard]] const std::unique_ptr<RoadRunner> &getRR() const;
 

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "RateLaw.h"
+#include "EvoRateLaw.h"
 
 namespace evo{
 
