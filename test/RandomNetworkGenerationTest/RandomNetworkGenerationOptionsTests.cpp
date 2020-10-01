@@ -35,15 +35,15 @@ TEST_F(NetworkGenerationOptionsTests, nCompartments){
 }
 TEST_F(NetworkGenerationOptionsTests, speciesLowerBoun){
     RandomNetworkGeneratorOptions options;
-    options.setSpeciesLowerBound(4);
+    options.setFloatingSpeciesLowerBound(4.5);
     double actual = options.getSpeciesLowerBound();
-    ASSERT_EQ(4.0, actual);
+    ASSERT_EQ(4.5, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, speciesUpperBoun){
     RandomNetworkGeneratorOptions options;
-    options.setSpeciesUpperBound(4);
+    options.setFloatingSpeciesUpperBound(9.4);
     double actual = options.getSpeciesUpperBound();
-    ASSERT_EQ(4, actual);
+    ASSERT_EQ(9.4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, parameterLowerBoun){
     RandomNetworkGeneratorOptions options;

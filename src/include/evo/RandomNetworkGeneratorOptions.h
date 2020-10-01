@@ -24,8 +24,8 @@ namespace evo {
         int nMotifs = 0;
         int nCompartments_ = 1;
 
-        double speciesLowerBound = 0.0;
-        double speciesUpperBound = 10.0;
+        double floatingSpeciesLowerBound = 0.0;
+        double floatingSpeciesUpperBound = 10.0;
         int boundarySpeciesLowerBound = 0;
         int boundarySpeciesUpperBound = 1;
         double parameterLowerBound = 0.1;
@@ -39,8 +39,7 @@ namespace evo {
         // for when we want the random model with a core component
         std::string core_sbml_;
 
-        /* place for user specified seed. Default 0 means use random seed */
-        unsigned long long seed_ = 0;
+        unsigned long long seed_ = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
         void validate() const;
 
@@ -95,11 +94,11 @@ namespace evo {
 
         [[nodiscard]] double getSpeciesLowerBound() const;
 
-        RandomNetworkGeneratorOptions &setSpeciesLowerBound(double speciesLowerBound);
+        RandomNetworkGeneratorOptions &setFloatingSpeciesLowerBound(double speciesLowerBound);
 
         [[nodiscard]] double getSpeciesUpperBound() const;
 
-        RandomNetworkGeneratorOptions &setSpeciesUpperBound(double speciesUpperBound);
+        RandomNetworkGeneratorOptions &setFloatingSpeciesUpperBound(double speciesUpperBound);
 
         [[nodiscard]] double getParameterLowerBound() const;
 

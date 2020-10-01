@@ -63,20 +63,20 @@ namespace evo {
     }
 
     double RandomNetworkGeneratorOptions::getSpeciesLowerBound() const {
-        return speciesLowerBound;
+        return floatingSpeciesLowerBound;
     }
 
-    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setSpeciesLowerBound(double speciesLowerBound) {
-        RandomNetworkGeneratorOptions::speciesLowerBound = speciesLowerBound;
+    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setFloatingSpeciesLowerBound(double speciesLowerBound) {
+        floatingSpeciesLowerBound = speciesLowerBound;
         return *this;
     }
 
     double RandomNetworkGeneratorOptions::getSpeciesUpperBound() const {
-        return speciesUpperBound;
+        return floatingSpeciesUpperBound;
     }
 
-    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setSpeciesUpperBound(double speciesUpperBound) {
-        RandomNetworkGeneratorOptions::speciesUpperBound = speciesUpperBound;
+    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setFloatingSpeciesUpperBound(double speciesUpperBound) {
+        floatingSpeciesUpperBound = speciesUpperBound;
         return *this;
     }
 
