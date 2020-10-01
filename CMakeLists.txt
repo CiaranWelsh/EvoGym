@@ -64,8 +64,6 @@ find_package(Sanitizers)
 #######################################################################
 #   options
 #
-option(WITH_SANITIZER "Compiler with sanitizers" ON)
-set(WHICH_SANITIZER "address" CACHE STRING "Which sanitizer to use")
 
 
 # Hide things by default
@@ -73,10 +71,14 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
 set(CMAKE_CXX_STANDARD 20)
 
+option(WITH_SANITIZER "Compiler with sanitizers" ON)
+set(WHICH_SANITIZER "address" CACHE STRING "Which sanitizer to use")
+
+
 if (${WITH_SANITIZER} AND ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"))
     #turn off optimizations for debug builds so profiler results do not get skewed
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
-    set (CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
+    set (CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
+    set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
 endif ()
 
 #######################################################################

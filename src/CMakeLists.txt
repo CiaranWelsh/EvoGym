@@ -6,6 +6,7 @@ set(
         EvoRateLaw.cpp
         Motif.cpp
         Population.cpp
+        __Unused__RandomNetworkGenerator.cpp
         RandomNetworkGenerator.cpp
         Experiment.cpp
         CSV.cpp
@@ -13,6 +14,7 @@ set(
         Individual.cpp
         ExperimentSet.cpp
         ObjectiveFunction.cpp
+        NetworkComponent.cpp
 )
 
 set(
@@ -22,6 +24,7 @@ set(
         include/evo/EvoRateLaw.h
         include/evo/Motif.h
         include/evo/Population.h
+        include/evo/__Unused__RandomNetworkGenerator.h
         include/evo/RandomNetworkGenerator.h
         include/evo/logger.h
         include/evo/StoicCounter.h
@@ -32,6 +35,7 @@ set(
         include/evo/ExperimentSet.h
         include/evo/ObjectiveFunction.h
         include/evo/TypeDefs.h
+        include/evo/NetworkComponent.h
 )
 
 add_library(${target}-static STATIC ${SOURCES} ${HEADERS})

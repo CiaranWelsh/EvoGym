@@ -33,6 +33,7 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
             "${CMAKE_CURRENT_SOURCE_DIR}/Mockups"
             "/Users/ciaranwelsh/Documents/Evogen/test/Mockups"
             "${NUMCPP_INCLUDE_DIR}"
+            "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
     add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
@@ -52,6 +53,7 @@ add_test_executable(quick_test OFF quick_test.cpp)
 add_test_executable(StringTest ON EvoStringTests.cpp)
 
 add_test_executable(MockingExampe ON MockingExample.cpp)
+add_test_executable(NCRandomSeed ON NCRandomSeed.cpp)
 
 
 

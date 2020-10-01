@@ -108,6 +108,48 @@ TEST_F(EvoRateLawTests, TestUnpackRateLawRecursion7) {
 }
 
 
+TEST_F(EvoRateLawTests, CountParameters) {
+    RoleMap roles = {
+            {"k", EVO_PARAMETER},
+            {"x", EVO_SUBSTRATE},
+            {"y", EVO_SUBSTRATE},
+    };
+    EvoRateLaw rateLaw("sine(x)", "k*sin(x)/y", roles);
+    ASSERT_EQ(1, rateLaw.numParameters());
+}
+
+
+TEST_F(EvoRateLawTests, CountSubstrates) {
+    RoleMap roles = {
+            {"k", EVO_PARAMETER},
+            {"x", EVO_SUBSTRATE},
+            {"y", EVO_SUBSTRATE},
+    };
+    EvoRateLaw rateLaw("sine(x)", "k*sin(x)/y", roles);
+    ASSERT_EQ(2, rateLaw.numSubstrates());
+}
+
+TEST_F(EvoRateLawTests, CountModifiers) {
+    RoleMap roles = {
+            {"k", EVO_PARAMETER},
+            {"x", EVO_MODIFIER},
+            {"y", EVO_SUBSTRATE},
+    };
+    EvoRateLaw rateLaw("sine(x)", "k*sin(x)/y", roles);
+    ASSERT_EQ(1, rateLaw.numModifiers());
+}
+
+TEST_F(EvoRateLawTests, CountProducts) {
+    RoleMap roles = {
+            {"k", EVO_PARAMETER},
+            {"x", EVO_PRODUCT},
+            {"y", EVO_SUBSTRATE},
+    };
+    EvoRateLaw rateLaw("sine(x)", "k*sin(x)/y", roles);
+    ASSERT_EQ(1, rateLaw.numProducts());
+}
+
+
 
 
 

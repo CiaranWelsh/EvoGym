@@ -2,7 +2,7 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#include "evo/__Unused__RandomNetworkGenerator.h"
+#include "evo/RandomNetworkGenerator.h"
 #include "evo/logger.h"
 #include <chrono>
 #include <regex>
