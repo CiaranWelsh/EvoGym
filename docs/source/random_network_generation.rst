@@ -12,7 +12,7 @@ all the options. These options include
       between "compartmentLowerBound" and "compartmentUpperBound"
     * nFloatingSpecies.
       These are initialized with a random variable draw from continueous uniform
-      distribution between "speciesLowerBound and "speciesUpperBound".
+      distribution between "floatingSpeciesLowerBound and "floatingSpeciesUpperBound".
     * nBoundarySpecies.
       These are initialized with a random variable drawn from a discrete uniform distribution between
       "boundarySpeciesLowerBound" and "boundarySpeciesUpperBound"
