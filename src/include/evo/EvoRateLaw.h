@@ -33,6 +33,11 @@ namespace evo {
          */
         void unpackRateLaw(std::vector<libsbml::ASTNode *> rate_law_terms = std::vector<libsbml::ASTNode *>());
 
+        /**
+         * @brief helper function to count instances of @param role in this RateLaw
+         */
+        [[nodiscard]] int countRoles(RoleType role) const;
+
 
     public:
 
@@ -72,6 +77,26 @@ namespace evo {
         void setRoles(const RoleMap &roles);
 
         void setRateLawElements(const std::set<std::string> &rateLawElements);
+
+        /**
+         * @brief count the number of parameters in this RateLaw
+         */
+        [[nodiscard]] int numParameters() const;
+
+        /**
+         * @brief count the number of substrates in this RateLaw
+         */
+        [[nodiscard]] int numSubstrates() const;
+
+        /**
+         * @brief count the number of products in this RateLaw
+         */
+        [[nodiscard]] int numProducts() const;
+
+        /**
+         * @brief count the number of modifiers in this RateLaw
+         */
+        [[nodiscard]] int numModifiers() const;
     };
 
     typedef std::unordered_map<std::string, EvoRateLaw> RateLaws;
