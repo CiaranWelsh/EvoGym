@@ -1,6 +1,7 @@
 #include "evo/RandomNetworkGenerator.h"
 #include "evo/RandomNetworkGeneratorOptions.h"
 #include "evo/StoicCounter.h"
+#include "evo/EvoRateLaw.h"
 
 #include "rr/rrRoadRunner.h"
 
@@ -34,8 +35,9 @@ int main(int argc, char **argv) {
             long long time_remaining = (N-i) * avg_duration;
             std::cout << "building model " << i << "; Estimated time remaining is: " << time_remaining << " milliseconds or " << time_remaining/1000  << " seconds or "<< time_remaining/(1000*60)  << " minutes" << std::endl;
         }
-        RandomNetworkGenerator generator(&options);
-        stoic.push_back( generator.getRR()->getFullStoichiometryMatrix().getValues());
+        NaiveRandomNetworkGenerator generator(options);
+        auto rr_ptr = generator.generate();
+        stoic.push_back( rr_ptr->getFullStoichiometryMatrix().getValues());
         auto t2 = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
 
