@@ -39,7 +39,8 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
 
-add_subdirectory(Mockups)
+set(MOCKUP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
+add_subdirectory(${MOCKUP_DIR})
 
 add_subdirectory(RandomNetworkGenerationTest)
 
@@ -67,3 +68,6 @@ add_test_executable(NCRandomSeed ON NCRandomSeed.cpp)
 #
 
 
+add_subdirectory(LearningPybind)
+
+add_subdirectory(ComparingPythonAndCSpeed)

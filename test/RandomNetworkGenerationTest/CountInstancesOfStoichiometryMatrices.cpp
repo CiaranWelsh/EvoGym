@@ -9,10 +9,10 @@ using namespace evo;
 using namespace rr;
 
 int main(int argc, char **argv) {
-    int N = 100;
+    int N = 10000;
 
     RateLaws rateLaws;
-    rateLaws["uni-uni"] = RateLaw("uni-uni", "k*A",
+    rateLaws["uni-uni"] = EvoRateLaw("uni-uni", "k*A",
                                   RoleMap({{"k", EVO_PARAMETER},
                                            {"A", EVO_SUBSTRATE},
                                            {"B", EVO_PRODUCT}}));
@@ -27,6 +27,8 @@ int main(int argc, char **argv) {
     long long avg_duration = 0.0;
     long long sum_of_durations = 0.0;
     auto start_time = std::chrono::high_resolution_clock::now();
+//    NaiveRandomNetworkGenerator generator(options);
+    UniqueReactionsRandomNetworkGenerator generator(options, 10);
 
     for (int i = 0; i < N; i++) {
         auto t1 = std::chrono::high_resolution_clock::now();
@@ -35,7 +37,6 @@ int main(int argc, char **argv) {
             long long time_remaining = (N-i) * avg_duration;
             std::cout << "building model " << i << "; Estimated time remaining is: " << time_remaining << " milliseconds or " << time_remaining/1000  << " seconds or "<< time_remaining/(1000*60)  << " minutes" << std::endl;
         }
-        NaiveRandomNetworkGenerator generator(options);
         auto rr_ptr = generator.generate();
         stoic.push_back( rr_ptr->getFullStoichiometryMatrix().getValues());
         auto t2 = std::chrono::high_resolution_clock::now();

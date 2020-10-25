@@ -9,6 +9,9 @@
 #include "rr/rrRoadRunner.h"
 #include "evo/evogym_export.h"
 #include "evo/Individual.h"
+#include "evo/TypeDefs.h"
+#include "evo/RandomNetworkGeneratorOptions.h"
+#include "evo/RandomNetworkGenerator.h"
 
 using namespace rr;
 
@@ -21,17 +24,30 @@ namespace evo{
      */
     class EVOGYM_EXPORT Population {
 
-        std::list<std::unique_ptr<Individual>> population_;
+        const RandomNetworkGeneratorOptions& options_ = RandomNetworkGeneratorOptions();
+        NestedIndividualPtrVector population_;
+        int size_;
+
+        
 
     public:
         /**
          * @brief default constructor for Population
+         * @details when the default constructor is used
+         * the caller must also manually set the population_
+         * field using setPopulation
          */
         Population() = default;
 
-//        Population(int size, int ncores, )
 
-        int size();
+        explicit Population(const RandomNetworkGeneratorOptions& options, int n_pop );
+//
+//        int size();
+//
+//        [[nodiscard]] const std::vector<std::vector<std::unique_ptr<Individual>>> &getPopulation() const;
+//
+//        void setPopulation(const std::vector<std::vector<std::unique_ptr<Individual>>> &population);
+
 
     };
 

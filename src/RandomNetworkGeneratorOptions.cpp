@@ -20,12 +20,12 @@ namespace evo {
     void RandomNetworkGeneratorOptions::setCoreSBML(const std::string &coreSbml) {
         core_sbml_ = coreSbml;
     }
-    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(Motifs motifs)
-        : motifs_(std::move(motifs)){}
-
-    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs)
-            : rate_laws_(std::move(rateLaws)), motifs_(std::move(motifs)) {}
-
+//    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(Motifs motifs)
+//        : motifs_(std::move(motifs)){}
+//
+//    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs)
+//            : rate_laws_(std::move(rateLaws)), motifs_(std::move(motifs)) {}
+//
     int RandomNetworkGeneratorOptions::getNFloatingSpecies() const {
         return nFloatingSpecies_;
     }
@@ -142,14 +142,14 @@ namespace evo {
         }
     }
 
-    const Motifs &RandomNetworkGeneratorOptions::getMotifs() const {
-        return motifs_;
-    }
-
-    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setMotifs(const Motifs &motifs) {
-        motifs_ = motifs;
-        return *this;
-    }
+//    const Motifs &RandomNetworkGeneratorOptions::getMotifs() const {
+//        return motifs_;
+//    }
+//
+//    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setMotifs(const Motifs &motifs) {
+//        motifs_ = motifs;
+//        return *this;
+//    }
 
     int RandomNetworkGeneratorOptions::getBoundarySpeciesLowerBound() const {
         return boundarySpeciesLowerBound;

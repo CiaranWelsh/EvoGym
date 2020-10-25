@@ -15,6 +15,8 @@ if (NOT EXISTS "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
     message(FATAL_ERROR "Roadrunner cmake module path not found: \"${ROADRUNNER_INSTALL_PREFIX}/lib/cmake\"")
 endif ()
 
+message(STATUS "Roadrunner install prefix: ${ROADRUNNER_INSTALL_PREFIX}")
+
 # for find_package(<...> CONFIG)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${ROADRUNNER_INSTALL_PREFIX}/lib/cmake")
 
@@ -61,6 +63,16 @@ set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${BOOST_INSTALL_PREFIX}")
 # get boost for NumCpp
 find_package(Boost REQUIRED CONFIG)
 find_package(Sanitizers)
+
+find_path(
+        MPI_INCLUDE_DIR
+        NAMES mpi.h
+)
+
+find_library(
+        MPI_LIBRARY
+        NAMES libmpi${CMAKE_SHARED_LIBRARY_SUFFIX}
+)
 #######################################################################
 #   options
 #
@@ -77,8 +89,8 @@ set(WHICH_SANITIZER "address" CACHE STRING "Which sanitizer to use")
 
 if (${WITH_SANITIZER} AND ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}"))
     #turn off optimizations for debug builds so profiler results do not get skewed
-    set (CMAKE_CXX_FLAGS_DEBUG  "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
-    set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
 endif ()
 
 #######################################################################
@@ -117,7 +129,8 @@ CMAKE_CXX_COMPILER_ID       ${CMAKE_CXX_COMPILER_ID}
 CMAKE_CXX_STANDARD          ${CMAKE_CXX_STANDARD}
 WITH_SANITIZER              ${WITH_SANITIZER}
 WHICH_SANITIZER             ${WHICH_SANITIZER}
-
+MPI_INCLUDE_DIR             ${MPI_INCLUDE_DIR}
+MPI_LIBRARY                 ${MPI_LIBRARY}
 ")
 
 

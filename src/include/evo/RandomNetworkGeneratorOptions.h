@@ -10,7 +10,7 @@
 #include "rr/Dictionary.h"
 #include "sbml/SBMLTypes.h"
 
-#include "evo/Motif.h"
+//#include "evo/Motif.h"
 #include "evo/EvoRateLaw.h"
 #include "evo/evogym_export.h"
 
@@ -34,7 +34,7 @@ namespace evo {
         double compartmentUpperBound = 1.0;
 
         RateLaws rate_laws_;
-        Motifs motifs_;
+//        Motifs motifs_;
 
         // for when we want the random model with a core component
         std::string core_sbml_;
@@ -48,9 +48,9 @@ namespace evo {
 
         explicit RandomNetworkGeneratorOptions(RateLaws rateLaws);
 
-        explicit RandomNetworkGeneratorOptions(Motifs motifs);
-
-        RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs);
+//        explicit RandomNetworkGeneratorOptions(Motifs motifs);
+//
+//        RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs);
 
         [[nodiscard]] const std::string &getCoreSbml() const;
 
@@ -68,9 +68,9 @@ namespace evo {
 
         RandomNetworkGeneratorOptions &setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
 
-        [[nodiscard]] const Motifs &getMotifs() const;
-
-        RandomNetworkGeneratorOptions &setMotifs(const Motifs &motifs);
+//        [[nodiscard]] const Motifs &getMotifs() const;
+//
+//        RandomNetworkGeneratorOptions &setMotifs(const Motifs &motifs);
 
         [[nodiscard]] int getNMotifs() const;
 

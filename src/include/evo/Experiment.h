@@ -7,6 +7,7 @@
 
 #include "evo/TypeDefs.h"
 #include "evo/evogym_export.h"
+#include "evo/RoleTypes.h"
 #include <iostream>
 
 namespace evo {
@@ -109,6 +110,14 @@ namespace evo {
          * @brief construct a DataSet by reading in a properly vector of formatted csv file
          */
         explicit Experiment(const StringVector& filepaths);
+
+        /**
+         * @brief read data from file into Experiment object
+         * @details This method is a convenience method only
+         * designed so that users use Experiment::fromFile(fname)
+         * which is more explicit than Experiment(fname), but equivalent
+         */
+         Experiment fromFile(const std::string& fname);
 
         /**
          * @brief construct a DataSet directly from a NdArray<double> object

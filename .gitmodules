@@ -16,3 +16,6 @@
 [submodule "third_party/sanitizers-cmake"]
 	path = third_party/sanitizers-cmake
 	url = git://github.com/arsenm/sanitizers-cmake.git
+[submodule "third_party/pybind11"]
+	path = third_party/pybind11
+	url = https://github.com/CiaranWelsh/pybind11.git

@@ -1,0 +1,177 @@
+@startuml
+
+
+
+
+class NetworkComponent {
+    list[str] ids
+}
+note left of NetworkComponent {
+    These are a set of data containers. Their only job
+    is to store information. There are some common aspects
+    to all parts of a network. These can go into
+    this base class, because why repeat outselves.
+    Subclasses hold the information that will be used
+    to create a model.
+
+    Remember that subclasses
+    all inherit the ids attribute.
+}
+
+class Compartment {
+    list[float] values
+}
+
+class BoundarySpecies {
+    list[int] compartment_index
+    list[int] values
+}
+
+class FloatingSpecies{
+    list[int] compartment_index
+    list[int] values
+}
+
+class Reactions {
+    list[RateLaw] rate_laws
+    list[int] substrate_indices
+    list[int] product_indices
+    list[int] modifier_indices
+}
+
+NetworkComponent <|-- Compartment :extends (or inherits from)
+NetworkComponent <|-- BoundarySpecies
+NetworkComponent <|-- FloatingSpecies
+NetworkComponent <|-- Reactions
+
+class RateLaw {
+    string name
+    string rate_law
+    dict roles
+    unpackRateLaw()
+}
+
+note left of RateLaw {
+    unpackRateLaw is probably the most diffict
+    bit to understand out of the whole RNG. Its
+    purpose is to automatically extract all
+    variable names from a rate law regardless
+    of the math thats holding them together. We
+    do this by relying on libsbml to be able to
+    parse arbitrary math strings.
+
+    Its nice to automate this, but a workaround to avoid
+    the rabbit hole I suspect this might cause you to fall into
+    could be to just get the user to input the names of the variables
+    in the math string?
+    So your RateLaw would have an extra argument, `variables` maybe
+
+    uni_uni = RateLaw("uni_uni", "k*A", variables=["A"]
+                roles = dict(k="parameter", A="substrate", B="product"),
+
+}
+
+class NetworkGenerationOptions {
+    NetworkGenerationOptions(rate_law_dict)
+}
+
+NetworkGenerationOptions <-- RateLaw : Input to
+
+abstract class RandomNetworkGenerator{
+    RandomNetworkGenerator(NetworkGenerationOptions)
+    createCompartments() (abstract)
+    createFloatingSpecies() (abstract)
+    createBoundarySpecies()(abstract)
+    createReactions()(abstract)
+    generate()
+}
+
+RandomNetworkGenerator <-- NetworkGenerationOptions : used by
+
+note right of RandomNetworkGenerator {
+    This in an abstract class. I.e. designed to
+    be extended. Never instantiated itself, only
+    subclasses are used by end user.
+    Algorithm is this:
+        1) randomly select nCompartments
+        compartments and create a Compartments object
+        2) randomly select nFloatingSpecies species
+        and create a FloatingSpecies object
+        3) randomly select nBoundarySpecies species
+        and create a BoundarySpecies object
+        4) Create nReactions reactions and store in
+        Reactions object. This involves
+        5) put the network together (generate)
+    }
+
+class NaiveRandomNetworkGenerator {
+    createCompartments()
+    createFloatingSpecies()
+    createBoundarySpecies()
+    createReactions()
+}
+
+RandomNetworkGenerator <|-- NaiveRandomNetworkGenerator
+
+note left of NaiveRandomNetworkGenerator {
+    This is how we want users to use the class.
+
+    //this is a comment
+    //can be arbitrary length. This is the selection
+    //of rate laws that can be chosen randomly by the
+    //algorithm
+    rate_law_dict = dict(
+        uni_uni = RateLaw("uni_uni", "k*A",
+            roles = dict(k="parameter", A="substrate", B="product"),
+
+        uni_bi = RateLaw("uni_bi", "k*A",
+            roles = dict(k="parameter", A="substrate", B="product", C="product")
+    )
+
+    options = RandomNetworkGeneratorOptions(rate_law_dict)
+    options.setNReactions(3)
+
+    // set other things
+
+    rng = NaiveRandomNetworkGenerator(options)
+    rr_model = rng.generate()
+    many_models = rng.generate(10) #list of models
+}
+
+Compartment <-- NaiveRandomNetworkGenerator : Create and\n read from
+
+
+BoundarySpecies <-- NaiveRandomNetworkGenerator : Create and\n read from
+
+
+FloatingSpecies <-- NaiveRandomNetworkGenerator : Create and\n read from
+
+
+Reactions <-- NaiveRandomNetworkGenerator : Create and\n read from
+
+
+'abstract class AbstractList
+'abstract AbstractCollection
+'interface List
+'interface Collection
+'
+'List <|-- AbstractList
+'Collection <|-- AbstractCollection
+'
+'Collection <|- List
+'AbstractCollection <|- AbstractList
+'AbstractList <|-- ArrayList
+'
+'class ArrayList {
+'Object[] elementData
+'size()
+'
+'}
+'
+'enum TimeUnit {
+'DAYS
+'HOURS
+'MINUTES
+'}
+
+@enduml

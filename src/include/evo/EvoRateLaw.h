@@ -16,6 +16,7 @@
 namespace evo {
 
 
+
     class EVOGYM_EXPORT EvoRateLaw {
         std::string name_;
         libsbml::ASTNode *rate_law_ = nullptr;

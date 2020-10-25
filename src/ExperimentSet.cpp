@@ -20,6 +20,11 @@ namespace evo{
         return *this;
     }
 
+    ExperimentSet &ExperimentSet::addExperiment(const std::string& filename) {
+        experiments_.push_back(Experiment::fromFile(filename));
+        return *this;
+    }
+
     int ExperimentSet::size() {
         return experiments_.size();
     }

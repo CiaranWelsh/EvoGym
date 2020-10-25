@@ -21,6 +21,14 @@ using namespace rr;
 namespace evo {
 
     class RandomNetworkGenerator {
+        /**
+         * @brief variable to hold the current value of parameter id.
+         * Parameter IDs are k0 through k-whatever. The algorithm that creates this id
+         * (generateUniqueID) is recursive and will keep adding 1 to Parameter ids until
+         * it encounters an unseen id. This is inefficient when we start at 0 each time
+         * so instead we start with current_parameter_id_number_.
+         */
+        unsigned long long current_parameter_id_number_ = 0;
 
         /**
          * @brief create a Compartments object
@@ -93,7 +101,13 @@ namespace evo {
          * @brief Use this RandomNetworkGenerator to create a single RoadRunner
          * instance and @returns a unique pointer to the newly created model.
          */
-        std::unique_ptr<RoadRunner> generate();
+        IndividualPtr generate();
+
+        /**
+         * @brief Use this RandomNetworkGenerator to create a @param n RoadRunner
+         * instance and @returns a vector of unique pointera to the newly created modela.
+         */
+        NestedIndividualPtrVector generate(int n);
 
 
     protected:
@@ -134,7 +148,7 @@ namespace evo {
         /**
          * @brief Creates a parameter id for use in the model
          */
-        [[nodiscard]] std::string generateUniqueParameterID(int number, const std::string &base_name) const;
+        [[nodiscard]] std::string generateUniqueParameterID(unsigned long long number, const std::string &base_name) const;
 
         /**
          * @brief given an integer @param idx, return the string
@@ -162,6 +176,31 @@ namespace evo {
 
         Reactions createReactions() override;
     };
+
+    class UniqueReactionsRandomNetworkGenerator : public NaiveRandomNetworkGenerator {
+        int max_recursion_ = 100;
+
+    public:
+        using NaiveRandomNetworkGenerator::NaiveRandomNetworkGenerator;
+
+        /**
+         * @brief Constructor for UniqueReactionsRandomNetworkGenerator that takes a
+         * @param options object as argument.
+         * @param max_recursion if a random reaction has been found to be already present in the model
+         * this many times, the curent reactions will be returned without any further reactions.
+         */
+        explicit UniqueReactionsRandomNetworkGenerator(const RandomNetworkGeneratorOptions& options, int max_recursion);
+
+
+        Reactions createReactions() override;
+    };
+
+//    enum EvoRandomNetworkGenerator {
+//        EVO_NAIVE_RANDOM_NETWORK_GENERATOR,
+//        EVO_UNIQUE_REACTIONS_RANDOM_NETWORK_GENERATOR,
+//    };
+//
+//    const RandomNetworkGenerator& RandomNetworkFactory(EvoRandomNetworkGenerator which);
 
 
 }// namespace evo

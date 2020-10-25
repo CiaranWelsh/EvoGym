@@ -8,10 +8,10 @@
 #include <vector>
 #include <set>
 #include <unordered_map>
-#include "evo/RoleTypes.h"
-
 #include "evo/evogym_export.h"
 #include "NumCpp.hpp"
+
+#include "rr/rrRoadRunner.h"
 
 namespace evo {
 /*******************************************************************
@@ -27,6 +27,13 @@ namespace evo {
     using VectorOfNdArrays = std::vector<nc::NdArray<T>>;
 
 /**************************************************************
+ *  ptr types
+ */
+
+    using RoadRunnerPtr = std::unique_ptr<rr::RoadRunner>;
+    using RoadRunnerSharedPtr = std::shared_ptr<rr::RoadRunner>;
+
+/**************************************************************
  *  vector types
  */
 
@@ -35,6 +42,19 @@ namespace evo {
     using StringVector = std::vector<std::string>;
     using IntVector = std::vector<int>;
     using DoubleVector = std::vector<double>;
+
+    /**
+     * @brief A vector of unique pointers to RoadRunner models
+     */
+    using RoadRunnerPtrVector = std::vector<RoadRunnerPtr>;
+
+
+
+    /**
+     * @brief a vector of vectors containing unique pointers to RoadRunner models
+     */
+    using NestedRoadRunnerPtrVector = std::vector<RoadRunnerPtrVector>;
+
 
     /**
      * @brief a triple nested set of type T.
@@ -58,7 +78,7 @@ namespace evo {
  *  map types
  */
     using StringMap = std::unordered_map<std::string, std::string>;
-    using RoleMap = std::unordered_map<std::string, RoleType>;
+
 }
 
 #endif//EVOGYM_TYPEDEFS_H

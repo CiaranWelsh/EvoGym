@@ -14,6 +14,7 @@ namespace evo {
         EVO_DEPENDENT_VARIABLE,
         EVO_INDEPENDENT_VARIABLE,
     };
-}
 
+    using RoleMap = std::unordered_map<std::string, RoleType>;
+}
 #endif //EVOGYM_ROLETYPES_H

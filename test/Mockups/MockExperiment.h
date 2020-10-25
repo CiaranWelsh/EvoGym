@@ -12,7 +12,7 @@ using namespace evo;
 using namespace ::testing;
 
 class MockExperiment : public Experiment {
-
+public:
     MOCK_METHOD(void, calculateAverages, ());
     MOCK_METHOD(ExperimentType, experimentType, (),  (const));
 

@@ -4,16 +4,15 @@ set(
         SOURCES
         RandomNetworkGeneratorOptions.cpp
         EvoRateLaw.cpp
-        Motif.cpp
-        Population.cpp
-        __Unused__RandomNetworkGenerator.cpp
+#        Motif.cpp
+#        Population.cpp
         RandomNetworkGenerator.cpp
-        Experiment.cpp
-        CSV.cpp
+#        Experiment.cpp
+#        CSV.cpp
         EvoString.cpp
-        Individual.cpp
-        ExperimentSet.cpp
-        ObjectiveFunction.cpp
+#        Individual.cpp
+#        ExperimentSet.cpp
+#        ObjectiveFunction.cpp
         NetworkComponent.cpp
 )
 
@@ -22,18 +21,17 @@ set(
         include/evo/RandomNetworkGeneratorOptions.h
         include/evo/RoleTypes.h
         include/evo/EvoRateLaw.h
-        include/evo/Motif.h
-        include/evo/Population.h
-        include/evo/__Unused__RandomNetworkGenerator.h
+#        include/evo/Motif.h
+#        include/evo/Population.h
         include/evo/RandomNetworkGenerator.h
         include/evo/logger.h
         include/evo/StoicCounter.h
-        include/evo/Experiment.h
-        include/evo/CSV.h
+#        include/evo/Experiment.h
+#        include/evo/CSV.h
         include/evo/EvoString.h
-        include/evo/Individual.h
+#        include/evo/Individual.h
         include/evo/ExperimentSet.h
-        include/evo/ObjectiveFunction.h
+#        include/evo/ObjectiveFunction.h
         include/evo/TypeDefs.h
         include/evo/NetworkComponent.h
 )
@@ -44,6 +42,7 @@ target_link_libraries(
         ${target}-static
         PUBLIC
         roadrunner-static::roadrunner-static
+        ${MPI_LIBRARY}
 )
 
 message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
@@ -57,6 +56,7 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<BUILD_INTERFACE:${MPI_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 #add_sanitizers(${target}-static)

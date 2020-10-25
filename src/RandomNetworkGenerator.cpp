@@ -7,6 +7,7 @@
 #include <regex>
 #include <evo/RandomNetworkGenerator.h>
 #include <evo/logger.h>
+#include "mpi.h"
 
 
 namespace evo {
@@ -40,7 +41,7 @@ namespace evo {
  * Private member functions
  */
 
-    std::unique_ptr<RoadRunner> RandomNetworkGenerator::generate() {
+    IndividualPtr RandomNetworkGenerator::generate() {
         // fist create a roadrunner model to work with
         std::unique_ptr<RoadRunner> rr_ptr = createRRModel();
         Compartments compartments = createCompartments();
@@ -113,7 +114,10 @@ namespace evo {
                                                                options_->getParameterUpperBound());
                         // ensure unique parameter name. We pass in reference to used parameter names
                         // so we do not have to reload the model each time we add a parameter (performance reasons).
-                        std::string parameter_name = generateUniqueParameterID(0, rate_law_component);
+                        std::string parameter_name = generateUniqueParameterID(current_parameter_id_number_,
+                                                                               rate_law_component);
+                        // remember to keep track of last used id.
+                        current_parameter_id_number_++;
                         existing_model_parameters_[parameter_name] = val;
                         // now we add the parameter to the model
                         rr_ptr->addParameter(parameter_name, val, false);
@@ -161,7 +165,54 @@ namespace evo {
             );
         }
         rr_ptr->regenerate();
-        return rr_ptr;
+        Individual individual(std::move(rr_ptr));
+
+        return std::make_unique<Individual>(std::move(individual));
+    }
+
+    NestedIndividualPtrVector RandomNetworkGenerator::generate(int N) {
+
+        // initialize MPI
+        MPI_Init(nullptr, nullptr);
+
+        // Find out rank and world size
+        int world_rank;
+        int world_size;// injected into program with mpirun command. Default is 1.
+
+        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+        // create our storage structure to have the world_size elements
+        NestedIndividualPtrVector rr_vec(world_size);
+
+        int num_per_proc = N / world_size;
+        int r = N % world_size;
+
+        // todo think about how we can generalize this logic so that we do
+        // not need to rewrite it for everything that we do with mpi.
+        // note it might be possible to follow the decorator pattern.
+        for (int rank = 0; rank < world_size; rank++) {
+            // only when this nodes rank comes up do we do anything
+            if (rank == world_rank) {
+                int nstart;
+                int nend;
+                if (rank < r) {// handle remainder
+                    nstart = rank * (num_per_proc + 1);
+                    nend = nstart + num_per_proc;
+                } else {
+                    nstart = rank * num_per_proc + r;
+                    nend = nstart + (num_per_proc - 1);
+                }
+                for (int i = nstart; i < nend + 1; i++) { // nend + 1 so that we have open intervals (0, 3) for instance is 4 items
+                    std::unique_ptr<Individual> individual = generate();
+                    // we set the rank of the individual and move it back
+                    individual->setRank(rank);
+                    rr_vec[rank].push_back(std::move(individual));
+                }
+            }
+        }
+        MPI_Finalize();
+        return rr_vec;
     }
 
     std::unique_ptr<RoadRunner> RandomNetworkGenerator::createRRModel() const {
@@ -236,7 +287,8 @@ namespace evo {
         return out;
     }
 
-    std::string RandomNetworkGenerator::generateUniqueParameterID(int number, const std::string &base_name) const {
+    std::string
+    RandomNetworkGenerator::generateUniqueParameterID(unsigned long long number, const std::string &base_name) const {
         StringVector existing_parameter_ids;
         for (auto &i: existing_model_parameters_)
             existing_parameter_ids.push_back(i.first);
@@ -248,6 +300,7 @@ namespace evo {
             // id already used
             number += 1;
             proposal.str("");// clear the proposal
+
             return generateUniqueParameterID(number, base_name);
         } else {
             return proposal.str();
@@ -268,8 +321,8 @@ namespace evo {
 
 
     /************************************************************************
- * NaiveRandomNetworkGenerator2
- */
+     * NaiveRandomNetworkGenerator2
+     */
 
     Compartments NaiveRandomNetworkGenerator::createCompartments() {
         Compartments compartments;
@@ -357,7 +410,6 @@ namespace evo {
             EvoRateLaw rateLaw = getRandomRateLaw();
             reactions.rate_laws[reaction_number] = rateLaw;
 
-
             const RoleMap &roles = rateLaw.getRoles();// from user input
 
             // work out how many randomly selected species we need
@@ -399,6 +451,128 @@ namespace evo {
         }
         return reactions;
     }
+
+/*****************************************************************************
+ * UniqueReactionsRandomNetworkGenerator
+ */
+
+    UniqueReactionsRandomNetworkGenerator::UniqueReactionsRandomNetworkGenerator(
+            const RandomNetworkGeneratorOptions &options, int max_recursion)
+            : NaiveRandomNetworkGenerator(options), max_recursion_(max_recursion) {}
+
+    Reactions UniqueReactionsRandomNetworkGenerator::createReactions() {
+        NOT_IMPLEMENTED_ERROR << "This class does not yet work";
+        Reactions reactions(options_->getNReactions());
+
+        std::ostringstream reaction_name;
+        int reaction_number = 0;
+        int recursion_count = 0;
+
+        while (reactions.size() != options_->getNReactions()) {
+            // generate reaction name;
+            reaction_name << "R" << reaction_number;
+
+            // select a random rate law
+            EvoRateLaw rateLaw = getRandomRateLaw();
+
+            const RoleMap &roles = rateLaw.getRoles();// from user input
+
+            // work out how many randomly selected species we need
+            int num_random_species =
+                    rateLaw.numSubstrates() + rateLaw.numProducts() + rateLaw.numModifiers();
+            int total_num_species_possible = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
+
+            // check that it makes sense to randomly generate num_random_species species
+            if (num_random_species > total_num_species_possible) {
+                const std::string &name = rateLaw.getName();
+                LOGIC_ERROR << "Rate law \"" << name << "\" requires " << num_random_species
+                            << " species "
+                            << "but your configurations only allow for " << total_num_species_possible
+                            << ". Please change your configuration options either by allowing more Floating or Boundary species or "
+                               "using different rate laws.";
+            }
+
+            // randomly sample without replacement
+            std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
+            assert(species_indices.size() == num_random_species); // this will always be true
+
+            std::vector<int> substrates;
+            std::vector<int> products;
+            std::vector<int> modifiers;
+
+            // dish out the species indices to reaction substrates, products or modifiers.
+            for (int s = 0; s < rateLaw.numSubstrates(); s++) {
+                const int &species_idx = species_indices[species_indices.size() - 1];
+                substrates.push_back(species_idx);
+                species_indices.resize(species_indices.size() - 1);
+            }
+            for (int s = 0; s < rateLaw.numProducts(); s++) {
+                const int &species_idx = species_indices[species_indices.size() - 1];
+                products.push_back(species_idx);
+                species_indices.resize(species_indices.size() - 1);
+            }
+            for (int s = 0; s < rateLaw.numModifiers(); s++) {
+                const int &species_idx = species_indices[species_indices.size() - 1];
+                modifiers.push_back(species_idx);
+                species_indices.resize(species_indices.size() - 1);
+            }
+            assert(species_indices.empty());
+
+            //todo put a max fail break in that breaks the recursion
+
+            // first sort so we are guarenteed to have same ordering each time we do comparison
+            std::sort(substrates.begin(), substrates.end());
+            std::sort(products.begin(), products.end());
+            std::sort(modifiers.begin(), modifiers.end());
+
+            bool substrates_in_reaction = false;
+            bool products_in_reaction = false;
+            bool modifiers_in_reaction = false;
+            if (std::find(reactions.substrates.begin(), reactions.substrates.end(), substrates) !=
+                reactions.substrates.end())
+                substrates_in_reaction = true;
+
+            if (std::find(reactions.products.begin(), reactions.products.end(), products) != reactions.products.end())
+                products_in_reaction = true;
+
+            if (std::find(reactions.modifiers.begin(), reactions.modifiers.end(), modifiers) !=
+                reactions.modifiers.end())
+                modifiers_in_reaction = true;
+
+            if (substrates_in_reaction && products_in_reaction && modifiers_in_reaction) {
+                // otherwise a like reaction is already defined
+                reaction_number--; // subtract 1 from reaction number to keep reaction count linear.
+                recursion_count++;
+                if (recursion_count == max_recursion_) {
+                    LOG("Max recursion of " << max_recursion_ << " has been reached.");
+                    break;
+                }
+            } else {
+                // we only add to model when these three are false
+                reactions.ids[reaction_number] = reaction_name.str();
+                reaction_name.str("");// clear the stream
+                reactions.rate_laws[reaction_number] = rateLaw;
+                reactions.substrates[reaction_number] = substrates;
+                reactions.products[reaction_number] = products;
+                reactions.modifiers[reaction_number] = modifiers;
+                recursion_count = 0; // reset the recursion count since we successfully added a reaction.
+            }
+        }
+        return reactions;
+    }
+
+//    RandomNetworkGenerator* RandomNetworkFactory(const RandomNetworkGeneratorOptions &options, EvoRandomNetworkGenerator which){
+//
+//        switch(which){
+//            case (EVO_NAIVE_RANDOM_NETWORK_GENERATOR):{
+//                NaiveRandomNetworkGenerator generator(options);
+//                return std::move(generator);
+//            }
+//            case EVO_UNIQUE_REACTIONS_RANDOM_NETWORK_GENERATOR:
+//                break;
+//        }
+//    }
+
 }// namespace evo
 
 

@@ -79,12 +79,13 @@ public:
 
 
 TEST_F(RandomNetworkGenerator2Tests, TestNumberOfCompartments){
+    // todo you haven't accounted for volume differences in multi compartment reactions.
     RandomNetworkGeneratorOptions options(rateLaws);
     options.setNCompartments(4);
     options.setSeed(4);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumCompartments());
+    auto ind_ptr = generator.generate();
+    ASSERT_EQ(4, ind_ptr->getRRPtr()->getModel()->getNumCompartments());
 }
 
 TEST_F(RandomNetworkGenerator2Tests, TestNumberOfBoundarySpecies){
@@ -92,8 +93,8 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfBoundarySpecies){
     options.setNBoundarySpecies(4);
     options.setSeed(4);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumBoundarySpecies());
+    auto ind_ptr = generator.generate();
+    ASSERT_EQ(4, ind_ptr->getRRPtr()->getModel()->getNumBoundarySpecies());
 }
 
 TEST_F(RandomNetworkGenerator2Tests, TestNumberOfFloatingSpecies){
@@ -101,8 +102,8 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfFloatingSpecies){
     options.setNFloatingSpecies(4);
     options.setSeed(4);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumFloatingSpecies());
+    auto ind_ptr = generator.generate();
+    ASSERT_EQ(4, ind_ptr->getRRPtr()->getModel()->getNumFloatingSpecies());
 }
 
 TEST_F(RandomNetworkGenerator2Tests, TestNumberOfReactions){
@@ -111,8 +112,8 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfReactions){
     options.setNReactions(5);
     options.setSeed(4);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(5, rr_ptr->getModel()->getNumReactions());
+    auto ind_ptr = generator.generate();
+    ASSERT_EQ(5, ind_ptr->getRRPtr()->getModel()->getNumReactions());
 }
 
 TEST_F(RandomNetworkGenerator2Tests, TestCompartmentValue){
@@ -122,9 +123,9 @@ TEST_F(RandomNetworkGenerator2Tests, TestCompartmentValue){
     options.setCompartmentUpperBound(10.0);
     options.setSeed(46);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_DOUBLE_EQ(7.59733895439041, rr_ptr->getCompartmentByIndex(0));
-    ASSERT_DOUBLE_EQ(3.2564907819767202, rr_ptr->getCompartmentByIndex(1));
+    auto ind_ptr = generator.generate();
+    ASSERT_DOUBLE_EQ(7.59733895439041, ind_ptr->getRRPtr()->getCompartmentByIndex(0));
+    ASSERT_DOUBLE_EQ(3.2564907819767202, ind_ptr->getRRPtr()->getCompartmentByIndex(1));
 }
 
 TEST_F(RandomNetworkGenerator2Tests, TestBoundarySpeciesValue){
@@ -134,9 +135,9 @@ TEST_F(RandomNetworkGenerator2Tests, TestBoundarySpeciesValue){
     options.setNBoundarySpecies(2);
     options.setSeed(2);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_DOUBLE_EQ(9, rr_ptr->getBoundarySpeciesByIndex(0));
-    ASSERT_DOUBLE_EQ(8, rr_ptr->getBoundarySpeciesByIndex(1));
+    auto ind_ptr = generator.generate();
+    ASSERT_DOUBLE_EQ(9, ind_ptr->getRRPtr()->getBoundarySpeciesByIndex(0));
+    ASSERT_DOUBLE_EQ(8, ind_ptr->getRRPtr()->getBoundarySpeciesByIndex(1));
 }
 
 
@@ -148,8 +149,8 @@ TEST_F(RandomNetworkGenerator2Tests, TestFloatingSpeciesValue){
 
     options.setSeed(8);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
-    auto x = rr_ptr->getFloatingSpeciesConcentrationsNamedArray().getValues();
+    auto ind_ptr = generator.generate();
+    auto x = ind_ptr->getRRPtr()->getFloatingSpeciesConcentrationsNamedArray().getValues();
     ASSERT_DOUBLE_EQ(9.2584571916380796, x[0][0]);
     ASSERT_DOUBLE_EQ(8.7608727625994405, x[0][1]);
 }
@@ -161,14 +162,27 @@ TEST_F(RandomNetworkGenerator2Tests, TestReactionStoichiometryMatrix){
     options.setNReactions(1);
     options.setSeed(4);
     NaiveRandomNetworkGenerator generator(options);
-    auto rr_ptr = generator.generate();
+    auto ind_ptr = generator.generate();
     std::ostringstream actual;
-    actual << rr_ptr->getFullStoichiometryMatrix();
+    actual << ind_ptr->getRRPtr()->getFullStoichiometryMatrix();
     std::string expected = "R0\n"
                            "1\n"
                            "-1\n";
     ASSERT_STREQ(expected.c_str(), actual.str().c_str());
 }
+
+
+TEST_F(RandomNetworkGenerator2Tests, TestGenerateMoreThan1Model){
+    RandomNetworkGeneratorOptions options(rateLaws);
+    options.setNFloatingSpecies(2);
+    options.setNBoundarySpecies(0);
+    options.setNReactions(1);
+    options.setSeed(4);
+    NaiveRandomNetworkGenerator generator(options);
+    auto ind_ptr = generator.generate(4);
+    ASSERT_EQ(4, ind_ptr[0].size());
+}
+
 
 
 

@@ -345,6 +345,10 @@ namespace evo {
         return os;
     }
 
+    Experiment Experiment::fromFile(const std::string& fname) {
+        return Experiment(fname);
+    }
+
 /************************************************************************
  * PerturbationExperiment
  */

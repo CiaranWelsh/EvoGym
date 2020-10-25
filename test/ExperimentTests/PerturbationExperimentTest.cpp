@@ -57,7 +57,7 @@ TEST_F(PerturbationExperimentTests, TestCountsMatrix) {
             .setRowNames({"A", "B", "C"})
             .setColNames({"A", "B", "C"});
 
-    // the whole counts matrix should be 3, as t
+    // the whole counts matrix should be 3
     ASSERT_TRUE(nc::all(experiment.getCounts() == 3)(0, 0));
 }
 
