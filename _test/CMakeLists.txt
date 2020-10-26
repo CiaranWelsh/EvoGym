@@ -1,9 +1,3 @@
-####################################################################
-#   Build the tests
-#
-
-# turn on tests with ctest
-enable_testing()
 
 add_subdirectory(googletest)
 
@@ -15,7 +9,7 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     add_executable(${BINARY} ${ARGN})
 
     set(LINK_LIBRARIES
-            random-network-generator-static
+            evo-gym-static
             roadrunner-static::roadrunner-static
             sbml-static
             /usr/local/lib/libmpi.dylib
@@ -26,11 +20,6 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
                 gmock gmock_main)
     endif ()
 
-    gtest_add_tests(
-            TARGET ${BINARY}
-
-    )
-
 #    gtest_discover_tests(${BINARY})
 
 
@@ -39,51 +28,33 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
     target_include_directories(
             ${BINARY} PRIVATE
-            $<TARGET_PROPERTY:random-network-generator-static,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:evo-gym-static,INCLUDE_DIRECTORIES>
             "/usr/local/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/Mockups"
             "/Users/ciaranwelsh/Documents/Evogen/test/Mockups"
             "${NUMCPP_INCLUDE_DIR}"
             "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
-    add_dependencies(${BINARY} random-network-generator-static roadrunner-static::roadrunner-static)
+    add_dependencies(${BINARY} evo-gym-static roadrunner-static::roadrunner-static)
     set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
 endmacro()
 
 set(MOCKUP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
-
 add_subdirectory(${MOCKUP_DIR})
 
 add_subdirectory(RandomNetworkGenerationTest)
 
-add_custom_target(run-ctest
-        COMMAND ${CMAKE_CTEST_COMMAND} --verbose --extra-verbose --progress ${CMAKE_BINARY_DIR}
-        )
+add_subdirectory(SOQuestions)
+
+add_subdirectory(ExperimentTests)
 
 
+add_test_executable(quick_test OFF quick_test.cpp)
 
-add_subdirectory(RoadRunnerQuestion)
+add_test_executable(StringTest ON EvoStringTests.cpp)
 
-
-
-
-
-
-
-
-
-
-#add_subdirectory(SOQuestions)
-#
-#add_subdirectory(ExperimentTests)
-
-
-#add_test_executable(quick_test OFF quick_test.cpp)
-#
-#add_test_executable(StringTest ON EvoStringTests.cpp)
-#
-#add_test_executable(MockingExampe ON MockingExample.cpp)
-#add_test_executable(NCRandomSeed ON NCRandomSeed.cpp)
+add_test_executable(MockingExampe ON MockingExample.cpp)
+add_test_executable(NCRandomSeed ON NCRandomSeed.cpp)
 
 
 
@@ -97,6 +68,6 @@ add_subdirectory(RoadRunnerQuestion)
 #
 
 
-#add_subdirectory(LearningPybind)
-#
-#add_subdirectory(ComparingPythonAndCSpeed)
+add_subdirectory(LearningPybind)
+
+add_subdirectory(ComparingPythonAndCSpeed)

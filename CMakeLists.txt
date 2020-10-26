@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15..3.18)
+cmake_minimum_required(VERSION 3.15)
 project(Evogen)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -113,8 +113,9 @@ add_subdirectory(third_party)
 #############################################################################
 # Add sources and tests to the project
 #
-set(EVOGYM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
-set(EVOGYM_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(RANDOM_NETWORK_GENERATOR_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/RandomNetworkGenerator")
+set(EVOGEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
 add_subdirectory(src)
 
 

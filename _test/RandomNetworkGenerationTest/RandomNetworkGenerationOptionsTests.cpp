@@ -1,5 +1,5 @@
 
-#include "RandomNetworkGeneratorOptions.h"
+#include "evo/RandomNetworkGeneratorOptions.h"
 #include "gtest/gtest.h"
 
 using namespace evo;

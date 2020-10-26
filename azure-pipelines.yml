@@ -51,7 +51,7 @@ stages:
             
       - job: BuildEvogenWindows
         timeoutInMinutes: "0"
-        displayName: Linux
+        displayName: Windows
         continueOnError: "false"
         pool:
           vmImage: "windows2019"

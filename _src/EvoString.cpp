@@ -2,13 +2,13 @@
 // Created by Ciaran Welsh on 25/09/2020.
 //
 
-#include "EvoString.h"
+#include "include/evo/EvoString.h"
 
 #include <iostream>
 #include <algorithm>
 
 #include <utility>
-#include "evo_error.h"
+#include "evo/evo_error.h"
 
 namespace evo {
     EvoString::EvoString(std::string  string)
