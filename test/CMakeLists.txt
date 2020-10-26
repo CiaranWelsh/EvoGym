@@ -9,7 +9,7 @@ add_subdirectory(googletest)
 
 include(GoogleTest)
 
-set(TEST_EXECUTABLES)
+set(TEST_EXECUTABLES "")
 
 macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
     add_executable(${BINARY} ${ARGN})
@@ -28,11 +28,7 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
 
     gtest_add_tests(
             TARGET ${BINARY}
-
     )
-
-#    gtest_discover_tests(${BINARY})
-
 
     target_link_libraries(${BINARY} PRIVATE ${LINK_LIBRARIES})
 
@@ -47,7 +43,7 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
             "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
     add_dependencies(${BINARY} random-network-generator-static roadrunner-static::roadrunner-static)
-    set(TEST_EXECUTABLES ${TEST_EXECUTABLES} ${BINARY})
+    list(APPEND TEST_EXECUTABLES ${BINARY})
 endmacro()
 
 set(MOCKUP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
@@ -59,7 +55,6 @@ add_subdirectory(RandomNetworkGenerationTest)
 add_custom_target(run-ctest
         COMMAND ${CMAKE_CTEST_COMMAND} --verbose --extra-verbose --progress ${CMAKE_BINARY_DIR}
         )
-
 
 
 add_subdirectory(RoadRunnerQuestion)

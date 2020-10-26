@@ -18,6 +18,7 @@ TEST_F(EvoRateLawTests, TestUnpackRateLawRecursion1) {
     RoleMap roles = {
             {"k",  EVO_PARAMETER},
             {"S1", EVO_SUBSTRATE},
+            {"S2", EVO_PRODUCT},
     };
     evoRateLaw rateLaw("uni-uni", "k*S1", roles);
     const std::set<std::string>& actual = rateLaw.getRateLawElements();
@@ -31,6 +32,7 @@ TEST_F(EvoRateLawTests, TestUnpackRateLawRecursion2) {
             {"k",  EVO_PARAMETER},
             {"S1", EVO_SUBSTRATE},
             {"S2", EVO_SUBSTRATE},
+            {"S3", EVO_PRODUCT},
     };
     evoRateLaw rateLaw("bi-uni", "k*S1*S2", roles);
     const std::set<std::string> &actual = rateLaw.getRateLawElements();

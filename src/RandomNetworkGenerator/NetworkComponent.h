@@ -27,6 +27,12 @@ namespace evo {
         explicit NetworkComponent(int n);
 
         /**
+         * @brief make NetworkComponent polymorphic with a virtual
+         * destructor
+         */
+        virtual ~NetworkComponent() = default;;
+
+        /**
          * @brief The size of a NetworkComponent is the number in the ids vector
          * @details it is assumed that the number of elements in ids is equal
          * to the number of elements in other vectors owned by NetworkComponent and subtypes,
@@ -53,15 +59,38 @@ namespace evo {
             return end;
         }
 
+        /**
+         * @brief return true when element
+         */
+        template<class T>
+        static bool elementInVector(T element, std::vector<T> vec) {
+            return std::find(vec.begin(), vec.end(), element) != vec.end();
+        }
+
+        /**
+         * @brief return index of element in vector or -1 if not found
+         */
+        template<class T>
+        static bool indexOfElementInVector(T element, std::vector<T> vec) {
+            auto it = std::find(vec.begin(), vec.end(), element);
+
+            if (it == vec.end()){
+                return -1;
+            } else{
+                return distance(vec.begin(), it);
+            }
+        }
+
         bool operator==(const NetworkComponent &rhs) const;
 
         bool operator!=(const NetworkComponent &rhs) const;
+
     };
 
-/**
- * @brief Data container for holding information about which compartments and their
- * sizes will be in a model
- */
+    /**
+     * @brief Data container for holding information about which compartments and their
+     * sizes will be in a model
+     */
     struct Compartments : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         DoubleVector values;
@@ -69,11 +98,14 @@ namespace evo {
         bool operator==(const Compartments &rhs) const;
 
         bool operator!=(const Compartments &rhs) const;
+
+        bool contains(const std::string &compartment);
+
     };
 
-/**
- * @brief Container to hold information about which BoundarySpecies a model will contain
- */
+    /**
+     * @brief Container to hold information about which BoundarySpecies a model will contain
+     */
     struct BoundarySpecies : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         IntVector compartment_index;
@@ -82,11 +114,14 @@ namespace evo {
         bool operator==(const BoundarySpecies &rhs) const;
 
         bool operator!=(const BoundarySpecies &rhs) const;
+
+        bool contains(const std::string &id, const int index);
+
     };
 
-/**
- * @brief Container to hold information about which FloatingSpecies a model will contain
- */
+    /**
+     * @brief Container to hold information about which FloatingSpecies a model will contain
+     */
     struct FloatingSpecies : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         IntVector compartment_index;
@@ -95,13 +130,18 @@ namespace evo {
         bool operator==(const FloatingSpecies &rhs) const;
 
         bool operator!=(const FloatingSpecies &rhs) const;
+
+        bool contains(const std::string &id, const int index);
+
     };
 
-/**
- * @brief Container to hold reaction information
- */
+    /**
+     * @brief Container to hold reaction information
+     */
     struct Reactions : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
+
+
         std::vector<evoRateLaw> rate_laws;
         // a vector of int vectors for substrate indexes
         std::vector<IntVector> substrates;
@@ -114,10 +154,24 @@ namespace evo {
 
     public:
         /**
-         * @brief instantiate Reactions object with predefined number
-         * of reactions
+         * @brief Alternative constructor for Reactions
+         * That enables preallocation of @param num Reactions.
          */
         explicit Reactions(int num);
+
+        /**
+         * @brief returns true if this Reactions object has
+         * a reaction hat has:
+         *  - the vector @param s for substrates
+         *  - the vector @param p for products
+         *  - the vector @param m for modifiers
+         * @details s, p and m are all integer vectors that are
+         * indexes of the corresponding species (boundary + floating).
+         */
+        bool contains(std::vector<int> s,
+                      std::vector<int> p,
+                      std::vector<int> m,
+                      evoRateLaw rateLaw);
     };
 }
 
