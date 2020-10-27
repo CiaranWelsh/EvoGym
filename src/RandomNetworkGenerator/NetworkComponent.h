@@ -131,16 +131,51 @@ namespace evo {
 
         bool operator!=(const FloatingSpecies &rhs) const;
 
-        bool contains(const std::string &id, const int index);
+        bool contains(const std::string &id, int index);
 
     };
+
+//    using Reaction = std::tuple<std::string, evoRateLaw, std::vector<int>, std::vector<int>, std::vector<int>>;
+
+    struct Reaction {
+        std::string name_;
+        evoRateLaw rate_law_;
+        std::vector<int> substrates_;
+        std::vector<int> products_;
+        std::vector<int> modifiers_;
+
+        Reaction(std::string name, evoRateLaw rateLaw,
+                 std::vector<int> substrates,
+                 std::vector<int> products,
+                 std::vector<int> modifiers);
+
+        [[nodiscard]] const std::string &getName() const;
+
+        void setName(const string &name);
+
+        [[nodiscard]] const evoRateLaw &getRateLaw() const;
+
+        void setRateLaw(const evoRateLaw &rateLaw);
+
+        [[nodiscard]] const std::vector<int> &getSubstrates() const;
+
+        void setSubstrates(const std::vector<int> &substrates);
+
+        [[nodiscard]] const std::vector<int> &getProducts() const;
+
+        void setProducts(const std::vector<int> &products);
+
+        [[nodiscard]] const std::vector<int> &getModifiers() const;
+
+        void setModifiers(const std::vector<int> &modifiers);
+    };
+
 
     /**
      * @brief Container to hold reaction information
      */
     struct Reactions : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
-
 
         std::vector<evoRateLaw> rate_laws;
         // a vector of int vectors for substrate indexes
@@ -159,6 +194,8 @@ namespace evo {
          */
         explicit Reactions(int num);
 
+        void addReaction(const Reaction& reaction, int index);
+
         /**
          * @brief returns true if this Reactions object has
          * a reaction hat has:
@@ -171,7 +208,15 @@ namespace evo {
         bool contains(std::vector<int> s,
                       std::vector<int> p,
                       std::vector<int> m,
-                      evoRateLaw rateLaw);
+                      const evoRateLaw& rateLaw);
+
+        /**
+         * @brief overload of contains method that takes a
+         * @param reaction Reaction tuple as input argument
+         * @details unpack the tuple and then feed into other overload.
+         *
+         */
+        bool contains(const Reaction& reaction);
     };
 }
 

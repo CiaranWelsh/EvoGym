@@ -19,7 +19,7 @@ using namespace rr;
 
 
 
-class RandomNetworkGenerator2Tests : public ::testing::Test {
+class UniqueReactionsRNGTests : public ::testing::Test {
 public:
     RateLaws rateLaws;
 
@@ -58,7 +58,7 @@ public:
                        "  </model>\n"
                        "</sbml>";
 
-    RandomNetworkGenerator2Tests() {
+    UniqueReactionsRNGTests() {
         rateLaws["uni-uni"] = evoRateLaw("uni-uni", "k*A",
                                          RoleMap({
                                                          {"k", EVO_PARAMETER},
@@ -78,112 +78,19 @@ public:
 };
 
 
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfCompartments){
-    // todo you haven't accounted for volume differences in multi compartment reactions.
+TEST_F(UniqueReactionsRNGTests, TestNumberOfCompartments){
     RNGOptions options(rateLaws);
-    options.setNCompartments(4);
-    options.setSeed(4);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumCompartments());
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfBoundarySpecies){
-    RNGOptions options(rateLaws);
-    options.setNBoundarySpecies(4);
-    options.setSeed(4);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumBoundarySpecies());
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfFloatingSpecies){
-    RNGOptions options(rateLaws);
-    options.setNFloatingSpecies(4);
-    options.setSeed(4);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(4, rr_ptr->getModel()->getNumFloatingSpecies());
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfReactions){
-    RNGOptions options(rateLaws);
-    options.setNFloatingSpecies(4);
-    options.setNReactions(5);
-    options.setSeed(4);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_EQ(5, rr_ptr->getModel()->getNumReactions());
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestCompartmentValue){
-    RNGOptions options(rateLaws);
-    options.setNCompartments(2);
-    options.setCompartmentLowerBound(1.0);
-    options.setCompartmentUpperBound(10.0);
-    options.setSeed(46);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_DOUBLE_EQ(7.59733895439041, rr_ptr->getCompartmentByIndex(0));
-    ASSERT_DOUBLE_EQ(3.2564907819767202, rr_ptr->getCompartmentByIndex(1));
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestBoundarySpeciesValue){
-    RNGOptions options(rateLaws);
-    options.setBoundarySpeciesLowerBound(1);
-    options.setBoundarySpeciesUpperBound(10);
-    options.setNBoundarySpecies(2);
-    options.setSeed(2);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    ASSERT_DOUBLE_EQ(9, rr_ptr->getBoundarySpeciesByIndex(0));
-    ASSERT_DOUBLE_EQ(8, rr_ptr->getBoundarySpeciesByIndex(1));
-}
-
-
-TEST_F(RandomNetworkGenerator2Tests, TestFloatingSpeciesValue){
-    RNGOptions options(rateLaws);
-    options.setFloatingSpeciesLowerBound(1.0);
-    options.setFloatingSpeciesUpperBound(10.0);
-    options.setNFloatingSpecies(2);
-
-    options.setSeed(8);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate();
-    auto x = rr_ptr->getFloatingSpeciesConcentrationsNamedArray().getValues();
-    ASSERT_DOUBLE_EQ(9.2584571916380796, x[0][0]);
-    ASSERT_DOUBLE_EQ(8.7608727625994405, x[0][1]);
-}
-
-TEST_F(RandomNetworkGenerator2Tests, TestReactionStoichiometryMatrix){
-    RNGOptions options(rateLaws);
-    options.setNFloatingSpecies(2);
+    options.setNCompartments(1);
     options.setNBoundarySpecies(0);
-    options.setNReactions(1);
-    options.setSeed(4);
-    NaiveRNG generator(options);
+    options.setNFloatingSpecies(3);
+    options.setNReactions(20);
+//    options.setSeed(4);
+    UniqueReactionsRNG generator(options);
     auto rr_ptr = generator.generate();
-    std::ostringstream actual;
-    actual << rr_ptr->getFullStoichiometryMatrix();
-    std::string expected = "R0\n"
-                           "1\n"
-                           "-1\n";
-    ASSERT_STREQ(expected.c_str(), actual.str().c_str());
+    std::cout << rr_ptr->getSBML() << std::endl;
+
+    std::cout << rr_ptr->getModel()->getNumReactions() << std::endl;
 }
-
-
-TEST_F(RandomNetworkGenerator2Tests, TestGenerateMoreThan1Model){
-    RNGOptions options(rateLaws);
-    options.setNFloatingSpecies(2);
-    options.setNBoundarySpecies(0);
-    options.setNReactions(1);
-    options.setSeed(4);
-    NaiveRNG generator(options);
-    auto rr_ptr = generator.generate(4);
-    ASSERT_EQ(4, rr_ptr[0].size());
-}
-
-
 
 
 

@@ -2,7 +2,7 @@ set(target random-network-generator)
 
 set(
         SOURCES
-        RandomNetworkGeneratorOptions.cpp
+        RNGOptions.cpp
         evoRateLaw.cpp
         RandomNetworkGenerator.cpp
         ../EvoString.cpp
@@ -11,7 +11,7 @@ set(
 
 set(
         HEADERS
-        RandomNetworkGeneratorOptions.h
+        RNGOptions.h
         RoleTypes.h
         evoRateLaw.h
         RandomNetworkGenerator.h

@@ -6,7 +6,7 @@
 #define EVOGYM_RANDOMNETWORKGENERATOR2_H
 
 #include "NumCpp.hpp"
-#include "RandomNetworkGeneratorOptions.h"
+#include "RNGOptions.h"
 #include "../evo_error.h"
 #include "TypeDefs.h"
 #include "NetworkComponent.h"
@@ -58,7 +58,7 @@ namespace evo {
         virtual Reactions createReactions() = 0;
 
     public:
-        std::unique_ptr<RandomNetworkGeneratorOptions> options_ = nullptr;
+        std::unique_ptr<RNGOptions> options_ = nullptr;
 
         /**
          * @brief store existing model parameter here. These
@@ -69,17 +69,17 @@ namespace evo {
         /**
          * @brief get a reference to the RandomNetworkGeneratorOptions pointer
          */
-        [[nodiscard]] const std::unique_ptr<RandomNetworkGeneratorOptions> &getOptions() const;
+        [[nodiscard]] const std::unique_ptr<RNGOptions> &getOptions() const;
 
         /**
          * @brief set the RandomNetworkGeneratorOptions pointer with a pointer
          */
-        void setOptions( std::unique_ptr<RandomNetworkGeneratorOptions> &options);
+        void setOptions( std::unique_ptr<RNGOptions> &options);
 
         /**
          * @brief set the RandomNetworkGeneratorOptions pointer
          */
-        void setOptions( const RandomNetworkGeneratorOptions& options);
+        void setOptions( const RNGOptions& options);
 
         /**
          * @brief default constructor for RandomNetworkGenerator2
@@ -94,7 +94,7 @@ namespace evo {
          * @details a unique pointer is constructed automatically from the
          * RandomNetworkGeneratorOptions passed in by user.
          */
-        explicit RandomNetworkGenerator(const RandomNetworkGeneratorOptions& options);
+        explicit RandomNetworkGenerator(const RNGOptions& options);
 
         /**
          * @brief Use this RandomNetworkGenerator to create a single RoadRunner
@@ -163,7 +163,7 @@ namespace evo {
                                     int idx);
         };
 
-    class NaiveRandomNetworkGenerator : public RandomNetworkGenerator {
+    class NaiveRNG : public RandomNetworkGenerator {
     public:
         using RandomNetworkGenerator::RandomNetworkGenerator;
 
@@ -176,11 +176,11 @@ namespace evo {
         Reactions createReactions() override;
     };
 
-    class UniqueReactionsRandomNetworkGenerator : public NaiveRandomNetworkGenerator {
+    class UniqueReactionsRNG : public NaiveRNG {
         int max_recursion_ = 100;
 
     public:
-        using NaiveRandomNetworkGenerator::NaiveRandomNetworkGenerator;
+        using NaiveRNG::NaiveRNG;
 
         /**
          * @brief Constructor for UniqueReactionsRandomNetworkGenerator that takes a
@@ -188,10 +188,12 @@ namespace evo {
          * @param max_recursion if a random reaction has been found to be already present in the model
          * this many times, the curent reactions will be returned without any further reactions.
          */
-        explicit UniqueReactionsRandomNetworkGenerator(const RandomNetworkGeneratorOptions& options, int max_recursion);
+        explicit UniqueReactionsRNG(const RNGOptions& options, int max_recursion);
 
 
         Reactions createReactions() override;
+
+        Reaction createReaction(Reactions &reactions, int reaction_number, int recursion_count);
     };
 
 //    enum EvoRandomNetworkGenerator {

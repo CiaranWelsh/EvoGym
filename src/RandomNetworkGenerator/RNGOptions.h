@@ -16,7 +16,7 @@
 
 namespace evo {
 
-    class RANDOM_NETWORK_GENERATOR_EXPORT RandomNetworkGeneratorOptions {
+    class RANDOM_NETWORK_GENERATOR_EXPORT RNGOptions {
     private:
         int nFloatingSpecies_ = 3;
         int nBoundarySpecies_ = 1;
@@ -44,9 +44,9 @@ namespace evo {
         void validate() const;
 
     public:
-        RandomNetworkGeneratorOptions() = default;
+        RNGOptions() = default;
 
-        explicit RandomNetworkGeneratorOptions(RateLaws rateLaws);
+        explicit RNGOptions(RateLaws rateLaws);
 
 //        explicit RandomNetworkGeneratorOptions(Motifs motifs);
 //
@@ -54,19 +54,19 @@ namespace evo {
 
         [[nodiscard]] const std::string &getCoreSbml() const;
 
-        RandomNetworkGeneratorOptions &setCoreSbml(const std::string &coreSbml);
+        RNGOptions &setCoreSbml(const std::string &coreSbml);
 
         [[nodiscard]] unsigned long long int getSeed() const;
 
-        RandomNetworkGeneratorOptions &setSeed(unsigned long long int seed);
+        RNGOptions &setSeed(unsigned long long int seed);
 
         [[nodiscard]] int getBoundarySpeciesLowerBound() const;
 
-        RandomNetworkGeneratorOptions &setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound);
+        RNGOptions &setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound);
 
         [[nodiscard]] int getBoundarySpeciesUpperBound() const;
 
-        RandomNetworkGeneratorOptions &setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
+        RNGOptions &setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
 
 //        [[nodiscard]] const Motifs &getMotifs() const;
 //
@@ -74,51 +74,51 @@ namespace evo {
 
         [[nodiscard]] int getNMotifs() const;
 
-        RandomNetworkGeneratorOptions &setNMotifs(int nMotifs);
+        RNGOptions &setNMotifs(int nMotifs);
 
         [[nodiscard]] int getNFloatingSpecies() const;
 
-        RandomNetworkGeneratorOptions &setNFloatingSpecies(int nFloatingSpecies);
+        RNGOptions &setNFloatingSpecies(int nFloatingSpecies);
 
         [[nodiscard]] int getNBoundarySpecies() const;
 
-        RandomNetworkGeneratorOptions &setNBoundarySpecies(int nBoundarySpecies);
+        RNGOptions &setNBoundarySpecies(int nBoundarySpecies);
 
         [[nodiscard]] int getNReactions() const;
 
-        RandomNetworkGeneratorOptions &setNReactions(int nReactions);
+        RNGOptions &setNReactions(int nReactions);
 
         [[nodiscard]] int getNCompartments() const;
 
-        RandomNetworkGeneratorOptions &setNCompartments(int nCompartments);
+        RNGOptions &setNCompartments(int nCompartments);
 
         [[nodiscard]] double getSpeciesLowerBound() const;
 
-        RandomNetworkGeneratorOptions &setFloatingSpeciesLowerBound(double speciesLowerBound);
+        RNGOptions &setFloatingSpeciesLowerBound(double speciesLowerBound);
 
         [[nodiscard]] double getSpeciesUpperBound() const;
 
-        RandomNetworkGeneratorOptions &setFloatingSpeciesUpperBound(double speciesUpperBound);
+        RNGOptions &setFloatingSpeciesUpperBound(double speciesUpperBound);
 
         [[nodiscard]] double getParameterLowerBound() const;
 
-        RandomNetworkGeneratorOptions &setParameterLowerBound(double parameterLowerBound);
+        RNGOptions &setParameterLowerBound(double parameterLowerBound);
 
         [[nodiscard]] double getParameterUpperBound() const;
 
-        RandomNetworkGeneratorOptions &setParameterUpperBound(double parameterUpperBound);
+        RNGOptions &setParameterUpperBound(double parameterUpperBound);
 
         [[nodiscard]] double getCompartmentLowerBound() const;
 
-        RandomNetworkGeneratorOptions &setCompartmentLowerBound(double compartmentLowerBound);
+        RNGOptions &setCompartmentLowerBound(double compartmentLowerBound);
 
         [[nodiscard]] double getCompartmentUpperBound() const;
 
-        RandomNetworkGeneratorOptions &setCompartmentUpperBound(double compartmentUpperBound);
+        RNGOptions &setCompartmentUpperBound(double compartmentUpperBound);
 
         [[nodiscard]] const RateLaws &getRateLaws() const;
 
-        RandomNetworkGeneratorOptions &setRateLaws(const RateLaws &rateLaws);
+        RNGOptions &setRateLaws(const RateLaws &rateLaws);
         [[nodiscard]] const std::string &getCoreSBML() const;
         void setCoreSBML(const std::string &coreSbml);
     };

@@ -5,7 +5,7 @@ Implementation
 --------------
 
 The current implementation of RandomNetworkGenerator requires a single argument,
-and thats an instance of a RandomNetworkGeneratorOptions object, which holds
+and thats an instance of a RNGOptions object, which holds
 all the options. These options include
 
     * nCompartments: The number of compartments. Initialized from contineous uniform distribution

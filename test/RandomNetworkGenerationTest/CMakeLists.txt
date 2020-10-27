@@ -7,6 +7,8 @@ add_test_executable(NetworkGenerationOptionsTests TRUE RandomNetworkGenerationOp
 
 add_test_executable(NetworkGenerationTests TRUE RandomNetworkGeneratorTests.cpp)
 
+add_test_executable(UniqueReactionsRandomNetworkGeneratorTests TRUE UniqueReactionsRandomNetworkGeneratorTests.cpp)
+
 add_test_executable(NetworkComponentTests TRUE NetworkComponentTests.cpp)
 
 #add_test_executable(StoichiometryCounterTests TRUE StoicCounterTests.cpp)

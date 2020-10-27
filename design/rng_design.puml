@@ -104,16 +104,16 @@ note right of RandomNetworkGenerator {
         5) put the network together (generate)
     }
 
-class NaiveRandomNetworkGenerator {
+class NaiveRNG {
     createCompartments()
     createFloatingSpecies()
     createBoundarySpecies()
     createReactions()
 }
 
-RandomNetworkGenerator <|-- NaiveRandomNetworkGenerator
+RandomNetworkGenerator <|-- NaiveRNG
 
-note left of NaiveRandomNetworkGenerator {
+note left of NaiveRNG {
     This is how we want users to use the class.
 
     //this is a comment
@@ -128,26 +128,26 @@ note left of NaiveRandomNetworkGenerator {
             roles = dict(k="parameter", A="substrate", B="product", C="product")
     )
 
-    options = RandomNetworkGeneratorOptions(rate_law_dict)
+    options = RNGOptions(rate_law_dict)
     options.setNReactions(3)
 
     // set other things
 
-    rng = NaiveRandomNetworkGenerator(options)
+    rng = NaiveRNG(options)
     rr_model = rng.generate()
     many_models = rng.generate(10) #list of models
 }
 
-Compartment <-- NaiveRandomNetworkGenerator : Create and\n read from
+Compartment <-- NaiveRNG : Create and\n read from
 
 
-BoundarySpecies <-- NaiveRandomNetworkGenerator : Create and\n read from
+BoundarySpecies <-- NaiveRNG : Create and\n read from
 
 
-FloatingSpecies <-- NaiveRandomNetworkGenerator : Create and\n read from
+FloatingSpecies <-- NaiveRNG : Create and\n read from
 
 
-Reactions <-- NaiveRandomNetworkGenerator : Create and\n read from
+Reactions <-- NaiveRNG : Create and\n read from
 
 
 'abstract class AbstractList

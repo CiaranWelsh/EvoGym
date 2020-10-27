@@ -7,7 +7,7 @@
 #include <pybind11/stl.h>
 
 #include "RandomNetworkGenerator.h"
-#include "RandomNetworkGeneratorOptions.h"
+#include "RNGOptions.h"
 #include "evoRateLaw.h"
 #include "RoleTypes.h"
 #include "StoicCounter.h"

@@ -15,12 +15,12 @@ namespace evo {
  * Constructors
  */
 
-    RandomNetworkGenerator::RandomNetworkGenerator(const RandomNetworkGeneratorOptions &options)
-            : options_(std::make_unique<RandomNetworkGeneratorOptions>(options)) {
+    RandomNetworkGenerator::RandomNetworkGenerator(const RNGOptions &options)
+            : options_(std::make_unique<RNGOptions>(options)) {
         nc::random::seed(options.getSeed());
     }
 
-    const std::unique_ptr<RandomNetworkGeneratorOptions> &RandomNetworkGenerator::getOptions() const {
+    const std::unique_ptr<RNGOptions> &RandomNetworkGenerator::getOptions() const {
         return options_;
     }
 
@@ -28,12 +28,12 @@ namespace evo {
  * Getters and setters
  */
 
-    void RandomNetworkGenerator::setOptions(std::unique_ptr<RandomNetworkGeneratorOptions> &options) {
+    void RandomNetworkGenerator::setOptions(std::unique_ptr<RNGOptions> &options) {
         options_ = std::move(options);
     }
 
-    void RandomNetworkGenerator::setOptions(const RandomNetworkGeneratorOptions &options) {
-        options_ = std::make_unique<RandomNetworkGeneratorOptions>(options);
+    void RandomNetworkGenerator::setOptions(const RNGOptions &options) {
+        options_ = std::make_unique<RNGOptions>(options);
     }
 
 /************************************************************************
@@ -165,9 +165,6 @@ namespace evo {
         }
         rr_ptr->regenerate();
         return rr_ptr;
-//        Individual individual(std::move(rr_ptr));
-//
-//        return std::make_unique<Individual>(std::move(individual));
     }
 
     NestedRoadRunnerPtrVector RandomNetworkGenerator::generate(int N) {
@@ -203,7 +200,8 @@ namespace evo {
                     nstart = rank * num_per_proc + r;
                     nend = nstart + (num_per_proc - 1);
                 }
-                for (int i = nstart; i < nend + 1; i++) { // nend + 1 so that we have open intervals (0, 3) for instance is 4 items
+                for (int i = nstart;
+                     i < nend + 1; i++) { // nend + 1 so that we have open intervals (0, 3) for instance is 4 items
                     std::unique_ptr<RoadRunner> individual = generate();
                     // we set the rank of the individual and move it back
 //                    individual->setRank(rank); //
@@ -321,10 +319,10 @@ namespace evo {
 
 
     /************************************************************************
-     * NaiveRandomNetworkGenerator2
+     * NaiveRandomNetworkGenerator
      */
 
-    Compartments NaiveRandomNetworkGenerator::createCompartments() {
+    Compartments NaiveRNG::createCompartments() {
         Compartments compartments;
         std::ostringstream id;
         for (int i = 0; i < options_->getNCompartments(); i++) {
@@ -341,7 +339,7 @@ namespace evo {
         return compartments;
     }
 
-    FloatingSpecies NaiveRandomNetworkGenerator::createFloatingSpecies() {
+    FloatingSpecies NaiveRNG::createFloatingSpecies() {
         FloatingSpecies floatingSpecies;
         std::ostringstream id;
         for (int i = 0; i < options_->getNFloatingSpecies(); i++) {
@@ -369,7 +367,7 @@ namespace evo {
         return floatingSpecies;
     }
 
-    BoundarySpecies NaiveRandomNetworkGenerator::createBoundarySpecies() {
+    BoundarySpecies NaiveRNG::createBoundarySpecies() {
         BoundarySpecies boundarySpecies;
         std::ostringstream id;
         for (int i = 0; i < options_->getNBoundarySpecies(); i++) {
@@ -396,7 +394,7 @@ namespace evo {
         return boundarySpecies;
     }
 
-    Reactions NaiveRandomNetworkGenerator::createReactions() {
+    Reactions NaiveRNG::createReactions() {
         Reactions reactions(options_->getNReactions());
 
         std::ostringstream reaction_name;
@@ -431,6 +429,11 @@ namespace evo {
             std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
             assert(species_indices.size() == num_random_species); // this will always be true
 
+            // need to shuffle
+            NdArray<int> sp = species_indices;
+            nc::random::shuffle(sp);
+            species_indices = sp.toStlVector();
+
             // dish out the species indices to reaction substrates, products or modifiers.
             for (int s = 0; s < rateLaw.numSubstrates(); s++) {
                 const int &species_idx = species_indices[species_indices.size() - 1];
@@ -456,107 +459,133 @@ namespace evo {
  * UniqueReactionsRandomNetworkGenerator
  */
 
-    UniqueReactionsRandomNetworkGenerator::UniqueReactionsRandomNetworkGenerator(
-            const RandomNetworkGeneratorOptions &options, int max_recursion)
-            : NaiveRandomNetworkGenerator(options), max_recursion_(max_recursion) {}
+    UniqueReactionsRNG::UniqueReactionsRNG(
+            const RNGOptions &options, int max_recursion)
+            : NaiveRNG(options), max_recursion_(max_recursion) {}
 
-    Reactions UniqueReactionsRandomNetworkGenerator::createReactions() {
-        NOT_IMPLEMENTED_ERROR << "This class does not yet work";
+
+    Reaction UniqueReactionsRNG::createReaction(Reactions &reactions, int reaction_number, int recursion_count) {
+        if (recursion_count > max_recursion_) {
+            RUNTIME_ERROR << "Maximum recursion exceeded whilst generating a network with unique reactions. It may be "
+                             "that there are no unique reactions left";
+        }
+        // generate reaction name;
+        std::ostringstream reaction_name;
+        reaction_name << "R" << reaction_number;
+
+
+        // select a random rate law
+        evoRateLaw rateLaw = getRandomRateLaw();
+
+        const RoleMap &roles = rateLaw.getRoles();// from user input
+
+        // work out how many randomly selected species we need
+        int num_random_species =
+                rateLaw.numSubstrates() + rateLaw.numProducts() + rateLaw.numModifiers();
+        int total_num_species_possible = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
+
+        // check that it makes sense to randomly generate num_random_species species
+        if (num_random_species > total_num_species_possible) {
+            const std::string &name = rateLaw.getName();
+            LOGIC_ERROR << "Rate law \"" << name << "\" requires " << num_random_species
+                        << " species "
+                        << "but your configurations only allow for " << total_num_species_possible
+                        << ". Please change your configuration options either by allowing more Floating or Boundary species or "
+                           "using different rate laws.";
+        }
+
+        // randomly sample without replacement
+        std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
+        assert(species_indices.size() == num_random_species); // this will always be true
+
+        // need to shuffle
+        NdArray<int> sp = species_indices;
+        nc::random::shuffle(sp);
+        species_indices = sp.toStlVector();
+
+        std::cout << "random species: ";
+        for(auto &i: species_indices){
+            std::cout << i << ", ";
+        }
+        std::cout << std::endl;
+
+        std::vector<int> substrates;
+        std::vector<int> products;
+        std::vector<int> modifiers;
+
+        // dish out the species indices to reaction substrates, products or modifiers.
+        for (int s = 0; s < rateLaw.numSubstrates(); s++) {
+            const int &species_idx = species_indices[species_indices.size() - 1];
+            substrates.push_back(species_idx);
+            species_indices.resize(species_indices.size() - 1);
+        }
+        for (int s = 0; s < rateLaw.numProducts(); s++) {
+            const int &species_idx = species_indices[species_indices.size() - 1];
+            products.push_back(species_idx);
+            species_indices.resize(species_indices.size() - 1);
+        }
+        for (int s = 0; s < rateLaw.numModifiers(); s++) {
+            const int &species_idx = species_indices[species_indices.size() - 1];
+            modifiers.push_back(species_idx);
+            species_indices.resize(species_indices.size() - 1);
+        }
+        assert(species_indices.empty());
+        Reaction reaction(reaction_name.str(), rateLaw, substrates, products, modifiers);
+        if (reactions.contains(reaction)) {
+            recursion_count += 1;
+            std::cout << "Candidate reaction already in Reactions. recurnion number:" << recursion_count << std::endl;
+            std::cout << "rateLaw: " << rateLaw.getName() << ", " << rateLaw.getRateLawString() << std::endl;
+            std::cout << "substrates: ";
+            for (auto &i: substrates) {
+                std::cout << i << ", ";
+            }
+            std::cout << std::endl;;
+            std::cout << "products: ";
+            for (auto &i: products) {
+                std::cout << i << ", ";
+            }
+            std::cout << std::endl;;
+            std::cout << "modifiers: ";
+            for (auto &i: modifiers) {
+                std::cout << i << ", ";
+            }
+            std::cout << std::endl;
+            std::cout << "retrying... " << std::endl << std::endl;
+            return createReaction(reactions, reaction_number, recursion_count);
+        } else {
+            return reaction;
+        }
+    }
+
+    Reactions UniqueReactionsRNG::createReactions() {
         Reactions reactions(options_->getNReactions());
 
-        std::ostringstream reaction_name;
-        int reaction_number = 0;
-        int recursion_count = 0;
+        for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
+            std::cout << "creating reaction  " << reaction_number << std::endl;
+            int recursion_counter = 0;
+            Reaction reaction = createReaction(reactions, reaction_number, recursion_counter);
 
-        while (reactions.size() != options_->getNReactions()) {
-            // generate reaction name;
-            reaction_name << "R" << reaction_number;
-
-            // select a random rate law
-            evoRateLaw rateLaw = getRandomRateLaw();
-
-            const RoleMap &roles = rateLaw.getRoles();// from user input
-
-            // work out how many randomly selected species we need
-            int num_random_species =
-                    rateLaw.numSubstrates() + rateLaw.numProducts() + rateLaw.numModifiers();
-            int total_num_species_possible = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
-
-            // check that it makes sense to randomly generate num_random_species species
-            if (num_random_species > total_num_species_possible) {
-                const std::string &name = rateLaw.getName();
-                LOGIC_ERROR << "Rate law \"" << name << "\" requires " << num_random_species
-                            << " species "
-                            << "but your configurations only allow for " << total_num_species_possible
-                            << ". Please change your configuration options either by allowing more Floating or Boundary species or "
-                               "using different rate laws.";
+//            std::cout << "name: " << name << std::endl;
+//            std::cout << "rateLaw: " << rateLaw.getName() << ", " << rateLaw.getRateLawString() << std::endl;
+//            std::cout << "substrates: ";
+            for (auto &i: reaction.substrates_) {
+                std::cout << i << ", ";
             }
 
-            // randomly sample without replacement
-            std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
-            assert(species_indices.size() == num_random_species); // this will always be true
-
-            std::vector<int> substrates;
-            std::vector<int> products;
-            std::vector<int> modifiers;
-
-            // dish out the species indices to reaction substrates, products or modifiers.
-            for (int s = 0; s < rateLaw.numSubstrates(); s++) {
-                const int &species_idx = species_indices[species_indices.size() - 1];
-                substrates.push_back(species_idx);
-                species_indices.resize(species_indices.size() - 1);
+            std::cout << std::endl;;
+            std::cout << "products: ";
+            for (auto &i: reaction.products_) {
+                std::cout << i << ", ";
             }
-            for (int s = 0; s < rateLaw.numProducts(); s++) {
-                const int &species_idx = species_indices[species_indices.size() - 1];
-                products.push_back(species_idx);
-                species_indices.resize(species_indices.size() - 1);
+
+            std::cout << std::endl;;
+            std::cout << "modifiers: ";
+            for (auto &i: reaction.modifiers_) {
+                std::cout << i << ", ";
             }
-            for (int s = 0; s < rateLaw.numModifiers(); s++) {
-                const int &species_idx = species_indices[species_indices.size() - 1];
-                modifiers.push_back(species_idx);
-                species_indices.resize(species_indices.size() - 1);
-            }
-            assert(species_indices.empty());
 
-            //todo put a max fail break in that breaks the recursion
-
-            // first sort so we are guarenteed to have same ordering each time we do comparison
-            std::sort(substrates.begin(), substrates.end());
-            std::sort(products.begin(), products.end());
-            std::sort(modifiers.begin(), modifiers.end());
-
-            bool substrates_in_reaction = false;
-            bool products_in_reaction = false;
-            bool modifiers_in_reaction = false;
-            if (std::find(reactions.substrates.begin(), reactions.substrates.end(), substrates) !=
-                reactions.substrates.end())
-                substrates_in_reaction = true;
-
-            if (std::find(reactions.products.begin(), reactions.products.end(), products) != reactions.products.end())
-                products_in_reaction = true;
-
-            if (std::find(reactions.modifiers.begin(), reactions.modifiers.end(), modifiers) !=
-                reactions.modifiers.end())
-                modifiers_in_reaction = true;
-
-            if (substrates_in_reaction && products_in_reaction && modifiers_in_reaction) {
-                // otherwise a like reaction is already defined
-                reaction_number--; // subtract 1 from reaction number to keep reaction count linear.
-                recursion_count++;
-                if (recursion_count == max_recursion_) {
-                    LOG("Max recursion of " << max_recursion_ << " has been reached.");
-                    break;
-                }
-            } else {
-                // we only add to model when these three are false
-                reactions.ids[reaction_number] = reaction_name.str();
-                reaction_name.str("");// clear the stream
-                reactions.rate_laws[reaction_number] = rateLaw;
-                reactions.substrates[reaction_number] = substrates;
-                reactions.products[reaction_number] = products;
-                reactions.modifiers[reaction_number] = modifiers;
-                recursion_count = 0; // reset the recursion count since we successfully added a reaction.
-            }
+            std::cout << std::endl << std::endl;
+            reactions.addReaction(reaction, reaction_number);
         }
         return reactions;
     }

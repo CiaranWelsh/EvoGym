@@ -3,7 +3,7 @@
 //
 
 #include "RandomNetworkGenerator.h"
-#include "RandomNetworkGeneratorOptions.h"
+#include "RNGOptions.h"
 #include "evoRateLaw.h"
 #include "RoleTypes.h"
 #include "StoicCounter.h"
@@ -81,7 +81,7 @@ RateLaws *massActionRateLaws();
  */
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_new(
+RNGOptions *RandomNetworkGeneratorOptions_new(
         evoRateLaw *);
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
@@ -89,149 +89,149 @@ void RandomNetworkGeneratorOptions_delete();
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 char *RandomNetworkGeneratorOptions_getCoreSbml(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_setCoreSbml(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, const char *core_sbml
+        RNGOptions *random_network_generator_options_ptr, const char *core_sbml
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 unsigned long long RandomNetworkGeneratorOptions_getSeed(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setSeed(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, unsigned long long seed
+RNGOptions *RandomNetworkGeneratorOptions_setSeed(
+        RNGOptions *random_network_generator_options_ptr, unsigned long long seed
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getBoundarySpeciesLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setBoundarySpeciesLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int lower_bound
+RNGOptions *RandomNetworkGeneratorOptions_setBoundarySpeciesLowerBound(
+        RNGOptions *random_network_generator_options_ptr, int lower_bound
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getBoundarySpeciesUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int upper_bound
+        RNGOptions *random_network_generator_options_ptr, int upper_bound
 );
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setBoundarySpeciesUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int upper_bound
+RNGOptions *RandomNetworkGeneratorOptions_setBoundarySpeciesUpperBound(
+        RNGOptions *random_network_generator_options_ptr, int upper_bound
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getNFloatingSpecies(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setNFloatingSpecies(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int n
+RNGOptions *RandomNetworkGeneratorOptions_setNFloatingSpecies(
+        RNGOptions *random_network_generator_options_ptr, int n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getNBoundarySpecies(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setNBoundarySpecies(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int n
+RNGOptions *RandomNetworkGeneratorOptions_setNBoundarySpecies(
+        RNGOptions *random_network_generator_options_ptr, int n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getNReactions(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setNReactions(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int n
+RNGOptions *RandomNetworkGeneratorOptions_setNReactions(
+        RNGOptions *random_network_generator_options_ptr, int n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getNCompartments(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setNCompartments(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, int n
+RNGOptions *RandomNetworkGeneratorOptions_setNCompartments(
+        RNGOptions *random_network_generator_options_ptr, int n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getSpeciesLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setFloatingSpeciesLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setFloatingSpeciesLowerBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getSpeciesUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setFloatingSpeciesUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setFloatingSpeciesUpperBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getParameterLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setParameterLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setParameterLowerBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getParameterUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setParameterUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setParameterUpperBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getCompartmentLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setCompartmentLowerBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setCompartmentLowerBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 int RandomNetworkGeneratorOptions_getCompartmentUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr);
+        RNGOptions *random_network_generator_options_ptr);
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setCompartmentUpperBound(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, double n
+RNGOptions *RandomNetworkGeneratorOptions_setCompartmentUpperBound(
+        RNGOptions *random_network_generator_options_ptr, double n
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
 RateLaws *RandomNetworkGeneratorOptions_getRateLaws(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr
+        RNGOptions *random_network_generator_options_ptr
 );
 
 RANDOM_NETWORK_GENERATOR_C_API_EXPORT
-RandomNetworkGeneratorOptions *RandomNetworkGeneratorOptions_setRateLaws(
-        RandomNetworkGeneratorOptions *random_network_generator_options_ptr, RateLaws *rate_laws
+RNGOptions *RandomNetworkGeneratorOptions_setRateLaws(
+        RNGOptions *random_network_generator_options_ptr, RateLaws *rate_laws
 );
 
 #ifdef __cplusplus
