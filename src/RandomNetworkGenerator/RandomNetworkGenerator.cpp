@@ -78,15 +78,15 @@ namespace evo {
                     false
             );
         }
-
         // create reactions
         Reactions reactions = createReactions();
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
-            const evoRateLaw &rateLaw = reactions.rate_laws[reaction_number];
+            const std::string& id = reactions[reaction_number].getName();
+            const evoRateLaw &rateLaw = reactions[reaction_number].rate_law_;
             std::string rate_law_string = rateLaw.getRateLawString(); // need copy not reference as we modify this string
-            const IntVector &substrate_idx_vector = reactions.substrates[reaction_number];
-            const IntVector &product_idx_vector = reactions.products[reaction_number];
-            const IntVector &modifier_idx_vector = reactions.modifiers[reaction_number];
+            const IntVector &substrate_idx_vector = reactions[reaction_number].substrates_;
+            const IntVector &product_idx_vector = reactions[reaction_number].products_;
+            const IntVector &modifier_idx_vector = reactions[reaction_number].modifiers_;
 
             // setup some integers to count the current index of substrate, product etc
             int substrate_count = 0;
@@ -99,7 +99,6 @@ namespace evo {
             // remember that modifers are infered from rate law internally inside roadrunner
 
             const RoleMap &roles = rateLaw.getRoles();
-
             for (const auto &role_pair: roles) {
                 const std::string &rate_law_component = role_pair.first;
                 const RoleType &role = role_pair.second;
@@ -159,7 +158,7 @@ namespace evo {
                 }
             }
             rr_ptr->addReaction(
-                    reactions.ids[reaction_number], substrate_string_vector, product_string_vector, rate_law_string,
+                    reactions[reaction_number].name_, substrate_string_vector, product_string_vector, rate_law_string,
                     false
             );
         }
@@ -396,17 +395,16 @@ namespace evo {
 
     Reactions NaiveRNG::createReactions() {
         Reactions reactions(options_->getNReactions());
-
-        std::ostringstream reaction_name;
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
             // generate reaction name;
+            std::ostringstream reaction_name;
             reaction_name << "R" << reaction_number;
-            reactions.ids[reaction_number] = reaction_name.str();
-            reaction_name.str("");// clear the stream
+            reactions[reaction_number].name_ = reaction_name.str();
 
+//            reaction_name.str("");// clear the stream
             // select a random rate law
             evoRateLaw rateLaw = getRandomRateLaw();
-            reactions.rate_laws[reaction_number] = rateLaw;
+            reactions[reaction_number].rate_law_ = rateLaw;
 
             const RoleMap &roles = rateLaw.getRoles();// from user input
 
@@ -414,7 +412,6 @@ namespace evo {
             int num_random_species =
                     rateLaw.numSubstrates() + rateLaw.numProducts() + rateLaw.numModifiers();
             int total_num_species_possible = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
-
             // check that it makes sense to randomly generate num_random_species species
             if (num_random_species > total_num_species_possible) {
                 const std::string &name = rateLaw.getName();
@@ -437,17 +434,17 @@ namespace evo {
             // dish out the species indices to reaction substrates, products or modifiers.
             for (int s = 0; s < rateLaw.numSubstrates(); s++) {
                 const int &species_idx = species_indices[species_indices.size() - 1];
-                reactions.substrates[reaction_number].push_back(species_idx);
+                reactions[reaction_number].substrates_.push_back(species_idx);
                 species_indices.resize(species_indices.size() - 1);
             }
             for (int s = 0; s < rateLaw.numProducts(); s++) {
                 const int &species_idx = species_indices[species_indices.size() - 1];
-                reactions.products[reaction_number].push_back(species_idx);
+                reactions[reaction_number].products_.push_back(species_idx);
                 species_indices.resize(species_indices.size() - 1);
             }
             for (int s = 0; s < rateLaw.numModifiers(); s++) {
                 const int &species_idx = species_indices[species_indices.size() - 1];
-                reactions.modifiers[reaction_number].push_back(species_idx);
+                reactions[reaction_number].modifiers_.push_back(species_idx);
                 species_indices.resize(species_indices.size() - 1);
             }
             assert(species_indices.empty());
@@ -472,7 +469,6 @@ namespace evo {
         // generate reaction name;
         std::ostringstream reaction_name;
         reaction_name << "R" << reaction_number;
-
 
         // select a random rate law
         evoRateLaw rateLaw = getRandomRateLaw();
@@ -503,12 +499,6 @@ namespace evo {
         nc::random::shuffle(sp);
         species_indices = sp.toStlVector();
 
-        std::cout << "random species: ";
-        for(auto &i: species_indices){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
         std::vector<int> substrates;
         std::vector<int> products;
         std::vector<int> modifiers;
@@ -530,27 +520,11 @@ namespace evo {
             species_indices.resize(species_indices.size() - 1);
         }
         assert(species_indices.empty());
-        Reaction reaction(reaction_name.str(), rateLaw, substrates, products, modifiers);
+        std::string id = reaction_name.str();
+        Reaction reaction(id, rateLaw, substrates, products, modifiers);
+
         if (reactions.contains(reaction)) {
             recursion_count += 1;
-            std::cout << "Candidate reaction already in Reactions. recurnion number:" << recursion_count << std::endl;
-            std::cout << "rateLaw: " << rateLaw.getName() << ", " << rateLaw.getRateLawString() << std::endl;
-            std::cout << "substrates: ";
-            for (auto &i: substrates) {
-                std::cout << i << ", ";
-            }
-            std::cout << std::endl;;
-            std::cout << "products: ";
-            for (auto &i: products) {
-                std::cout << i << ", ";
-            }
-            std::cout << std::endl;;
-            std::cout << "modifiers: ";
-            for (auto &i: modifiers) {
-                std::cout << i << ", ";
-            }
-            std::cout << std::endl;
-            std::cout << "retrying... " << std::endl << std::endl;
             return createReaction(reactions, reaction_number, recursion_count);
         } else {
             return reaction;
@@ -561,30 +535,9 @@ namespace evo {
         Reactions reactions(options_->getNReactions());
 
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
-            std::cout << "creating reaction  " << reaction_number << std::endl;
             int recursion_counter = 0;
             Reaction reaction = createReaction(reactions, reaction_number, recursion_counter);
 
-//            std::cout << "name: " << name << std::endl;
-//            std::cout << "rateLaw: " << rateLaw.getName() << ", " << rateLaw.getRateLawString() << std::endl;
-//            std::cout << "substrates: ";
-            for (auto &i: reaction.substrates_) {
-                std::cout << i << ", ";
-            }
-
-            std::cout << std::endl;;
-            std::cout << "products: ";
-            for (auto &i: reaction.products_) {
-                std::cout << i << ", ";
-            }
-
-            std::cout << std::endl;;
-            std::cout << "modifiers: ";
-            for (auto &i: reaction.modifiers_) {
-                std::cout << i << ", ";
-            }
-
-            std::cout << std::endl << std::endl;
             reactions.addReaction(reaction, reaction_number);
         }
         return reactions;

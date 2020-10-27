@@ -78,20 +78,17 @@ public:
 };
 
 
-TEST_F(UniqueReactionsRNGTests, TestNumberOfCompartments){
+TEST_F(UniqueReactionsRNGTests, TestNumberOfReactions){
     RNGOptions options(rateLaws);
     options.setNCompartments(1);
     options.setNBoundarySpecies(0);
-    options.setNFloatingSpecies(3);
+    options.setNFloatingSpecies(4);
     options.setNReactions(20);
-//    options.setSeed(4);
+    options.setSeed(4);
     UniqueReactionsRNG generator(options);
     auto rr_ptr = generator.generate();
-    std::cout << rr_ptr->getSBML() << std::endl;
-
-    std::cout << rr_ptr->getModel()->getNumReactions() << std::endl;
+    ASSERT_EQ(20,rr_ptr->getModel()->getNumReactions());
 }
-
 
 
 

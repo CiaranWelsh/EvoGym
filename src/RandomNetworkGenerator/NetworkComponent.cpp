@@ -76,23 +76,7 @@ namespace evo {
     }
 
     Reactions::Reactions(int num) {
-        substrates.resize(num);
-        products.resize(num);
-        modifiers.resize(num);
-        rate_laws.resize(num);
-        ids.resize(num);
-    }
-
-    bool Reactions::operator==(const Reactions &rhs) const {
-        return static_cast<const evo::NetworkComponent &>(*this) == static_cast<const evo::NetworkComponent &>(rhs) &&
-               rate_laws == rhs.rate_laws &&
-               substrates == rhs.substrates &&
-               products == rhs.products &&
-               modifiers == rhs.modifiers;
-    }
-
-    bool Reactions::operator!=(const Reactions &rhs) const {
-        return !(rhs == *this);
+        reactions.resize(num);
     }
 
     Reaction::Reaction(
@@ -108,84 +92,24 @@ namespace evo {
     }
 
     bool Reactions::contains(const Reaction& reaction) {
+        return std::find(reactions.begin(), reactions.end(), reaction) != reactions.end();
+    }
 
-        // we first sort s, p and m sub vectors (Not the outer vector as that would be a bug)
-        for (auto &i: substrates) {
-            std::sort(i.begin(), i.end());
-        }
+    bool Reactions::operator==(const Reactions &rhs) const {
+        return static_cast<const evo::NetworkComponent &>(*this) == static_cast<const evo::NetworkComponent &>(rhs) &&
+               reactions == rhs.reactions;
+    }
 
-        for (auto &i: products) {
-            std::sort(i.begin(), i.end());
-        }
+    bool Reactions::operator!=(const Reactions &rhs) const {
+        return !(rhs == *this);
+    }
 
-        for (auto &i: modifiers) {
-            std::sort(i.begin(), i.end());
-        }
-
-        int idx = indexOfElementInVector<std::vector<int>>(reaction.substrates_, substrates);
-        std::cout << "idx: " << idx << std::endl;
-        // when idx == -1 we know this reaction is not in this Reactions object
-        if (idx < 0)
-            return false;
-        // otherwise we now have the index of the Reaction we are looking at
-        // and we can check the other elements
-        std::cout << "Substrates[idx]: ";
-        for (auto &i: substrates[idx]){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "reaction.substrates: ";
-        for (auto &i: reaction.substrates_){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "products[idx]: ";
-        for (auto &i: products[idx]){
-            std::cout << i << ", ";
-        }
-
-        std::cout << "reaction.prodicts: ";
-        for (auto &i: reaction.products_){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "modifiers[idx]: ";
-        for (auto &i: modifiers[idx]){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
-
-        std::cout << "reaction.modifiers: ";
-        for (auto &i: reaction.modifiers_){
-            std::cout << i << ", ";
-        }
-        std::cout << std::endl;
-
-//        std::cout << "substrates[idx] == p: " << (substrates[idx] == reaction.substrates_) << std::endl;
-//        std::cout << "products[idx] == p: " <<   (products[idx] == reaction.products_) << std::endl;
-//        std::cout << "modifiers[idx] == p: " <<  (modifiers[idx] == reaction.modifiers_) << std::endl;
-//        std::cout << "rate_laws[idx] == p: " <<  (rate_laws[idx] == reaction.rate_law_) << std::endl;
-//        std::cout << "all: " << (substrates[idx] == reaction.substrates_ && products[idx] == reaction.products_
-//                                 && modifiers[idx] == reaction.modifiers_
-//                                 && rate_laws[idx] == reaction.rate_law_
-//        ) << std::endl;
-
-        return substrates[idx] == reaction.substrates_
-               && products[idx] == reaction.products_
-               && modifiers[idx] == reaction.modifiers_
-               && rate_laws[idx] == reaction.rate_law_;
+    Reaction& Reactions::operator[](int i){
+        return reactions[i];
     }
 
     void Reactions::addReaction(const Reaction& reaction, int index) {
-        ids[index] = reaction.name_;
-        rate_laws[index] = reaction.rate_law_;
-        substrates[index] = reaction.substrates_;
-        products[index] = reaction.products_;
-        modifiers[index] = reaction.modifiers_;
+        reactions[index] = reaction;
     }
 
     const string &Reaction::getName() const {
@@ -226,5 +150,16 @@ namespace evo {
 
     void Reaction::setModifiers(const std::vector<int> &modifiers) {
         Reaction::modifiers_ = modifiers;
+    }
+
+    bool Reaction::operator==(const Reaction &rhs) const {
+        return rate_law_ == rhs.rate_law_ &&
+               substrates_ == rhs.substrates_ &&
+               products_ == rhs.products_ &&
+               modifiers_ == rhs.modifiers_;
+    }
+
+    bool Reaction::operator!=(const Reaction &rhs) const {
+        return !(rhs == *this);
     }
 }

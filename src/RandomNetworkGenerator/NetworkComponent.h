@@ -144,10 +144,16 @@ namespace evo {
         std::vector<int> products_;
         std::vector<int> modifiers_;
 
+        bool operator==(const Reaction &rhs) const;
+
+        bool operator!=(const Reaction &rhs) const;
+
         Reaction(std::string name, evoRateLaw rateLaw,
                  std::vector<int> substrates,
                  std::vector<int> products,
                  std::vector<int> modifiers);
+
+        Reaction() = default;
 
         [[nodiscard]] const std::string &getName() const;
 
@@ -177,17 +183,15 @@ namespace evo {
     struct Reactions : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
 
-        std::vector<evoRateLaw> rate_laws;
-        // a vector of int vectors for substrate indexes
-        std::vector<IntVector> substrates;
-        std::vector<IntVector> products;
-        std::vector<IntVector> modifiers;
+        std::vector<Reaction> reactions;
 
+    public:
         bool operator==(const Reactions &rhs) const;
 
         bool operator!=(const Reactions &rhs) const;
 
-    public:
+        Reaction& operator[](int i);
+
         /**
          * @brief Alternative constructor for Reactions
          * That enables preallocation of @param num Reactions.
@@ -197,26 +201,20 @@ namespace evo {
         void addReaction(const Reaction& reaction, int index);
 
         /**
-         * @brief returns true if this Reactions object has
-         * a reaction hat has:
-         *  - the vector @param s for substrates
-         *  - the vector @param p for products
-         *  - the vector @param m for modifiers
-         * @details s, p and m are all integer vectors that are
-         * indexes of the corresponding species (boundary + floating).
-         */
-        bool contains(std::vector<int> s,
-                      std::vector<int> p,
-                      std::vector<int> m,
-                      const evoRateLaw& rateLaw);
-
-        /**
          * @brief overload of contains method that takes a
          * @param reaction Reaction tuple as input argument
          * @details unpack the tuple and then feed into other overload.
          *
          */
         bool contains(const Reaction& reaction);
+
+        std::vector<Reaction>::iterator begin(){
+            return reactions.begin();
+        }
+
+        std::vector<Reaction>::iterator end(){
+            return reactions.end();
+        }
     };
 }
 

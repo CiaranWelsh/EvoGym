@@ -31,113 +31,97 @@ TEST(NetworkComponent, BoundarySpeciesContains) {
     ASSERT_FALSE(floatingSpecies.contains("S1", 1));
 }
 
-TEST(NetworkComponent, ReactionsContains) {
 
-    // construct a Reactions object
-    evoRateLaw rateLaw1("uni-uni", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT}}
-                        ));
-    evoRateLaw rateLaw2("uni-bi", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT},
-                                 {"C", EVO_PRODUCT}}
-                        ));
-    Reactions reactions;
-    reactions.substrates = {{0},
-                            {1}};
-    reactions.products = {{2},
-                          {3}};
-    reactions.modifiers = {{5},
-                           {6}};
-    reactions.rate_laws = {rateLaw1, rateLaw2};
 
-    Reaction reaction1("R1", rateLaw1, {0}, {2}, {5});
-    Reaction reaction2("R2", rateLaw1, {0}, {2}, {6});
-    Reaction reaction3("R3", rateLaw2, {1}, {3}, {6});
-    Reaction reaction4("R4", rateLaw1, {1}, {3}, {6});
+class ReactionsTests : public ::testing::Test {
+public:
+    
+    evoRateLaw uni_uni;
+    evoRateLaw uni_bi;
+    ReactionsTests () {
+        uni_uni = evoRateLaw("uni-uni", "k*A",
+                            RoleMap(
+                                    {{"k", EVO_PARAMETER},
+                                     {"A", EVO_SUBSTRATE},
+                                     {"B", EVO_PRODUCT}}
+                            ));
+        uni_bi = evoRateLaw("uni-bi", "k*A",
+                            RoleMap(
+                                    {{"k", EVO_PARAMETER},
+                                     {"A", EVO_SUBSTRATE},
+                                     {"B", EVO_PRODUCT},
+                                     {"C", EVO_PRODUCT}}
+                            ));
+        
+    }
+};
 
-    ASSERT_TRUE(reactions.contains(  reaction1));
-    ASSERT_FALSE(reactions.contains( reaction2));
-    ASSERT_TRUE(reactions.contains(  reaction3));
-    ASSERT_FALSE(reactions.contains( reaction4));
-
+TEST_F(ReactionsTests, Equality){
+    Reaction reaction1("R4", uni_bi, {2, 1}, {3}, {});
+    Reaction reaction2("R4", uni_bi, {2, 1}, {3}, {});
+    ASSERT_TRUE(reaction1 == reaction2);
 }
 
-TEST(NetworkComponent, ReactionsContains2) {
+TEST_F(ReactionsTests, Find){
+    Reaction reaction1("R1", uni_uni, {0}, {2}, {});
 
-    // construct a Reactions object
-    evoRateLaw rateLaw1("uni-uni", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT}}
-                        ));
-    evoRateLaw rateLaw2("uni-bi", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT},
-                                 {"C", EVO_PRODUCT}}
-                        ));
-    Reactions reactions;
-    reactions.substrates = {{0},
-                            {1}};
-    reactions.products = {{2},
-                          {3}};
-    reactions.modifiers = {{5},
-                           {6}};
-    reactions.rate_laws = {rateLaw1, rateLaw2};
+    Reactions reactions(1);
+    reactions[0].substrates_ = {0};
+    reactions[0].products_ = {2};
+    reactions[0].modifiers_ = {};
+    reactions[0].rate_law_ = uni_uni;
 
-    std::vector s1 = {0};
-    std::vector p1 = {2};
-    std::vector m1 = {5};
-    Reaction reaction1("R1", rateLaw1, s1, p1, m1);
-    Reaction reaction2("R1", rateLaw2, s1, p1, m1);
+    bool in = false;
+    if (std::find(reactions.begin(), reactions.end(), reaction1) != reactions.end())
+        in = true;
 
-    ASSERT_TRUE(reactions.contains(reaction1));
-    ASSERT_FALSE(reactions.contains(reaction2));
-
+    ASSERT_TRUE(in);
 }
 
-TEST(NetworkComponent, ReactionsContains3) {
+TEST_F(ReactionsTests, ReactionsContains) {
+
+    Reaction reaction1("R1", uni_uni, {0}, {2}, {});
+    Reaction reaction2("R2", uni_uni, {1}, {3}, {});
+    Reaction reaction3("R3", uni_bi, {1, 3}, {2}, {});
+    Reaction reaction4("R4", uni_bi, {2, 1}, {3}, {});
+    Reaction reaction5("R5", uni_uni, {1}, {7}, {3});
+    Reaction reaction6("R6", uni_bi, {2, 3}, {3}, {});
 
     // construct a Reactions object
-    evoRateLaw uni_uni("uni-uni", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT}}
-                        ));
+    Reactions reactions(4);
+    reactions.addReaction(reaction1);
+    reactions.addReaction(reaction2);
+    reactions.addReaction(reaction3);
+    reactions.addReaction(reaction4);
 
-    evoRateLaw uni_bi("uni-bi", "k*A",
-                        RoleMap(
-                                {{"k", EVO_PARAMETER},
-                                 {"A", EVO_SUBSTRATE},
-                                 {"B", EVO_PRODUCT},
-                                 {"C", EVO_PRODUCT}}
-                        ));
-    Reactions reactions;
-    reactions.substrates = {
-            {1}, {2}, {2}
-    };
-    reactions.products = {
-            {2}, {1, 0}, {1}
-    };
-    reactions.modifiers = {{}, {}, {}};
-    reactions.rate_laws = {uni_uni, uni_bi, uni_uni};
-
-    std::vector<int> s1 = {2};
-    std::vector<int> p1 = {1};
-    std::vector<int> m1 = {};
-
-    Reaction reaction1("R1", uni_uni, s1, p1, m1);
 
     ASSERT_TRUE(reactions.contains(reaction1));
+    ASSERT_TRUE(reactions.contains(reaction2));
+    ASSERT_TRUE(reactions.contains(reaction3));
+    ASSERT_TRUE(reactions.contains(reaction4));
+
+    ASSERT_FALSE(reactions.contains(reaction5));
+    ASSERT_FALSE(reactions.contains(reaction6));
+}
+
+TEST_F(ReactionsTests, CreateReactionsWithName) {
+
+    Reaction reaction1("R1", uni_uni, {0}, {2}, {});
+    Reaction reaction2("R2", uni_uni, {1}, {3}, {});
+    Reaction reaction3("R3", uni_bi, {1, 3}, {2}, {});
+    Reaction reaction4("R4", uni_bi, {2, 1}, {3}, {});
+
+    // construct a Reactions object
+    Reactions reactions(4);
+    reactions.addReaction(reaction1);
+    reactions.addReaction(reaction2);
+    reactions.addReaction(reaction3);
+    reactions.addReaction(reaction4);
+
+    ASSERT_STREQ("R1", reaction1.getName().c_str());
+    ASSERT_STREQ("R2", reaction2.getName().c_str());
+    ASSERT_STREQ("R3", reaction3.getName().c_str());
+    ASSERT_STREQ("R4", reaction4.getName().c_str());
 }
 
 

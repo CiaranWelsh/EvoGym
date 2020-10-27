@@ -5,7 +5,7 @@
 #ifndef EVOGYM_STOICCOUNTER_H
 #define EVOGYM_STOICCOUNTER_H
 
-#include "evo/TypeDefs.h"
+#include "TypeDefs.h"
 #include "rr/rrRoadRunner.h"
 
 namespace evo {

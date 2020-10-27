@@ -9,9 +9,13 @@ add_subdirectory(googletest)
 
 include(GoogleTest)
 
-set(TEST_EXECUTABLES "")
+#set(TEST_EXECUTABLES "")
+#message(STATUS "TEST_EXECUTABLES1 ${TEST_EXECUTABLES}")
 
-macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
+# BINARY: Name of the binary for the test unit you are adding
+# LINK_WITH_GOOGLETEST: ON or OFF.
+# OUT_VARIABLE: test target will be added into this list
+function(add_test_executable BINARY LINK_WITH_GOOGLETEST OUT_VARIABLE)
     add_executable(${BINARY} ${ARGN})
 
     set(LINK_LIBRARIES
@@ -43,12 +47,23 @@ macro(add_test_executable BINARY LINK_WITH_GOOGLETEST)
             "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
     add_dependencies(${BINARY} random-network-generator-static roadrunner-static::roadrunner-static)
-    list(APPEND TEST_EXECUTABLES ${BINARY})
-endmacro()
 
-set(MOCKUP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
+    # Add to an output scoped variable keeping track of binaries we need.
+#    message(STATUS "OUT_VARIABLE ${OUT_VARIABLE}")
+#    message(STATUS "OUT_VARIABLE_inner ${${OUT_VARIABLE}}")
+    if ("${${OUT_VARIABLE}}" STREQUAL "")
+        set(${OUT_VARIABLE} "${BINARY}" PARENT_SCOPE)
+    else ()
+        set(${OUT_VARIABLE} "${${OUT_VARIABLE}}" "${BINARY}" PARENT_SCOPE)
+    endif ()
 
-add_subdirectory(${MOCKUP_DIR})
+#    set(OUT_VARIABLE ${OUT_VARIABLE} ${BINARY} PARENT_SCOPE)
+endfunction()
+
+
+#set(MOCKUP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
+#
+#add_subdirectory(${MOCKUP_DIR})
 
 add_subdirectory(RandomNetworkGenerationTest)
 
@@ -56,16 +71,8 @@ add_custom_target(run-ctest
         COMMAND ${CMAKE_CTEST_COMMAND} --verbose --extra-verbose --progress ${CMAKE_BINARY_DIR}
         )
 
-
+add_dependencies(run-ctest ${TEST_EXECUTABLES})
 add_subdirectory(RoadRunnerQuestion)
-
-
-
-
-
-
-
-
 
 
 #add_subdirectory(SOQuestions)
@@ -79,7 +86,6 @@ add_subdirectory(RoadRunnerQuestion)
 #
 #add_test_executable(MockingExampe ON MockingExample.cpp)
 #add_test_executable(NCRandomSeed ON NCRandomSeed.cpp)
-
 
 
 ##add_test_executable(ProfileRandomNetwork OFF profile_random_network_test.cpp)

@@ -69,11 +69,10 @@ generate_export_header(
 )
 
 add_library(${target}-C-API SHARED RandomNetworkGeneratorCAPI.cpp)
-target_include_directories(${target}-C-API PUBLIC $<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>)
-target_link_libraries(${target}-C-API PUBLIC $<TARGET_PROPERTY:${target},LINK_LIBRARIES>)
+target_link_libraries(${target}-C-API PUBLIC ${target}-static)
 
 set_target_properties(${target}-C-API PROPERTIES PREFIX "")
-add_dependencies(${target}-C-API ${target})
+add_dependencies(${target}-C-API ${target}-static)
 
 generate_export_header(
         ${target}-C-API

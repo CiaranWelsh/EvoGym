@@ -177,7 +177,7 @@ namespace evo {
     };
 
     class UniqueReactionsRNG : public NaiveRNG {
-        int max_recursion_ = 100;
+        int max_recursion_ = 1000;
 
     public:
         using NaiveRNG::NaiveRNG;

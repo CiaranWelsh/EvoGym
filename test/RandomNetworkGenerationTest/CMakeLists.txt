@@ -1,15 +1,27 @@
 
 # Test using googletests for Rate laws
-add_test_executable(RateLawTests TRUE RateLawTests.cpp)
+add_test_executable(RateLawTests TRUE TEST_EXECUTABLES RateLawTests.cpp)
 
 # Tests for RandomNetworkGenreationOptions using googletests
-add_test_executable(NetworkGenerationOptionsTests TRUE RandomNetworkGenerationOptionsTests.cpp)
+add_test_executable(NetworkGenerationOptionsTests TRUE TEST_EXECUTABLES RandomNetworkGenerationOptionsTests.cpp)
 
-add_test_executable(NetworkGenerationTests TRUE RandomNetworkGeneratorTests.cpp)
+add_test_executable(NetworkGenerationTests TRUE TEST_EXECUTABLES RandomNetworkGeneratorTests.cpp)
 
-add_test_executable(UniqueReactionsRandomNetworkGeneratorTests TRUE UniqueReactionsRandomNetworkGeneratorTests.cpp)
+add_test_executable(UniqueReactionsRandomNetworkGeneratorTests TRUE TEST_EXECUTABLES UniqueReactionsRandomNetworkGeneratorTests.cpp)
 
-add_test_executable(NetworkComponentTests TRUE NetworkComponentTests.cpp)
+add_test_executable(NetworkComponentTests TRUE TEST_EXECUTABLES NetworkComponentTests.cpp)
+
+# propagate TEST_EXECUTABLES upwards
+set(TEST_EXECUTABLES ${TEST_EXECUTABLES} PARENT_SCOPE)
+
+
+
+
+
+
+
+
+
 
 #add_test_executable(StoichiometryCounterTests TRUE StoicCounterTests.cpp)
 

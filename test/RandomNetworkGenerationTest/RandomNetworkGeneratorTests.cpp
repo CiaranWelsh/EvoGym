@@ -19,7 +19,7 @@ using namespace rr;
 
 
 
-class RandomNetworkGenerator2Tests : public ::testing::Test {
+class NaiveRNGTests : public ::testing::Test {
 public:
     RateLaws rateLaws;
 
@@ -58,7 +58,7 @@ public:
                        "  </model>\n"
                        "</sbml>";
 
-    RandomNetworkGenerator2Tests() {
+    NaiveRNGTests() {
         rateLaws["uni-uni"] = evoRateLaw("uni-uni", "k*A",
                                          RoleMap({
                                                          {"k", EVO_PARAMETER},
@@ -78,7 +78,7 @@ public:
 };
 
 
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfCompartments){
+TEST_F(NaiveRNGTests, TestNumberOfCompartments){
     // todo you haven't accounted for volume differences in multi compartment reactions.
     RNGOptions options(rateLaws);
     options.setNCompartments(4);
@@ -88,7 +88,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfCompartments){
     ASSERT_EQ(4, rr_ptr->getModel()->getNumCompartments());
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfBoundarySpecies){
+TEST_F(NaiveRNGTests, TestNumberOfBoundarySpecies){
     RNGOptions options(rateLaws);
     options.setNBoundarySpecies(4);
     options.setSeed(4);
@@ -97,7 +97,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfBoundarySpecies){
     ASSERT_EQ(4, rr_ptr->getModel()->getNumBoundarySpecies());
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfFloatingSpecies){
+TEST_F(NaiveRNGTests, TestNumberOfFloatingSpecies){
     RNGOptions options(rateLaws);
     options.setNFloatingSpecies(4);
     options.setSeed(4);
@@ -106,7 +106,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfFloatingSpecies){
     ASSERT_EQ(4, rr_ptr->getModel()->getNumFloatingSpecies());
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestNumberOfReactions){
+TEST_F(NaiveRNGTests, TestNumberOfReactions){
     RNGOptions options(rateLaws);
     options.setNFloatingSpecies(4);
     options.setNReactions(5);
@@ -116,7 +116,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestNumberOfReactions){
     ASSERT_EQ(5, rr_ptr->getModel()->getNumReactions());
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestCompartmentValue){
+TEST_F(NaiveRNGTests, TestCompartmentValue){
     RNGOptions options(rateLaws);
     options.setNCompartments(2);
     options.setCompartmentLowerBound(1.0);
@@ -128,7 +128,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestCompartmentValue){
     ASSERT_DOUBLE_EQ(3.2564907819767202, rr_ptr->getCompartmentByIndex(1));
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestBoundarySpeciesValue){
+TEST_F(NaiveRNGTests, TestBoundarySpeciesValue){
     RNGOptions options(rateLaws);
     options.setBoundarySpeciesLowerBound(1);
     options.setBoundarySpeciesUpperBound(10);
@@ -141,7 +141,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestBoundarySpeciesValue){
 }
 
 
-TEST_F(RandomNetworkGenerator2Tests, TestFloatingSpeciesValue){
+TEST_F(NaiveRNGTests, TestFloatingSpeciesValue){
     RNGOptions options(rateLaws);
     options.setFloatingSpeciesLowerBound(1.0);
     options.setFloatingSpeciesUpperBound(10.0);
@@ -155,7 +155,7 @@ TEST_F(RandomNetworkGenerator2Tests, TestFloatingSpeciesValue){
     ASSERT_DOUBLE_EQ(8.7608727625994405, x[0][1]);
 }
 
-TEST_F(RandomNetworkGenerator2Tests, TestReactionStoichiometryMatrix){
+TEST_F(NaiveRNGTests, TestReactionStoichiometryMatrix){
     RNGOptions options(rateLaws);
     options.setNFloatingSpecies(2);
     options.setNBoundarySpecies(0);
@@ -172,9 +172,9 @@ TEST_F(RandomNetworkGenerator2Tests, TestReactionStoichiometryMatrix){
 }
 
 
-TEST_F(RandomNetworkGenerator2Tests, TestGenerateMoreThan1Model){
+TEST_F(NaiveRNGTests, TestGenerateMoreThan1Model){
     RNGOptions options(rateLaws);
-    options.setNFloatingSpecies(2);
+    options.setNFloatingSpecies(3);
     options.setNBoundarySpecies(0);
     options.setNReactions(1);
     options.setSeed(4);
