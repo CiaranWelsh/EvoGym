@@ -77,8 +77,8 @@ class NetworkGenerationOptions {
 
 NetworkGenerationOptions <-- RateLaw : Input to
 
-abstract class RandomNetworkGenerator{
-    RandomNetworkGenerator(NetworkGenerationOptions)
+abstract class RNGAbstract{
+    RNGAbstract(NetworkGenerationOptions)
     createCompartments() (abstract)
     createFloatingSpecies() (abstract)
     createBoundarySpecies()(abstract)
@@ -86,9 +86,9 @@ abstract class RandomNetworkGenerator{
     generate()
 }
 
-RandomNetworkGenerator <-- NetworkGenerationOptions : used by
+RNGAbstract <-- NetworkGenerationOptions : used by
 
-note right of RandomNetworkGenerator {
+note right of RNGAbstract {
     This in an abstract class. I.e. designed to
     be extended. Never instantiated itself, only
     subclasses are used by end user.
@@ -104,16 +104,16 @@ note right of RandomNetworkGenerator {
         5) put the network together (generate)
     }
 
-class NaiveRNG {
+class BasicRNG {
     createCompartments()
     createFloatingSpecies()
     createBoundarySpecies()
     createReactions()
 }
 
-RandomNetworkGenerator <|-- NaiveRNG
+RNGAbstract <|-- BasicRNG
 
-note left of NaiveRNG {
+note left of BasicRNG {
     This is how we want users to use the class.
 
     //this is a comment
@@ -133,21 +133,21 @@ note left of NaiveRNG {
 
     // set other things
 
-    rng = NaiveRNG(options)
+    rng = BasicRNG(options)
     rr_model = rng.generate()
     many_models = rng.generate(10) #list of models
 }
 
-Compartment <-- NaiveRNG : Create and\n read from
+Compartment <-- BasicRNG : Create and\n read from
 
 
-BoundarySpecies <-- NaiveRNG : Create and\n read from
+BoundarySpecies <-- BasicRNG : Create and\n read from
 
 
-FloatingSpecies <-- NaiveRNG : Create and\n read from
+FloatingSpecies <-- BasicRNG : Create and\n read from
 
 
-Reactions <-- NaiveRNG : Create and\n read from
+Reactions <-- BasicRNG : Create and\n read from
 
 
 'abstract class AbstractList

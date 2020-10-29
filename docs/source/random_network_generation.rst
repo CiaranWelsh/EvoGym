@@ -4,18 +4,18 @@ Random Network Generation
 Implementation
 --------------
 
-The current implementation of RandomNetworkGenerator requires a single argument,
+The current implementation of RNGAbstract requires a single argument,
 and thats an instance of a RNGOptions object, which holds
 all the options. These options include
 
     * nCompartments: The number of compartments. Initialized from contineous uniform distribution
-      between "compartmentLowerBound" and "compartmentUpperBound"
+      between "compartmentLowerBound_" and "compartmentUpperBound_"
     * nFloatingSpecies.
       These are initialized with a random variable draw from continueous uniform
-      distribution between "floatingSpeciesLowerBound and "floatingSpeciesUpperBound".
+      distribution between "floatingSpeciesLowerBound_ and "floatingSpeciesUpperBound_".
     * nBoundarySpecies.
       These are initialized with a random variable drawn from a discrete uniform distribution between
-      "boundarySpeciesLowerBound" and "boundarySpeciesUpperBound"
+      "boundarySpeciesLowerBound_" and "boundarySpeciesUpperBound_"
     * rateLaws.
       Define the rate laws that are randomly selected during network generation.
       See below for more details.

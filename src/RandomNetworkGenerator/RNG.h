@@ -2,8 +2,8 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#ifndef EVOGYM_RANDOMNETWORKGENERATOR2_H
-#define EVOGYM_RANDOMNETWORKGENERATOR2_H
+#ifndef EVOGEN_RNG_H
+#define EVOGEN_RNG_H
 
 #include "NumCpp.hpp"
 #include "RNGOptions.h"
@@ -19,7 +19,7 @@ using namespace rr;
 
 namespace evo {
 
-    class RandomNetworkGenerator {
+    class RNGAbstract {
         /**
          * @brief variable to hold the current value of parameter id.
          * Parameter IDs are k0 through k-whatever. The algorithm that creates this id
@@ -67,57 +67,63 @@ namespace evo {
         std::unordered_map<std::string, double> existing_model_parameters_;
 
         /**
-         * @brief get a reference to the RandomNetworkGeneratorOptions pointer
+         * @brief get a reference to the RNGOptions pointer
          */
         [[nodiscard]] const std::unique_ptr<RNGOptions> &getOptions() const;
 
         /**
-         * @brief set the RandomNetworkGeneratorOptions pointer with a pointer
+         * @brief set the RNGOptions pointer with a pointer
          */
         void setOptions( std::unique_ptr<RNGOptions> &options);
 
         /**
-         * @brief set the RandomNetworkGeneratorOptions pointer
+         * @brief set the RNGOptions pointer
          */
         void setOptions( const RNGOptions& options);
 
         /**
-         * @brief default constructor for RandomNetworkGenerator2
+         * @brief default constructor for RNG2
          * @details users of the default constructor must set the options_ field
-         * before a RandomNetworkGenerator2::generate can be called
+         * before a RNG2::generate can be called
          */
-        RandomNetworkGenerator() = default;
+        RNGAbstract() = default;
 
         /**
-         * @brief Constructor for RandomNetworkGenerator2 that takes a
+         * @brief Constructor for RNG2 that takes a
          * @param options object as argument.
          * @details a unique pointer is constructed automatically from the
-         * RandomNetworkGeneratorOptions passed in by user.
+         * RNGOptions passed in by user.
          */
-        explicit RandomNetworkGenerator(const RNGOptions& options);
+        explicit RNGAbstract(const RNGOptions& options);
 
         /**
-         * @brief Use this RandomNetworkGenerator to create a single RoadRunner
+         * @brief Use this RNG to create a single RoadRunner
          * instance and @returns a unique pointer to the newly created model.
          */
         RoadRunnerPtr generate();
 
         /**
-         * @brief Use this RandomNetworkGenerator to create a @param n RoadRunner
-         * instance and @returns a vector of unique pointera to the newly created modela.
+         * @brief Use this RNG to create a @param n RoadRunner using MPI
+         * instance and @returns a vector of unique pointera to the newly created models.         *
          */
-        NestedRoadRunnerPtrVector generate(int n);
+        NestedRoadRunnerPtrVector generateMPI(int n);
+
+        /**
+         * @brief Use this RNG to create a @param n RoadRunner using MPI
+         * instance and @returns a vector of unique pointera to the newly created models.         *
+         */
+        RoadRunnerPtrVector generate(int n);
 
 
     protected:
         /**
          * @brief create a roadrunner model.
          * @details If a sbml string was given to
-         * evo::RandomNetworkGeneratorOptions::core_sbml_ (via the
-         * evo::RandomNetworkGeneratorOptions::setCoreSBML method) then this core
+         * evo::RNGOptions::core_sbml_ (via the
+         * evo::RNGOptions::setCoreSBML method) then this core
          * network will a subgraph in the random network. Otherwise,
          * an empty rr::RoadRunner model instance is created. When a submodel
-         * is given, the options in evo::RandomNetworkGeneratorOptions are in addition to
+         * is given, the options in evo::RNGOptions are in addition to
          * those already present in the core SBML model. I.e. if the sbml model has
          * 5 nodes and you specify you want 2 boundary and 3 Floating nodes, you'll
          * have a network with 10 nodes.
@@ -126,8 +132,8 @@ namespace evo {
 
         /**
          * @brief pick a random ratelaw using a discrete uniform distribution.
-         * @details the set of RateLaws defined for this RandomNetworkGenerator
-         * is given as user input to RandomNetworkGeneratorOptions
+         * @details the set of RateLaws defined for this RNG
+         * is given as user input to RNGOptions
          */
         [[nodiscard]] evoRateLaw getRandomRateLaw() const;
 
@@ -163,9 +169,9 @@ namespace evo {
                                     int idx);
         };
 
-    class NaiveRNG : public RandomNetworkGenerator {
+    class BasicRNG : public RNGAbstract {
     public:
-        using RandomNetworkGenerator::RandomNetworkGenerator;
+        using RNGAbstract::RNGAbstract;
 
         Compartments createCompartments() override;
 
@@ -176,14 +182,14 @@ namespace evo {
         Reactions createReactions() override;
     };
 
-    class UniqueReactionsRNG : public NaiveRNG {
+    class UniqueReactionsRNG : public BasicRNG {
         int max_recursion_ = 1000;
 
     public:
-        using NaiveRNG::NaiveRNG;
+        using BasicRNG::BasicRNG;
 
         /**
-         * @brief Constructor for UniqueReactionsRandomNetworkGenerator that takes a
+         * @brief Constructor for UniqueReactionsRNG that takes a
          * @param options object as argument.
          * @param max_recursion if a random reaction has been found to be already present in the model
          * this many times, the curent reactions will be returned without any further reactions.
@@ -196,15 +202,15 @@ namespace evo {
         Reaction createReaction(Reactions &reactions, int reaction_number, int recursion_count);
     };
 
-//    enum EvoRandomNetworkGenerator {
-//        EVO_NAIVE_RANDOM_NETWORK_GENERATOR,
-//        EVO_UNIQUE_REACTIONS_RANDOM_NETWORK_GENERATOR,
-//    };
-//
-//    const RandomNetworkGenerator& RandomNetworkFactory(EvoRandomNetworkGenerator which);
+    enum eRNG {
+        BASIC,
+        UNIQUE_REACTIONS,
+    };
+
+    std::unique_ptr<RNGAbstract> RNGFactory(const RNGOptions &options, eRNG which);
 
 
 }// namespace evo
 
 
-#endif//EVOGYM_RANDOMNETWORKGENERATOR2_H
+#endif//EVOGEN_RNG_H

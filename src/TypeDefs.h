@@ -2,8 +2,8 @@
 // Created by Ciaran Welsh on 24/09/2020.
 //
 
-#ifndef EVOGYM_TYPEDEFS_H
-#define EVOGYM_TYPEDEFS_H
+#ifndef EVOGEN_TYPEDEFS_H
+#define EVOGEN_TYPEDEFS_H
 
 #include <vector>
 #include <set>
@@ -80,4 +80,4 @@ namespace evo {
 
 }
 
-#endif//EVOGYM_TYPEDEFS_H
+#endif//EVOGEN_TYPEDEFS_H

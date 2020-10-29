@@ -50,7 +50,7 @@ message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
 target_include_directories(
         ${target}-static PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${EVOGEN_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${NUMCPP_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -63,14 +63,14 @@ target_include_directories(
 add_sanitize_address(${target}-static)
 
 target_compile_definitions(
-        ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
+        ${target}-static PUBLIC EVOGEN_STATIC_DEFINE LIBSBML_STATIC
 )
 
 add_library(${target} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${target} PUBLIC roadrunner-static::roadrunner-static)
 target_include_directories(
         ${target} PUBLIC
-        $<BUILD_INTERFACE:${EVOGYM_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${EVOGEN_INCLUDE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -82,7 +82,7 @@ generate_export_header(
         BASE_NAME RANDOM_NETWORK_GENERATOR
         EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator.h"
 )
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/src/evogym_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/evo)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/src/EVOGEN_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/evo)
 
 
 

@@ -2,11 +2,11 @@
 // Created by Ciaran Welsh on 24/09/2020.
 //
 
-#ifndef EVOGYM_EXPERIMENT_H
-#define EVOGYM_EXPERIMENT_H
+#ifndef EVOGEN_EXPERIMENT_H
+#define EVOGEN_EXPERIMENT_H
 
 #include "evo/TypeDefs.h"
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 #include "evo/RoleTypes.h"
 #include <iostream>
 
@@ -33,7 +33,7 @@ namespace evo {
      * - or use a heirachy of datasets
      *
      * @brief Parent DataSet object defining the structure of
-     * datasets in EvoGym.
+     * datasets in EVOGEN.
      * @details Both PerturbationDataSet and
      * TimeseriesDataSet implement this virtual class. Data can be read in
      * from a csv file where row and column names are defined by subtypes.
@@ -46,7 +46,7 @@ namespace evo {
      * setErrorMatrix.
      *
      */
-    class EVOGYM_EXPORT Experiment {
+    class EVOGEN_EXPORT Experiment {
         VectorOfNdArrays<double> datasets_; /* dataset repeats*/
         NdArray<int> counts_;
         NdArray<double> average_;
@@ -294,4 +294,4 @@ namespace evo {
     };
 
 }// namespace evo
-#endif//EVOGYM_EXPERIMENT_H
+#endif//EVOGEN_EXPERIMENT_H

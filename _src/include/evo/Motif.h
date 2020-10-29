@@ -2,8 +2,8 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#ifndef EVOGYM_MOTIF_H
-#define EVOGYM_MOTIF_H
+#ifndef EVOGEN_MOTIF_H
+#define EVOGEN_MOTIF_H
 
 #include <iostream>
 
@@ -14,7 +14,7 @@ namespace evo{
     /**
      * A Motif is a collection of evo::RateLaw objects
      */
-    class EVOGYM_EXPORT Motif {
+    class EVOGEN_EXPORT Motif {
         std::string name_;
         RateLaws rate_laws_;
 
@@ -35,4 +35,4 @@ namespace evo{
 }
 
 
-#endif //EVOGYM_MOTIF_H
+#endif //EVOGEN_MOTIF_H

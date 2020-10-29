@@ -62,57 +62,57 @@ namespace evo {
         return *this;
     }
 
-    double RNGOptions::getSpeciesLowerBound() const {
-        return floatingSpeciesLowerBound;
+    double RNGOptions::getFloatingSpeciesLowerBound() const {
+        return floatingSpeciesLowerBound_;
     }
 
     RNGOptions &RNGOptions::setFloatingSpeciesLowerBound(double speciesLowerBound) {
-        floatingSpeciesLowerBound = speciesLowerBound;
+        floatingSpeciesLowerBound_ = speciesLowerBound;
         return *this;
     }
 
-    double RNGOptions::getSpeciesUpperBound() const {
-        return floatingSpeciesUpperBound;
+    double RNGOptions::getFloatingSpeciesUpperBound() const {
+        return floatingSpeciesUpperBound_;
     }
 
     RNGOptions &RNGOptions::setFloatingSpeciesUpperBound(double speciesUpperBound) {
-        floatingSpeciesUpperBound = speciesUpperBound;
+        floatingSpeciesUpperBound_ = speciesUpperBound;
         return *this;
     }
 
     double RNGOptions::getParameterLowerBound() const {
-        return parameterLowerBound;
+        return parameterLowerBound_;
     }
 
     RNGOptions &RNGOptions::setParameterLowerBound(double parameterLowerBound) {
-        RNGOptions::parameterLowerBound = parameterLowerBound;
+        RNGOptions::parameterLowerBound_ = parameterLowerBound;
         return *this;
     }
 
     double RNGOptions::getParameterUpperBound() const {
-        return parameterUpperBound;
+        return parameterUpperBound_;
     }
 
     RNGOptions &RNGOptions::setParameterUpperBound(double parameterUpperBound) {
-        RNGOptions::parameterUpperBound = parameterUpperBound;
+        RNGOptions::parameterUpperBound_ = parameterUpperBound;
         return *this;
     }
 
     double RNGOptions::getCompartmentLowerBound() const {
-        return compartmentLowerBound;
+        return compartmentLowerBound_;
     }
 
     RNGOptions &RNGOptions::setCompartmentLowerBound(double compartmentLowerBound) {
-        RNGOptions::compartmentLowerBound = compartmentLowerBound;
+        RNGOptions::compartmentLowerBound_ = compartmentLowerBound;
         return *this;
     }
 
     double RNGOptions::getCompartmentUpperBound() const {
-        return compartmentUpperBound;
+        return compartmentUpperBound_;
     }
 
     RNGOptions &RNGOptions::setCompartmentUpperBound(double compartmentUpperBound) {
-        RNGOptions::compartmentUpperBound = compartmentUpperBound;
+        RNGOptions::compartmentUpperBound_ = compartmentUpperBound;
         return *this;
     }
 
@@ -125,56 +125,32 @@ namespace evo {
         return *this;
     }
 
-    int RNGOptions::getNMotifs() const {
-        return nMotifs;
-    }
-
-    RNGOptions &RNGOptions::setNMotifs(int nMotifs) {
-        RNGOptions::nMotifs = nMotifs;
-        return *this;
-    }
-
     void RNGOptions::validate() const {
-        if (getNMotifs() == 0 && getNReactions() == 0) {
-            throw std::logic_error("Both nReactions and nMotifs are 0, meaning that "
+        if (getNReactions() == 0) {
+            throw std::logic_error("nReactions is 0, meaning that "
                                    "you are trying to randomize the generation of a network "
                                    "without any reactions.");
         }
     }
 
-//    const Motifs &RandomNetworkGeneratorOptions::getMotifs() const {
-//        return motifs_;
-//    }
-//
-//    RandomNetworkGeneratorOptions &RandomNetworkGeneratorOptions::setMotifs(const Motifs &motifs) {
-//        motifs_ = motifs;
-//        return *this;
-//    }
-
     int RNGOptions::getBoundarySpeciesLowerBound() const {
-        return boundarySpeciesLowerBound;
+        return boundarySpeciesLowerBound_;
     }
 
     RNGOptions &RNGOptions::setBoundarySpeciesLowerBound(int boundarySpeciesLowerBound) {
-        RNGOptions::boundarySpeciesLowerBound = boundarySpeciesLowerBound;
+        RNGOptions::boundarySpeciesLowerBound_ = boundarySpeciesLowerBound;
         return *this;
     }
 
     int RNGOptions::getBoundarySpeciesUpperBound() const {
-        return boundarySpeciesUpperBound;
+        return boundarySpeciesUpperBound_;
     }
 
     RNGOptions &RNGOptions::setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound) {
-        RNGOptions::boundarySpeciesUpperBound = boundarySpeciesUpperBound;
+        RNGOptions::boundarySpeciesUpperBound_ = boundarySpeciesUpperBound;
         return *this;
     }
-    const std::string &RNGOptions::getCoreSbml() const {
-        return core_sbml_;
-    }
-    RNGOptions &RNGOptions::setCoreSbml(const std::string &coreSbml) {
-        core_sbml_ = coreSbml;
-        return *this;
-    }
+
 
     unsigned long long int RNGOptions::getSeed() const {
         return seed_;

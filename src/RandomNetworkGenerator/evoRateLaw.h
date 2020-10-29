@@ -2,13 +2,13 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#ifndef EVOGYM_RATELAW_H
-#define EVOGYM_RATELAW_H
+#ifndef EVOGEN_RATELAW_H
+#define EVOGEN_RATELAW_H
 
 #include <unordered_map>
 #include <set>
 
-#include "TypeDefs.h"
+#include "../TypeDefs.h"
 #include "RoleTypes.h"
 #include "random_network_generator_export.h"
 #include "sbml/SBMLTypes.h"
@@ -37,7 +37,7 @@ namespace evo {
         /**
          * @brief helper function to count instances of @param role in this RateLaw
          */
-        [[nodiscard]] int countRoles(RoleType role) const;
+        [[nodiscard]] int countRoles(eRoleType role) const;
 
 
     public:
@@ -115,4 +115,4 @@ namespace evo {
 }
 
 
-#endif //EVOGYM_RATELAW_H
+#endif //EVOGEN_RATELAW_H

@@ -2,8 +2,8 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#ifndef EVOGYM_EVO_ERROR_H
-#define EVOGYM_EVO_ERROR_H
+#ifndef EVOGEN_EVO_ERROR_H
+#define EVOGEN_EVO_ERROR_H
 
 
 #include <iostream>
@@ -52,4 +52,4 @@ namespace evo {
 
 }// namespace evo
 
-#endif//EVOGYM_EVO_ERROR_H
+#endif//EVOGEN_EVO_ERROR_H

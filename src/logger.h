@@ -2,8 +2,8 @@
 // Created by Ciaran on 12/09/2020.
 //
 
-#ifndef EVOGYM_LOGGER_H
-#define EVOGYM_LOGGER_H
+#ifndef EVOGEN_LOGGER_H
+#define EVOGEN_LOGGER_H
 
 #include <iostream>
 
@@ -56,4 +56,4 @@ void log(const char *file,int line,const LogData<List> &data)
 
 #define LOG(x) (log(__FILE__,__LINE__,LogData<None>() << x))
 
-#endif//EVOGYM_LOGGER_H
+#endif//EVOGEN_LOGGER_H

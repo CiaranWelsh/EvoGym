@@ -2,8 +2,8 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#ifndef EVOGYM_RANDOMNETWORKGENERATOR2_H
-#define EVOGYM_RANDOMNETWORKGENERATOR2_H
+#ifndef EVOGEN_RANDOMNETWORKGENERATOR2_H
+#define EVOGEN_RANDOMNETWORKGENERATOR2_H
 
 #include "NumCpp.hpp"
 #include "evo/RandomNetworkGeneratorOptions.h"
@@ -206,4 +206,4 @@ namespace evo {
 }// namespace evo
 
 
-#endif//EVOGYM_RANDOMNETWORKGENERATOR2_H
+#endif//EVOGEN_RANDOMNETWORKGENERATOR2_H

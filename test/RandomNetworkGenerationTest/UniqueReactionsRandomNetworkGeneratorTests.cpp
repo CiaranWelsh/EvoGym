@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 
-#include "RandomNetworkGenerator.h"
+#include "RNG.h"
 #include "RNGOptions.h"
 #include "logger.h"
 #include "evoRateLaw.h"

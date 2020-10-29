@@ -2,12 +2,12 @@
 // Created by Ciaran on 09/09/2020.
 //
 
-#ifndef EVOGYM_POPULATION_H
-#define EVOGYM_POPULATION_H
+#ifndef EVOGEN_POPULATION_H
+#define EVOGEN_POPULATION_H
 
 #include <list>
 #include "rr/rrRoadRunner.h"
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 #include "evo/Individual.h"
 #include "evo/TypeDefs.h"
 #include "evo/RandomNetworkGeneratorOptions.h"
@@ -22,7 +22,7 @@ namespace evo{
      * The Individuals in the Population are pointers to blocks of memory
      * which may be on other nodes (non 0 MPI Rank).
      */
-    class EVOGYM_EXPORT Population {
+    class EVOGEN_EXPORT Population {
 
         const RandomNetworkGeneratorOptions& options_ = RandomNetworkGeneratorOptions();
         NestedIndividualPtrVector population_;
@@ -54,4 +54,4 @@ namespace evo{
 }
 
 
-#endif //EVOGYM_POPULATION_H
+#endif //EVOGEN_POPULATION_H

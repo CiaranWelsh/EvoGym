@@ -4,7 +4,7 @@ set(
         SOURCES
         RNGOptions.cpp
         evoRateLaw.cpp
-        RandomNetworkGenerator.cpp
+        RNG.cpp
         ../EvoString.cpp
         NetworkComponent.cpp
 )
@@ -14,7 +14,7 @@ set(
         RNGOptions.h
         RoleTypes.h
         evoRateLaw.h
-        RandomNetworkGenerator.h
+        RNG.h
         ../logger.h
         StoicCounter.h
         ../TypeDefs.h
@@ -50,7 +50,7 @@ target_include_directories(
 add_sanitize_address(${target}-static)
 
 target_compile_definitions(
-        ${target}-static PUBLIC EVOGYM_STATIC_DEFINE LIBSBML_STATIC
+        ${target}-static PUBLIC EVOGEN_STATIC_DEFINE LIBSBML_STATIC
 )
 
 
@@ -68,21 +68,22 @@ generate_export_header(
         EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_export.h"
 )
 
-add_library(${target}-C-API SHARED RandomNetworkGeneratorCAPI.cpp)
-target_link_libraries(${target}-C-API PUBLIC ${target}-static)
+#add_library(${target}-C-API SHARED RandomNetworkGeneratorCAPI.cpp)
+#target_link_libraries(${target}-C-API PUBLIC ${target}-static)
+#
+#set_target_properties(${target}-C-API PROPERTIES PREFIX "")
+#add_dependencies(${target}-C-API ${target}-static)
+#
+#generate_export_header(
+#        ${target}-C-API
+#        BASE_NAME RANDOM_NETWORK_GENERATOR_C_API
+#        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_c_api_export.h"
+#)
+#
 
-set_target_properties(${target}-C-API PROPERTIES PREFIX "")
-add_dependencies(${target}-C-API ${target}-static)
-
-generate_export_header(
-        ${target}-C-API
-        BASE_NAME RANDOM_NETWORK_GENERATOR_C_API
-        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_c_api_export.h"
-)
-#pybind11_add_module(${target}-bindings pybind_interface.cpp)
-
-
-
+pybind11_add_module(evogen MODULE evogen.cpp)
+target_link_libraries(evogen PRIVATE roadrunner-static::roadrunner-static random-network-generator-static)
+target_include_directories(evogen PRIVATE "$<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>")
 
 
 

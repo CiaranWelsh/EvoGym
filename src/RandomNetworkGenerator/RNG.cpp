@@ -5,7 +5,7 @@
 #include "../logger.h"
 #include <chrono>
 #include <regex>
-#include <RandomNetworkGenerator.h>
+#include <RNG.h>
 #include "mpi.h"
 
 
@@ -15,12 +15,12 @@ namespace evo {
  * Constructors
  */
 
-    RandomNetworkGenerator::RandomNetworkGenerator(const RNGOptions &options)
+    RNGAbstract::RNGAbstract(const RNGOptions &options)
             : options_(std::make_unique<RNGOptions>(options)) {
         nc::random::seed(options.getSeed());
     }
 
-    const std::unique_ptr<RNGOptions> &RandomNetworkGenerator::getOptions() const {
+    const std::unique_ptr<RNGOptions> &RNGAbstract::getOptions() const {
         return options_;
     }
 
@@ -28,11 +28,11 @@ namespace evo {
  * Getters and setters
  */
 
-    void RandomNetworkGenerator::setOptions(std::unique_ptr<RNGOptions> &options) {
+    void RNGAbstract::setOptions(std::unique_ptr<RNGOptions> &options) {
         options_ = std::move(options);
     }
 
-    void RandomNetworkGenerator::setOptions(const RNGOptions &options) {
+    void RNGAbstract::setOptions(const RNGOptions &options) {
         options_ = std::make_unique<RNGOptions>(options);
     }
 
@@ -40,7 +40,7 @@ namespace evo {
  * Private member functions
  */
 
-    RoadRunnerPtr RandomNetworkGenerator::generate() {
+    RoadRunnerPtr RNGAbstract::generate() {
         // fist create a roadrunner model to work with
         std::unique_ptr<RoadRunner> rr_ptr = createRRModel();
         Compartments compartments = createCompartments();
@@ -101,7 +101,7 @@ namespace evo {
             const RoleMap &roles = rateLaw.getRoles();
             for (const auto &role_pair: roles) {
                 const std::string &rate_law_component = role_pair.first;
-                const RoleType &role = role_pair.second;
+                const eRoleType &role = role_pair.second;
                 // Regex defined here as its the same expression for all cases.
                 // \b matches a word boundary (\\b escapes the first \)
                 std::regex reg(rate_law_component + "\\b");//
@@ -166,7 +166,7 @@ namespace evo {
         return rr_ptr;
     }
 
-    NestedRoadRunnerPtrVector RandomNetworkGenerator::generate(int N) {
+    NestedRoadRunnerPtrVector RNGAbstract::generateMPI(int N) {
 
         // initialize MPI
         MPI_Init(nullptr, nullptr);
@@ -212,7 +212,19 @@ namespace evo {
         return rr_vec;
     }
 
-    std::unique_ptr<RoadRunner> RandomNetworkGenerator::createRRModel() const {
+    RoadRunnerPtrVector RNGAbstract::generate(int N) {
+
+        // create our storage structure to have the world_size elements
+        RoadRunnerPtrVector rr_vec(N);
+
+        for (int i=0; i<N ; i++){
+            rr_vec[i] = generate();
+        }
+
+        return rr_vec;
+    }
+
+    std::unique_ptr<RoadRunner> RNGAbstract::createRRModel() const {
         if (options_->getCoreSBML().empty()) {
             auto *rr = new RoadRunner();
             return std::move(std::unique_ptr<RoadRunner>(rr));
@@ -228,7 +240,7 @@ namespace evo {
 /************************************************************************
  * Protected member functions
  */
-    evoRateLaw RandomNetworkGenerator::getRandomRateLaw() const {
+    evoRateLaw RNGAbstract::getRandomRateLaw() const {
         std::vector<evoRateLaw> keys;
         for (auto &it : options_->getRateLaws()) {
             keys.push_back(it.second);
@@ -242,7 +254,7 @@ namespace evo {
         return keys[random_rate_law_index];
     }
 
-    std::vector<int> RandomNetworkGenerator::selectRandomSpeciesIndex(int n) const {
+    std::vector<int> RNGAbstract::selectRandomSpeciesIndex(int n) const {
         int nspecies = options_->getNBoundarySpecies() + options_->getNFloatingSpecies();
 
         // check for the impossible
@@ -256,10 +268,16 @@ namespace evo {
         }
         // do the sampling
         std::vector<int> species_indices = sample_with_replacement(n, nspecies);
+
+//        // need to shuffle
+//        NdArray<int> sp = species_indices;
+//        nc::random::shuffle(sp);
+//        species_indices = sp.toStlVector();
+
         return species_indices;
     }
 
-    std::vector<int> RandomNetworkGenerator::sample_with_replacement(int nsamples, int npop) {
+    std::vector<int> RNGAbstract::sample_with_replacement(int nsamples, int npop) {
         if (nsamples > npop) {
             LOGIC_ERROR << "The number of samples cannot be more than the size of the population when sampling"
                            "with replacement";
@@ -281,11 +299,17 @@ namespace evo {
         for (int &i : out) {
             i -= 1;
         }
+
+        // need to shuffle
+        NdArray<int> sp = out;
+        nc::random::shuffle(sp);
+        out = sp.toStlVector();
+
         return out;
     }
 
     std::string
-    RandomNetworkGenerator::generateUniqueParameterID(unsigned long long number, const std::string &base_name) const {
+    RNGAbstract::generateUniqueParameterID(unsigned long long number, const std::string &base_name) const {
         StringVector existing_parameter_ids;
         for (auto &i: existing_model_parameters_)
             existing_parameter_ids.push_back(i.first);
@@ -304,9 +328,9 @@ namespace evo {
         }
     }
 
-    std::string RandomNetworkGenerator::convertSpeciesIndexToString(const BoundarySpecies &boundarySpecies,
-                                                                    const FloatingSpecies &floatingSpecies,
-                                                                    int idx) {
+    std::string RNGAbstract::convertSpeciesIndexToString(const BoundarySpecies &boundarySpecies,
+                                                         const FloatingSpecies &floatingSpecies,
+                                                         int idx) {
         StringVector species_ids = boundarySpecies.ids;
         species_ids.insert(species_ids.begin(), floatingSpecies.ids.begin(), floatingSpecies.ids.end());
         if (idx < boundarySpecies.ids.size()) {
@@ -321,7 +345,7 @@ namespace evo {
      * NaiveRandomNetworkGenerator
      */
 
-    Compartments NaiveRNG::createCompartments() {
+    Compartments BasicRNG::createCompartments() {
         Compartments compartments;
         std::ostringstream id;
         for (int i = 0; i < options_->getNCompartments(); i++) {
@@ -338,15 +362,15 @@ namespace evo {
         return compartments;
     }
 
-    FloatingSpecies NaiveRNG::createFloatingSpecies() {
+    FloatingSpecies BasicRNG::createFloatingSpecies() {
         FloatingSpecies floatingSpecies;
         std::ostringstream id;
         for (int i = 0; i < options_->getNFloatingSpecies(); i++) {
             id << "S" << i;
-            double val = options_->getSpeciesUpperBound();
-            if (options_->getSpeciesLowerBound() != options_->getSpeciesUpperBound()) {
-                val = nc::random::uniform<double>(options_->getSpeciesLowerBound(),
-                                                  options_->getSpeciesUpperBound());
+            double val = options_->getFloatingSpeciesUpperBound();
+            if (options_->getFloatingSpeciesLowerBound() != options_->getFloatingSpeciesUpperBound()) {
+                val = nc::random::uniform<double>(options_->getFloatingSpeciesLowerBound(),
+                                                  options_->getFloatingSpeciesUpperBound());
             }
             // With single compartment models, go and get the compartment name
             // with multiple compartment models, random selection
@@ -366,7 +390,7 @@ namespace evo {
         return floatingSpecies;
     }
 
-    BoundarySpecies NaiveRNG::createBoundarySpecies() {
+    BoundarySpecies BasicRNG::createBoundarySpecies() {
         BoundarySpecies boundarySpecies;
         std::ostringstream id;
         for (int i = 0; i < options_->getNBoundarySpecies(); i++) {
@@ -393,7 +417,7 @@ namespace evo {
         return boundarySpecies;
     }
 
-    Reactions NaiveRNG::createReactions() {
+    Reactions BasicRNG::createReactions() {
         Reactions reactions(options_->getNReactions());
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
             // generate reaction name;
@@ -426,10 +450,10 @@ namespace evo {
             std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
             assert(species_indices.size() == num_random_species); // this will always be true
 
-            // need to shuffle
-            NdArray<int> sp = species_indices;
-            nc::random::shuffle(sp);
-            species_indices = sp.toStlVector();
+//            // need to shuffle
+//            NdArray<int> sp = species_indices;
+//            nc::random::shuffle(sp);
+//            species_indices = sp.toStlVector();
 
             // dish out the species indices to reaction substrates, products or modifiers.
             for (int s = 0; s < rateLaw.numSubstrates(); s++) {
@@ -458,7 +482,7 @@ namespace evo {
 
     UniqueReactionsRNG::UniqueReactionsRNG(
             const RNGOptions &options, int max_recursion)
-            : NaiveRNG(options), max_recursion_(max_recursion) {}
+            : BasicRNG(options), max_recursion_(max_recursion) {}
 
 
     Reaction UniqueReactionsRNG::createReaction(Reactions &reactions, int reaction_number, int recursion_count) {
@@ -493,11 +517,6 @@ namespace evo {
         // randomly sample without replacement
         std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
         assert(species_indices.size() == num_random_species); // this will always be true
-
-        // need to shuffle
-        NdArray<int> sp = species_indices;
-        nc::random::shuffle(sp);
-        species_indices = sp.toStlVector();
 
         std::vector<int> substrates;
         std::vector<int> products;
@@ -543,17 +562,25 @@ namespace evo {
         return reactions;
     }
 
-//    RandomNetworkGenerator* RandomNetworkFactory(const RandomNetworkGeneratorOptions &options, EvoRandomNetworkGenerator which){
-//
-//        switch(which){
-//            case (EVO_NAIVE_RANDOM_NETWORK_GENERATOR):{
-//                NaiveRandomNetworkGenerator generator(options);
-//                return std::move(generator);
-//            }
-//            case EVO_UNIQUE_REACTIONS_RANDOM_NETWORK_GENERATOR:
-//                break;
-//        }
-//    }
+    /**
+     * @Brief factory for instantiation of RandomNeworkGenerator types
+     * @param options A reference to an RNGOptions object with parameters for the network generation
+     * @param which The type of RandomNetworkGenerator to create
+     * @returns a unique pointer to the RandomNetworkGenerator
+     */
+    std::unique_ptr<RNGAbstract> RNGFactory(const RNGOptions &options, eRNG which){
+        switch(which){
+            case (BASIC):{
+                std::unique_ptr<BasicRNG> rng_ptr = std::make_unique<BasicRNG>(BasicRNG(options));
+                return std::move(rng_ptr);
+            }
+            case (UNIQUE_REACTIONS): {
+                std::unique_ptr<UniqueReactionsRNG> rng_ptr
+                    = std::make_unique<UniqueReactionsRNG>(UniqueReactionsRNG(options));
+                return std::move(rng_ptr);
+            }
+        }
+    }
 
 }// namespace evo
 

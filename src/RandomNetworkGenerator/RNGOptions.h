@@ -2,8 +2,8 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#ifndef EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
-#define EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
+#ifndef EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H
+#define EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H
 
 #include <chrono>
 
@@ -21,20 +21,18 @@ namespace evo {
         int nFloatingSpecies_ = 3;
         int nBoundarySpecies_ = 1;
         int nReactions_ = 4;
-        int nMotifs = 0;
         int nCompartments_ = 1;
 
-        double floatingSpeciesLowerBound = 0.0;
-        double floatingSpeciesUpperBound = 10.0;
-        int boundarySpeciesLowerBound = 0;
-        int boundarySpeciesUpperBound = 1;
-        double parameterLowerBound = 0.1;
-        double parameterUpperBound = 10.0;
-        double compartmentLowerBound = 1.0;
-        double compartmentUpperBound = 1.0;
+        double floatingSpeciesLowerBound_ = 0.0;
+        double floatingSpeciesUpperBound_ = 10.0;
+        int boundarySpeciesLowerBound_ = 0;
+        int boundarySpeciesUpperBound_ = 1;
+        double parameterLowerBound_ = 0.1;
+        double parameterUpperBound_ = 10.0;
+        double compartmentLowerBound_ = 1.0;
+        double compartmentUpperBound_ = 1.0;
 
         RateLaws rate_laws_;
-//        Motifs motifs_;
 
         // for when we want the random model with a core component
         std::string core_sbml_;
@@ -48,14 +46,6 @@ namespace evo {
 
         explicit RNGOptions(RateLaws rateLaws);
 
-//        explicit RandomNetworkGeneratorOptions(Motifs motifs);
-//
-//        RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs);
-
-        [[nodiscard]] const std::string &getCoreSbml() const;
-
-        RNGOptions &setCoreSbml(const std::string &coreSbml);
-
         [[nodiscard]] unsigned long long int getSeed() const;
 
         RNGOptions &setSeed(unsigned long long int seed);
@@ -67,14 +57,6 @@ namespace evo {
         [[nodiscard]] int getBoundarySpeciesUpperBound() const;
 
         RNGOptions &setBoundarySpeciesUpperBound(int boundarySpeciesUpperBound);
-
-//        [[nodiscard]] const Motifs &getMotifs() const;
-//
-//        RandomNetworkGeneratorOptions &setMotifs(const Motifs &motifs);
-
-        [[nodiscard]] int getNMotifs() const;
-
-        RNGOptions &setNMotifs(int nMotifs);
 
         [[nodiscard]] int getNFloatingSpecies() const;
 
@@ -92,11 +74,11 @@ namespace evo {
 
         RNGOptions &setNCompartments(int nCompartments);
 
-        [[nodiscard]] double getSpeciesLowerBound() const;
+        [[nodiscard]] double getFloatingSpeciesLowerBound() const;
 
         RNGOptions &setFloatingSpeciesLowerBound(double speciesLowerBound);
 
-        [[nodiscard]] double getSpeciesUpperBound() const;
+        [[nodiscard]] double getFloatingSpeciesUpperBound() const;
 
         RNGOptions &setFloatingSpeciesUpperBound(double speciesUpperBound);
 
@@ -119,10 +101,13 @@ namespace evo {
         [[nodiscard]] const RateLaws &getRateLaws() const;
 
         RNGOptions &setRateLaws(const RateLaws &rateLaws);
+
         [[nodiscard]] const std::string &getCoreSBML() const;
+
         void setCoreSBML(const std::string &coreSbml);
+
     };
 }// namespace evo
 
 
-#endif//EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
+#endif//EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H

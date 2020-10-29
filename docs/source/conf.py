@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'EvoGym'
+project = 'EVOGEN'
 copyright = '2020, Ciaran Welsh'
 author = 'Ciaran Welsh'
 

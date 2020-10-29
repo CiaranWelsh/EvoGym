@@ -2,11 +2,11 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#ifndef EVOGYM_ROLETYPES_H
-#define EVOGYM_ROLETYPES_H
+#ifndef EVOGEN_ROLETYPES_H
+#define EVOGEN_ROLETYPES_H
 
 namespace evo {
-    enum RoleType {
+    enum eRoleType {
         EVO_SUBSTRATE,
         EVO_PRODUCT,
         EVO_MODIFIER,
@@ -15,6 +15,6 @@ namespace evo {
         EVO_INDEPENDENT_VARIABLE,
         };
 
-    using RoleMap = std::unordered_map<std::string, RoleType>;
+    using RoleMap = std::unordered_map<std::string, eRoleType>;
 }
-#endif //EVOGYM_ROLETYPES_H
+#endif //EVOGEN_ROLETYPES_H

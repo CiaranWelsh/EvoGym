@@ -1,7 +1,4 @@
-#include "evo/EvoRateLaw.h"
-#include "evo/StoicCounter.h"
-
-#include "rr/rrRoadRunner.h"
+#include "StoicCounter.h"
 
 #include "gtest/gtest.h"
 

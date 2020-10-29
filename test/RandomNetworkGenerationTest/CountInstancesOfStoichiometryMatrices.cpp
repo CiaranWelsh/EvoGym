@@ -1,7 +1,7 @@
-#include "evo/RandomNetworkGenerator.h"
-#include "evo/RandomNetworkGeneratorOptions.h"
-#include "evo/StoicCounter.h"
-#include "evo/EvoRateLaw.h"
+#include "RNG.h"
+#include "RNGOptions.h"
+#include "StoicCounter.h"
+#include "evoRateLaw.h"
 
 #include "rr/rrRoadRunner.h"
 
@@ -12,23 +12,24 @@ int main(int argc, char **argv) {
     int N = 10000;
 
     RateLaws rateLaws;
-    rateLaws["uni-uni"] = EvoRateLaw("uni-uni", "k*A",
+    rateLaws["uni-uni"] = evoRateLaw("uni-uni", "k*A",
                                   RoleMap({{"k", EVO_PARAMETER},
                                            {"A", EVO_SUBSTRATE},
                                            {"B", EVO_PRODUCT}}));
 
-    RandomNetworkGeneratorOptions options(rateLaws);
+    RNGOptions options(rateLaws);
     options.setNReactions(2);
     options.setNFloatingSpecies(2);
-    options.setNBoundarySpecies(1);
+    options.setNBoundarySpecies(0);
 
     VectorOfMatrices<double> stoic;
 
     long long avg_duration = 0.0;
     long long sum_of_durations = 0.0;
     auto start_time = std::chrono::high_resolution_clock::now();
-//    NaiveRandomNetworkGenerator generator(options);
-    UniqueReactionsRandomNetworkGenerator generator(options, 10);
+//    NaiveRNG generator(options);
+    UniqueReactionsRNG generator(options);
+//    UniqueReactionsRandomNetworkGenerator generator(options, 10);
 
     for (int i = 0; i < N; i++) {
         auto t1 = std::chrono::high_resolution_clock::now();
@@ -41,7 +42,6 @@ int main(int argc, char **argv) {
         stoic.push_back( rr_ptr->getFullStoichiometryMatrix().getValues());
         auto t2 = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
-
 
         sum_of_durations += duration;
         long long target = (1/(N-1)) *sum_of_durations;

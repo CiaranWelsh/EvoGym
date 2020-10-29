@@ -89,10 +89,10 @@ TEST_F(ReactionsTests, ReactionsContains) {
 
     // construct a Reactions object
     Reactions reactions(4);
-    reactions.addReaction(reaction1);
-    reactions.addReaction(reaction2);
-    reactions.addReaction(reaction3);
-    reactions.addReaction(reaction4);
+    reactions.addReaction(reaction1, 0);
+    reactions.addReaction(reaction2, 1);
+    reactions.addReaction(reaction3, 2);
+    reactions.addReaction(reaction4, 3);
 
 
     ASSERT_TRUE(reactions.contains(reaction1));
@@ -113,10 +113,10 @@ TEST_F(ReactionsTests, CreateReactionsWithName) {
 
     // construct a Reactions object
     Reactions reactions(4);
-    reactions.addReaction(reaction1);
-    reactions.addReaction(reaction2);
-    reactions.addReaction(reaction3);
-    reactions.addReaction(reaction4);
+    reactions.addReaction(reaction1, 0);
+    reactions.addReaction(reaction2, 1);
+    reactions.addReaction(reaction3, 2);
+    reactions.addReaction(reaction4, 3);
 
     ASSERT_STREQ("R1", reaction1.getName().c_str());
     ASSERT_STREQ("R2", reaction2.getName().c_str());

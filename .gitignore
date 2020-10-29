@@ -6,3 +6,5 @@ build
 .vs
 
 .DS_Store
+
+install-*

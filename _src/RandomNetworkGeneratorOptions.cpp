@@ -5,7 +5,7 @@
 #include "evo/RandomNetworkGeneratorOptions.h"
 
 #include <utility>
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 
 namespace evo {
 

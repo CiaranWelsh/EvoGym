@@ -4,7 +4,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-EXECUTABLE = r"/Users/ciaranwelsh/Documents/EvoGym/cmake-build-release/bin/HowLongDoesItTakeToCreateNRandomNetworksParallel"
+EXECUTABLE = r"/Users/ciaranwelsh/Documents/EVOGEN/cmake-build-release/bin/HowLongDoesItTakeToCreateNRandomNetworksParallel"
 
 if not os.path.isfile(EXECUTABLE):
     raise FileNotFoundError(EXECUTABLE)

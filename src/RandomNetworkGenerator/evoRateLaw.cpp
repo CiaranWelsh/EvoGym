@@ -100,7 +100,7 @@ namespace evo {
         return roles_;
     }
 
-    int evoRateLaw::countRoles(RoleType role) const {
+    int evoRateLaw::countRoles(eRoleType role) const {
         // count number of parameters
         int count = 0;
         for (auto &it : getRoles()) {
@@ -112,7 +112,7 @@ namespace evo {
     }
 
     int evoRateLaw::numParameters() const {
-        int count = countRoles(RoleType::EVO_PARAMETER);
+        int count = countRoles(eRoleType::EVO_PARAMETER);
         if (count == 0) {
             LOGIC_ERROR << "Counted 0 kinetic parameters in your rate law. This"
                            "is highly unusual and probably wrong.";

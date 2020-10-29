@@ -2,8 +2,8 @@
 // Created by Ciaran Welsh on 21/09/2020.
 //
 
-#ifndef EVOGYM_STOICCOUNTER_H
-#define EVOGYM_STOICCOUNTER_H
+#ifndef EVOGEN_STOICCOUNTER_H
+#define EVOGEN_STOICCOUNTER_H
 
 #include "evo/TypeDefs.h"
 #include "rr/rrRoadRunner.h"
@@ -73,4 +73,4 @@ namespace evo {
 }// namespace evo
 
 
-#endif//EVOGYM_STOICCOUNTER_H
+#endif//EVOGEN_STOICCOUNTER_H

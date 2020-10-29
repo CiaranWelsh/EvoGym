@@ -36,13 +36,13 @@ TEST_F(NetworkGenerationOptionsTests, nCompartments){
 TEST_F(NetworkGenerationOptionsTests, speciesLowerBoun){
     RNGOptions options;
     options.setFloatingSpeciesLowerBound(4.5);
-    double actual = options.getSpeciesLowerBound();
+    double actual = options.getFloatingSpeciesLowerBound();
     ASSERT_EQ(4.5, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, speciesUpperBoun){
     RNGOptions options;
     options.setFloatingSpeciesUpperBound(9.4);
-    double actual = options.getSpeciesUpperBound();
+    double actual = options.getFloatingSpeciesUpperBound();
     ASSERT_EQ(9.4, actual);
 }
 TEST_F(NetworkGenerationOptionsTests, parameterLowerBoun){
@@ -67,13 +67,6 @@ TEST_F(NetworkGenerationOptionsTests, compartmentUpperBoun){
     RNGOptions options;
     options.setCompartmentUpperBound(4);
     double actual = options.getCompartmentUpperBound();
-    ASSERT_EQ(4, actual);
-}
-
-TEST_F(NetworkGenerationOptionsTests, nMotifsTests){
-    RNGOptions options;
-    options.setNMotifs(4);
-    double actual = options.getNMotifs();
     ASSERT_EQ(4, actual);
 }
 

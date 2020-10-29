@@ -2,8 +2,8 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#ifndef EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
-#define EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
+#ifndef EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H
+#define EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H
 
 #include <chrono>
 
@@ -12,11 +12,11 @@
 
 //#include "evo/Motif.h"
 #include "evo/EvoRateLaw.h"
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 
 namespace evo {
 
-    class EVOGYM_EXPORT RandomNetworkGeneratorOptions {
+    class EVOGEN_EXPORT RandomNetworkGeneratorOptions {
     private:
         int nFloatingSpecies_ = 3;
         int nBoundarySpecies_ = 1;
@@ -125,4 +125,4 @@ namespace evo {
 }// namespace evo
 
 
-#endif//EVOGYM_RANDOMNETWORKGENERATOROPTIONS_H
+#endif//EVOGEN_RANDOMNETWORKGENERATOROPTIONS_H

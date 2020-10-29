@@ -2,22 +2,22 @@
 // Created by Ciaran on 08/09/2020.
 //
 
-#ifndef EVOGYM_RATELAW_H
-#define EVOGYM_RATELAW_H
+#ifndef EVOGEN_RATELAW_H
+#define EVOGEN_RATELAW_H
 
 #include <unordered_map>
 #include <set>
 
 #include "TypeDefs.h"
 #include "evo/RoleTypes.h"
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 #include "sbml/SBMLTypes.h"
 
 namespace evo {
 
 
 
-    class EVOGYM_EXPORT EvoRateLaw {
+    class EVOGEN_EXPORT EvoRateLaw {
         std::string name_;
         libsbml::ASTNode *rate_law_ = nullptr;
         std::string rate_law_string_;
@@ -112,4 +112,4 @@ namespace evo {
 }
 
 
-#endif //EVOGYM_RATELAW_H
+#endif //EVOGEN_RATELAW_H

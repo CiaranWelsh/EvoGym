@@ -2,13 +2,13 @@
 // Created by Ciaran Welsh on 24/09/2020.
 //
 
-#ifndef EVOGYM_TYPEDEFS_H
-#define EVOGYM_TYPEDEFS_H
+#ifndef EVOGEN_TYPEDEFS_H
+#define EVOGEN_TYPEDEFS_H
 
 #include <vector>
 #include <set>
 #include <unordered_map>
-#include "evo/evogym_export.h"
+#include "evo/EVOGEN_export.h"
 #include "NumCpp.hpp"
 
 #include "rr/rrRoadRunner.h"
@@ -81,4 +81,4 @@ namespace evo {
 
 }
 
-#endif//EVOGYM_TYPEDEFS_H
+#endif//EVOGEN_TYPEDEFS_H
