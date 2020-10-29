@@ -1,7 +1,24 @@
 cmake_minimum_required(VERSION 3.15)
-project(Evogen)
 
-set(CMAKE_CXX_STANDARD 17)
+
+set(EVOGEN_VERSION_MAJOR 0)
+set(EVOGEN_VERSION_MINOR 0)
+set(EVOGEN_VERSION_PATCH 1)
+
+set(EVOGEN_VERSION "${EVOGEN_VERSION_MAJOR}.${EVOGEN_VERSION_MINOR}.${EVOGEN_VERSION_PATCH}")
+project(
+        Evogen
+        DESCRIPTION "Evogen: evolving network topologies"
+        VERSION ${EVOGEN_VERSION}
+        LANGUAGES CXX
+)
+
+set(EVOGEN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+
+configure_file(VERSION.txt.in "${CMAKE_CURRENT_BINARY_DIR}/VERSION.txt")
+configure_file(setup.py.in "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
+
+set(CMAKE_CXX_STANDARD 20)
 
 if (NOT ROADRUNNER_INSTALL_PREFIX)
     find_path(
@@ -97,6 +114,9 @@ if (${WITH_SANITIZER} AND ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURC
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
     set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=${WHICH_SANITIZER}")
 endif ()
+
+set(PYTHON_PACKAGE_INSTALL_PREFIX "site-packages/evogen" CACHE STRING "Full or relative path to where to install the Python package. If
+relative, then this is relative to the CMAKE_INSTALL_PREFIX variable")
 
 #######################################################################
 #   Implement options

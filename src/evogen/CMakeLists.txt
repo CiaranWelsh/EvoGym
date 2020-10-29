@@ -1,4 +1,4 @@
-set(target random-network-generator)
+set(target evogen-rng)
 
 set(
         SOURCES
@@ -68,25 +68,49 @@ generate_export_header(
         EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_export.h"
 )
 
-#add_library(${target}-C-API SHARED RandomNetworkGeneratorCAPI.cpp)
-#target_link_libraries(${target}-C-API PUBLIC ${target}-static)
-#
-#set_target_properties(${target}-C-API PROPERTIES PREFIX "")
-#add_dependencies(${target}-C-API ${target}-static)
-#
-#generate_export_header(
-#        ${target}-C-API
-#        BASE_NAME RANDOM_NETWORK_GENERATOR_C_API
-#        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_c_api_export.h"
-#)
-#
-
 pybind11_add_module(evogen MODULE evogen.cpp)
-target_link_libraries(evogen PRIVATE roadrunner-static::roadrunner-static random-network-generator-static)
+target_link_libraries(evogen PRIVATE roadrunner-static::roadrunner-static evogen-rng-static)
 target_include_directories(evogen PRIVATE "$<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>")
 
 
+# install
+install(
+        TARGETS ${target}-static ${target}
+        COMPONENT RNG
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
+install(TARGETS evogen
+        COMPONENT RNG
+        LIBRARY DESTINATION ${PYTHON_PACKAGE_INSTALL_PREFIX}
+        )
+configure_file("${EVOGEN_ROOT}/__init__.py.in" "${CMAKE_BINARY_DIR}/__init__.py")
+INSTALL(
+        FILES
+        "${CMAKE_BINARY_DIR}/__init__.py"
+        DESTINATION ${PYTHON_PACKAGE_INSTALL_PREFIX}
+)
+
+
+install(FILES
+        "${CMAKE_BINARY_DIR}/VERSION.txt"
+        "${EVOGEN_ROOT}/LICENCE.txt"
+        "${CMAKE_BINARY_DIR}/setup.py"
+        DESTINATION .
+        COMPONENT RNG
+        )
+
+
+#install()
+## install the export info
+#install(
+#        EXPORT ${target}
+#        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/evogen
+#        NAMESPACE evogen::
+#        FILE ${target}.cmake
+#)
 
 
 

@@ -24,3 +24,5 @@ add_test_executable(CountInstancesOfStoichiometryMatrices OFF TEST_EXECUTABLES C
 
 # propagate TEST_EXECUTABLES upwards
 set(TEST_EXECUTABLES ${TEST_EXECUTABLES} PARENT_SCOPE)
+
+install(FILES evogen_tests.py DESTINATION ${PYTHON_PACKAGE_INSTALL_PREFIX})

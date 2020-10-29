@@ -1,0 +1,58 @@
+from setuptools import setup, Distribution
+
+import platform
+import shutil
+import sys
+import os.path
+
+# base directory of file
+_basedir = os.path.abspath(os.path.dirname(__file__))
+
+_version_fname = os.path.join(_basedir, 'VERSION.txt')
+
+_version = open(_version_fname).readline().strip()
+
+class BinaryDistribution(Distribution):
+    """Distribution which always forces a binary package with platform name"""
+    def has_ext_modules(foo):
+        return True
+
+
+CLASSIFIERS = """\
+Development Status :: 3 - Alpha
+Intended Audience :: Science/Research
+License :: OSI Approved :: Apache Software License
+Programming Language :: C
+Programming Language :: C++
+Programming Language :: Python
+Programming Language :: Python :: 3.7
+Programming Language :: Python :: 3.8
+Programming Language :: Python :: 3 :: Only
+Programming Language :: Python :: Implementation :: CPython
+Topic :: Software Development
+Topic :: Scientific/Engineering
+Operating System :: Microsoft :: Windows
+Operating System :: POSIX
+Operating System :: MacOS :: MacOS X,
+Operating System :: Unix
+"""
+# Operating System :: MacOS // macos not yet supported
+
+setup(name='evogen',
+    author='Ciaran Welsh',
+    author_email='cwelsh2@uw.edu',
+    classifiers=CLASSIFIERS.split("\n"),
+    version="@EVOGEN_VERSION@",
+    description='evogen: evolving network topologies',
+    url='http://github.com/CiaranWelsh/Evogen',
+    packages=['evogen'],
+    package_dir={
+        'evogen' : 'site-packages/evogen',
+    },
+    package_data={
+        # add dll, won't hurt unix, not there anyway
+        'evogen' : ['evogen*', '*.so', '*.so.*', '*.dll', '*.txt', '*.dylib', '*.pyd'],
+    },
+    install_requires=[],
+    distclass=BinaryDistribution,
+)

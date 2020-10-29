@@ -19,7 +19,7 @@ function(add_test_executable BINARY LINK_WITH_GOOGLETEST OUT_VARIABLE)
     add_executable(${BINARY} ${ARGN})
 
     set(LINK_LIBRARIES
-            random-network-generator-static
+            evogen-rng-static
             roadrunner-static::roadrunner-static
             sbml-static
             /usr/local/lib/libmpi.dylib
@@ -39,14 +39,14 @@ function(add_test_executable BINARY LINK_WITH_GOOGLETEST OUT_VARIABLE)
     message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}/Mockups")
     target_include_directories(
             ${BINARY} PRIVATE
-            $<TARGET_PROPERTY:random-network-generator-static,INCLUDE_DIRECTORIES>
+            $<TARGET_PROPERTY:evogen-rng-static,INCLUDE_DIRECTORIES>
             "/usr/local/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/Mockups"
             "/Users/ciaranwelsh/Documents/Evogen/test/Mockups"
             "${NUMCPP_INCLUDE_DIR}"
             "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
-    add_dependencies(${BINARY} random-network-generator-static roadrunner-static::roadrunner-static)
+    add_dependencies(${BINARY} evogen-rng roadrunner-static::roadrunner-static)
 
     # Add to an output scoped variable keeping track of binaries we need.
 #    message(STATUS "OUT_VARIABLE ${OUT_VARIABLE}")
@@ -72,7 +72,14 @@ add_custom_target(run-ctest
         )
 
 add_dependencies(run-ctest ${TEST_EXECUTABLES})
-add_subdirectory(RoadRunnerQuestion)
+
+
+
+
+
+
+
+#add_subdirectory(RoadRunnerQuestion)
 
 
 #add_subdirectory(SOQuestions)
