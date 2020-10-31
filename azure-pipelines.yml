@@ -98,6 +98,7 @@ stages:
             displayName: ConfigureEvogenBuild
           - script: |
               conda init bash
+              source ~/.bashrc
               conda activate py38
               cd /home/vsts/work/1/s/build
               cmake --build . --target install --config $(BuildType) -j 12
