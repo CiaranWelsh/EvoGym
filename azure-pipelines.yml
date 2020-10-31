@@ -95,7 +95,7 @@ stages:
 
           - script: |
               cd /home/vsts/work/1/s
-              echo "pwd: $(pwd}"
+              echo "pwd: $(pwd)"
               ls -R
               conda init bash
               source ~/.bashrc
