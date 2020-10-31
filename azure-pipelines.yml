@@ -30,6 +30,8 @@ stages:
               BuildType: Debug
               roadrunner_install_prefix: "$(Build.BinariesDirectory)/roadrunner-install-azure-debug"
         steps:
+          - checkout: self
+            submodules: true
           - script: |
               echo "pwd: $(pwd)"
               ls -R
