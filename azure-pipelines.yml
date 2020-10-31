@@ -67,7 +67,7 @@ stages:
               cd roadrunner 
               mkdir build 
               cd build 
-              cmake $(CMakeArgs) -DCMAKE_INSTALL_PREFIX=$(Agent.BinariesDirectory)/s/roadrunner-install-release -DRR_DEPENDENCIES_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/roadrunner-deps-gcc7.5-x64-release" -DLLVM_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
+              cmake $(CMakeArgs) -DCMAKE_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DRR_DEPENDENCIES_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/roadrunner-deps-gcc7.5-x64-release" -DLLVM_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
               cmake --build . --target install --config Release -j 12
               ls
             displayName: "Build Roadrunner"
@@ -75,7 +75,7 @@ stages:
           - task: CMake@1
             displayName: ConfigureCommand
             inputs:
-                cmakeArgs: -DROADRUNNER_INSTALL_PREFIX="$(Agent.BinariesDirectory)/s/roadrunner-install-release" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure release ..
+                cmakeArgs: -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure release ..
           - task: CMake@1
             displayName: BuildEvogen
             inputs:
