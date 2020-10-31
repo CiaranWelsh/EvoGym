@@ -5,8 +5,10 @@
 #ifndef EVOGEN_ROLETYPES_H
 #define EVOGEN_ROLETYPES_H
 
+#include "rng_export.h"
+
 namespace evo {
-    enum eRoleType {
+    enum RNG_EXPORT eRoleType {
         EVO_SUBSTRATE,
         EVO_PRODUCT,
         EVO_MODIFIER,

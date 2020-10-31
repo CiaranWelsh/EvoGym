@@ -10,7 +10,7 @@ project(
         Evogen
         DESCRIPTION "Evogen: evolving network topologies"
         VERSION ${EVOGEN_VERSION}
-        LANGUAGES CXX
+        LANGUAGES CXX C
 )
 
 set(EVOGEN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -18,7 +18,9 @@ set(EVOGEN_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 configure_file(VERSION.txt.in "${CMAKE_CURRENT_BINARY_DIR}/VERSION.txt")
 configure_file(setup.py.in "${CMAKE_CURRENT_BINARY_DIR}/setup.py")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
+set(CMAKE_CXX_STANDARD 14)
 
 if (NOT ROADRUNNER_INSTALL_PREFIX)
     find_path(
@@ -60,11 +62,43 @@ include(GNUInstallDirs)
 
 include(GenerateExportHeader)
 
-include(ImportRoadrunnerAndDependencies)
+find_package(Threads) # for libxml2, FindThreads.cmake is shipped with cmake
+find_package(LibLZMA) # for libxml2, LibLZMA.cmake is shipped with cmake
+find_package(zlib CONFIG REQUIRED)
+find_package(bzip2 CONFIG REQUIRED)
+find_package(iconv CONFIG REQUIRED)
+find_package(LibXml2 CONFIG REQUIRED)
+find_package(sbml-static CONFIG REQUIRED)
+find_package(rr-libstruct CONFIG REQUIRED)
+find_package(clapack CONFIG REQUIRED)
+find_package(nleq1 CONFIG REQUIRED)
+find_package(nleq2 CONFIG REQUIRED)
+find_package(PocoFoundation CONFIG REQUIRED)
+find_package(PocoNet CONFIG REQUIRED)
+find_package(Sundials CONFIG REQUIRED)
+find_package(LLVM REQUIRED)
+find_package(roadrunner-static CONFIG REQUIRED)
+find_package(roadrunner CONFIG REQUIRED)
+find_package(roadrunner_c_api CONFIG REQUIRED)
+
+
+# on linux, libz2
+
+add_custom_target(printGenex
+        COMMENT "Result of generator expression:"
+        COMMAND ${CMAKE_COMMAND} -E echo "cmd here$<TARGET_PROPERTY:roadrunner-static::roadrunner-static,INTERFACE_LINK_LIBRARIES>"
+        VERBATIM
+        )
+
 find_path(
         BOOST_INSTALL_PREFIX
-        NAMES lib/cmake/Boost-1.75.0/BoostConfig.cmake
+        NAMES
+        lib/cmake/Boost-1.75.0/BoostConfig.cmake
+        boost/algorithm/algorithm.hpp
 )
+
+message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
+
 if (NOT EXISTS ${BOOST_INSTALL_PREFIX})
     message(FATAL_ERROR "Couldn't find Boost. Please provide the root to your boost installation \
 using
@@ -74,11 +108,16 @@ folder that contains lib/cmake/BoostConfig.cmake. On mine this is
     /Users/ciaranwelsh/Documents/boost/stage
 ")
 endif ()
-message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
 
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${BOOST_INSTALL_PREFIX}")
-# get boost for NumCpp
-find_package(Boost REQUIRED CONFIG)
+message(STATUS "Boost_FOUND: ${Boost_FOUND}")
+
+set(BOOST_INCLUDE_DIR "${BOOST_INSTALL_PREFIX}/boost")
+include(CheckIncludeFile)
+check_include_file("${BOOST_INCLUDE_DIR}/algorithm/algorithm.h" BOOST_FOUND)
+if (NOT ${BOOST_FOUND})
+    message(FATAL_ERROR "Boost file ${BOOST_INCLUDE_DIR}/algorithm/algorithm.h cannot be located")
+endif ()
+
 find_package(Sanitizers)
 find_package(Python COMPONENTS Interpreter Development NumPy REQUIRED)
 
@@ -93,8 +132,16 @@ find_path(
 
 find_library(
         MPI_LIBRARY
-        NAMES libmpi${CMAKE_SHARED_LIBRARY_SUFFIX}
+        NAMES
+        mpi${CMAKE_SHARED_LIBRARY_SUFFIX}
+        libmpi${CMAKE_SHARED_LIBRARY_SUFFIX}
 )
+set(HAVE_MPI FALSE)
+if (MPI_INCLUDE_DIR_FOUND AND MPI_LIBRARY)
+    set(HAVE_MPI TRUE)
+endif ()
+message(STATUS "HAVE_MPI ${HAVE_MPI}")
+
 #######################################################################
 #   options
 #
@@ -103,7 +150,6 @@ find_library(
 # Hide things by default
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN YES)
-set(CMAKE_CXX_STANDARD 20)
 
 option(WITH_SANITIZER "Compiler with sanitizers" ON)
 set(WHICH_SANITIZER "address" CACHE STRING "Which sanitizer to use")
@@ -122,6 +168,22 @@ relative, then this is relative to the CMAKE_INSTALL_PREFIX variable")
 #   Implement options
 #
 
+#add_definitions(
+#        -DLIBSBML_USE_CPP_NAMESPACE
+#        -DLIBSBML_STATIC
+#        -DLIBLAX_STATIC
+#        -DSTATIC_LIBSTRUCT
+#        -DSTATIC_PUGI
+#        -DSTATIC_NLEQ1
+#        -DSTATIC_NLEQ2
+#        -DPOCO_STATIC
+#        -DPOCO_NO_AUTOMATIC_LIBS
+#        -DCRT_NONSTDC_NO_DEPRECATE
+#        -D_CRT_SECURE_NO_WARNINGS    # MS wanting you to changes basically all standard C functions :(
+#        -D_WIN32                     # used as switch in zlib macro
+#        -DXML_STATIC                 # for expat inside poco. The code that uses this define (poco_xml) is only used in tests.
+#)
+
 # when not windows, add sanitizer flags to debug configuration
 
 
@@ -132,7 +194,7 @@ relative, then this is relative to the CMAKE_INSTALL_PREFIX variable")
 # use the roadrunner defined cmake script for importing roadrunner
 # The script hides the find_package calls needed for roadrunner and
 # its dependencies.
-include(ImportRoadrunnerAndDependencies)
+#include(ImportRoadrunnerAndDependencies)
 
 add_subdirectory(third_party)
 #############################################################################

@@ -6,13 +6,16 @@
 #define EVOGEN_STOICCOUNTER_H
 
 #include "TypeDefs.h"
+#include "rng_export.h"
+#include "rr-libstruct/lsMatrix.h"
 #include "rr/rrRoadRunner.h"
+#include <iostream>
 
 namespace evo {
 
 
     template<class T>
-    class StoicCounter {
+    class RNG_EXPORT StoicCounter {
         VectorOfMatrices<T> vector_of_matrices_;
         SetOfMatrices<T> set_of_matrices_;
         std::vector<int> counts_ = count();
@@ -27,7 +30,7 @@ namespace evo {
         }
 
         SetOfMatrices<T> convertToSet() {
-            return std::set(vector_of_matrices_.begin(), vector_of_matrices_.end());
+            return std::set<std::vector<std::vector<T>>>(vector_of_matrices_.begin(), vector_of_matrices_.end());
         };
 
         [[nodiscard]] const VectorOfMatrices<T> &getVectorOfMatrices() const {
@@ -43,28 +46,30 @@ namespace evo {
             }
             return counts;
         };
-        friend std::ostream &operator<<(std::ostream &os, const StoicCounter<T> &stoicCounter);
-
+        template <class U>
+        friend std::ostream &operator<<(std::ostream &os, const StoicCounter<U> &stoicCounter);
     };
 
-    std::ostream &operator<<(std::ostream &os, const StoicCounter<double> &stoicCounter) {
+    template<class U>
+    std::ostream &operator<<(std::ostream &os, const StoicCounter<U> &stoicCounter) {
         const std::vector<int> &count = stoicCounter.count();
         os << "{" << std::endl;
         for (int i = 0; i < count.size() - 1; i++) {
-            os <<"\t" << i << ": " << count[i] << ",\n";
+            os << "\t" << i << ": " << count[i] << ",\n";
         }
-        os << "\t"<< count.size() - 1 << ": " << count[count.size() - 1] << std::endl;
+        os << "\t" << count.size() - 1 << ": " << count[count.size() - 1] << std::endl;
         os << "}" << std::endl;
 
         os << std::endl;
         auto stoic_matrix = stoicCounter.getSetOfMatrices().begin();
-        for (int i = 0; i < stoicCounter.getSetOfMatrices().size(); i++){
-            os << "Stoiciometry matrix "<< i << std::endl;
+        for (int i = 0; i < stoicCounter.getSetOfMatrices().size(); i++) {
+            os << "Stoiciometry matrix " << i << std::endl;
             os << "{" << std::endl;
-            Vector2D<double> v = *stoic_matrix;
-            ls::Matrix<double> m(v);
+            Vector2D<U> v = *stoic_matrix;
+            ls::Matrix<U> m(v);
             os << m;
-            os << "}\n" << std::endl;
+            os << "}\n"
+               << std::endl;
             std::advance(stoic_matrix, 1);
         }
         return os;

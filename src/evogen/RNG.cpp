@@ -3,20 +3,22 @@
 //
 
 #include "../logger.h"
+#include <RNG.h>
 #include <chrono>
 #include <regex>
-#include <RNG.h>
-#include "mpi.h"
 
+#ifdef HAVE_MPI
+#include "mpi.h"
+#endif
 
 namespace evo {
 
-/************************************************************************
+    /************************************************************************
  * Constructors
  */
 
     RNGAbstract::RNGAbstract(const RNGOptions &options)
-            : options_(std::make_unique<RNGOptions>(options)) {
+        : options_(std::make_unique<RNGOptions>(options)) {
         nc::random::seed(options.getSeed());
     }
 
@@ -24,7 +26,7 @@ namespace evo {
         return options_;
     }
 
-/************************************************************************
+    /************************************************************************
  * Getters and setters
  */
 
@@ -36,7 +38,7 @@ namespace evo {
         options_ = std::make_unique<RNGOptions>(options);
     }
 
-/************************************************************************
+    /************************************************************************
  * Private member functions
  */
 
@@ -61,8 +63,7 @@ namespace evo {
                     false,
                     true,
                     "",
-                    false
-            );
+                    false);
         }
 
         // create floating species
@@ -75,15 +76,14 @@ namespace evo {
                     false,
                     false,
                     "",
-                    false
-            );
+                    false);
         }
         // create reactions
         Reactions reactions = createReactions();
         for (int reaction_number = 0; reaction_number < options_->getNReactions(); reaction_number++) {
-            const std::string& id = reactions[reaction_number].getName();
+            const std::string &id = reactions[reaction_number].getName();
             const evoRateLaw &rateLaw = reactions[reaction_number].rate_law_;
-            std::string rate_law_string = rateLaw.getRateLawString(); // need copy not reference as we modify this string
+            std::string rate_law_string = rateLaw.getRateLawString();// need copy not reference as we modify this string
             const IntVector &substrate_idx_vector = reactions[reaction_number].substrates_;
             const IntVector &product_idx_vector = reactions[reaction_number].products_;
             const IntVector &modifier_idx_vector = reactions[reaction_number].modifiers_;
@@ -99,14 +99,14 @@ namespace evo {
             // remember that modifers are infered from rate law internally inside roadrunner
 
             const RoleMap &roles = rateLaw.getRoles();
-            for (const auto &role_pair: roles) {
+            for (const auto &role_pair : roles) {
                 const std::string &rate_law_component = role_pair.first;
                 const eRoleType &role = role_pair.second;
                 // Regex defined here as its the same expression for all cases.
                 // \b matches a word boundary (\\b escapes the first \)
                 std::regex reg(rate_law_component + "\\b");//
                 switch (role) {
-                    case (EVO_PARAMETER) : {
+                    case (EVO_PARAMETER): {
                         // sample between specified boundaries and add to the model
                         auto val = nc::random::uniform<double>(options_->getParameterLowerBound(),
                                                                options_->getParameterUpperBound());
@@ -123,7 +123,7 @@ namespace evo {
                         rate_law_string = regex_replace(rate_law_string, reg, parameter_name);
                         break;
                     }
-                    case (EVO_SUBSTRATE) : {
+                    case (EVO_SUBSTRATE): {
                         const int &substrate_idx = substrate_idx_vector[substrate_count];
                         substrate_count++;
                         // convert the index to string
@@ -133,7 +133,7 @@ namespace evo {
                         rate_law_string = regex_replace(rate_law_string, reg, substrate);
                         break;
                     }
-                    case (EVO_MODIFIER) : {
+                    case (EVO_MODIFIER): {
                         const int &modifier_idx = modifier_idx_vector[modifier_count];
                         modifier_count++;
                         // convert the index to string
@@ -142,7 +142,7 @@ namespace evo {
                         rate_law_string = regex_replace(rate_law_string, reg, modifier);
                         break;
                     }
-                    case (EVO_PRODUCT) : {
+                    case (EVO_PRODUCT): {
                         const int &product_idx = product_idx_vector[product_count];
                         product_count++;
                         // convert the index to string
@@ -152,20 +152,19 @@ namespace evo {
                         rate_law_string = regex_replace(rate_law_string, reg, product);
                         break;
                     }
-                    default : {
+                    default: {
                         INVALID_ARGUMENT_ERROR << "Unknown role given";
                     }
                 }
             }
             rr_ptr->addReaction(
                     reactions[reaction_number].name_, substrate_string_vector, product_string_vector, rate_law_string,
-                    false
-            );
+                    false);
         }
         rr_ptr->regenerate();
         return rr_ptr;
     }
-
+#ifdef HAVE_MPI
     NestedRoadRunnerPtrVector RNGAbstract::generateMPI(int N) {
 
         // initialize MPI
@@ -200,10 +199,10 @@ namespace evo {
                     nend = nstart + (num_per_proc - 1);
                 }
                 for (int i = nstart;
-                     i < nend + 1; i++) { // nend + 1 so that we have open intervals (0, 3) for instance is 4 items
+                     i < nend + 1; i++) {// nend + 1 so that we have open intervals (0, 3) for instance is 4 items
                     std::unique_ptr<RoadRunner> individual = generate();
                     // we set the rank of the individual and move it back
-//                    individual->setRank(rank); //
+                    //                    individual->setRank(rank); //
                     rr_vec[rank].push_back(std::move(individual));
                 }
             }
@@ -211,13 +210,13 @@ namespace evo {
         MPI_Finalize();
         return rr_vec;
     }
-
+#endif
     RoadRunnerPtrVector RNGAbstract::generate(int N) {
 
         // create our storage structure to have the world_size elements
         RoadRunnerPtrVector rr_vec(N);
 
-        for (int i=0; i<N ; i++){
+        for (int i = 0; i < N; i++) {
             rr_vec[i] = generate();
         }
 
@@ -231,13 +230,13 @@ namespace evo {
         } else {
             NOT_IMPLEMENTED_ERROR << "Generating a random network around a core "
                                      "sbml model is not yet implemented";
-//            auto *rr = new RoadRunner(options_->getCoreSBML());
-//            existing_model_parameters_ = getExistingModelParameters(*rr);
-//            return std::move(std::unique_ptr<RoadRunner>(rr));
+            //            auto *rr = new RoadRunner(options_->getCoreSBML());
+            //            existing_model_parameters_ = getExistingModelParameters(*rr);
+            //            return std::move(std::unique_ptr<RoadRunner>(rr));
         }
     }
 
-/************************************************************************
+    /************************************************************************
  * Protected member functions
  */
     evoRateLaw RNGAbstract::getRandomRateLaw() const {
@@ -269,10 +268,10 @@ namespace evo {
         // do the sampling
         std::vector<int> species_indices = sample_with_replacement(n, nspecies);
 
-//        // need to shuffle
-//        NdArray<int> sp = species_indices;
-//        nc::random::shuffle(sp);
-//        species_indices = sp.toStlVector();
+        //        // need to shuffle
+        //        NdArray<int> sp = species_indices;
+        //        nc::random::shuffle(sp);
+        //        species_indices = sp.toStlVector();
 
         return species_indices;
     }
@@ -311,7 +310,7 @@ namespace evo {
     std::string
     RNGAbstract::generateUniqueParameterID(unsigned long long number, const std::string &base_name) const {
         StringVector existing_parameter_ids;
-        for (auto &i: existing_model_parameters_)
+        for (auto &i : existing_model_parameters_)
             existing_parameter_ids.push_back(i.first);
 
         std::ostringstream proposal;
@@ -336,7 +335,7 @@ namespace evo {
         if (idx < boundarySpecies.ids.size()) {
             return boundarySpecies.ids[idx];
         } else {
-            return floatingSpecies.ids[idx - boundarySpecies.ids.size()]; // offset by num boundary species
+            return floatingSpecies.ids[idx - boundarySpecies.ids.size()];// offset by num boundary species
         }
     }
 
@@ -425,7 +424,7 @@ namespace evo {
             reaction_name << "R" << reaction_number;
             reactions[reaction_number].name_ = reaction_name.str();
 
-//            reaction_name.str("");// clear the stream
+            //            reaction_name.str("");// clear the stream
             // select a random rate law
             evoRateLaw rateLaw = getRandomRateLaw();
             reactions[reaction_number].rate_law_ = rateLaw;
@@ -448,12 +447,12 @@ namespace evo {
 
             // randomly sample without replacement
             std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
-            assert(species_indices.size() == num_random_species); // this will always be true
+            assert(species_indices.size() == num_random_species);// this will always be true
 
-//            // need to shuffle
-//            NdArray<int> sp = species_indices;
-//            nc::random::shuffle(sp);
-//            species_indices = sp.toStlVector();
+            //            // need to shuffle
+            //            NdArray<int> sp = species_indices;
+            //            nc::random::shuffle(sp);
+            //            species_indices = sp.toStlVector();
 
             // dish out the species indices to reaction substrates, products or modifiers.
             for (int s = 0; s < rateLaw.numSubstrates(); s++) {
@@ -476,13 +475,13 @@ namespace evo {
         return reactions;
     }
 
-/*****************************************************************************
+    /*****************************************************************************
  * UniqueReactionsRandomNetworkGenerator
  */
 
     UniqueReactionsRNG::UniqueReactionsRNG(
             const RNGOptions &options, int max_recursion)
-            : BasicRNG(options), max_recursion_(max_recursion) {}
+        : BasicRNG(options), max_recursion_(max_recursion) {}
 
 
     Reaction UniqueReactionsRNG::createReaction(Reactions &reactions, int reaction_number, int recursion_count) {
@@ -516,7 +515,7 @@ namespace evo {
 
         // randomly sample without replacement
         std::vector<int> species_indices = selectRandomSpeciesIndex(num_random_species);
-        assert(species_indices.size() == num_random_species); // this will always be true
+        assert(species_indices.size() == num_random_species);// this will always be true
 
         std::vector<int> substrates;
         std::vector<int> products;
@@ -568,54 +567,19 @@ namespace evo {
      * @param which The type of RandomNetworkGenerator to create
      * @returns a unique pointer to the RandomNetworkGenerator
      */
-    std::unique_ptr<RNGAbstract> RNGFactory(const RNGOptions &options, eRNG which){
-        switch(which){
-            case (BASIC):{
+    std::unique_ptr<RNGAbstract> RNGFactory(const RNGOptions &options, eRNG which) {
+        switch (which) {
+            case (BASIC): {
                 std::unique_ptr<BasicRNG> rng_ptr = std::make_unique<BasicRNG>(BasicRNG(options));
                 return std::move(rng_ptr);
             }
             case (UNIQUE_REACTIONS): {
-                std::unique_ptr<UniqueReactionsRNG> rng_ptr
-                    = std::make_unique<UniqueReactionsRNG>(UniqueReactionsRNG(options));
+                std::unique_ptr<UniqueReactionsRNG> rng_ptr = std::make_unique<UniqueReactionsRNG>(UniqueReactionsRNG(options));
                 return std::move(rng_ptr);
             }
+            default:
+                INVALID_ARGUMENT_ERROR << "input to which argument is invalid. ";
         }
     }
 
 }// namespace evo
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

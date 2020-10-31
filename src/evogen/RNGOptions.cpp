@@ -5,7 +5,7 @@
 #include "RNGOptions.h"
 
 #include <utility>
-#include "random_network_generator_export.h"
+#include "rng_export.h"
 
 namespace evo {
 
@@ -20,12 +20,7 @@ namespace evo {
     void RNGOptions::setCoreSBML(const std::string &coreSbml) {
         core_sbml_ = coreSbml;
     }
-//    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(Motifs motifs)
-//        : motifs_(std::move(motifs)){}
-//
-//    RandomNetworkGeneratorOptions::RandomNetworkGeneratorOptions(RateLaws rateLaws, Motifs motifs)
-//            : rate_laws_(std::move(rateLaws)), motifs_(std::move(motifs)) {}
-//
+
     int RNGOptions::getNFloatingSpecies() const {
         return nFloatingSpecies_;
     }

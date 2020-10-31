@@ -12,11 +12,11 @@
 
 //#include "evo/Motif.h"
 #include "evoRateLaw.h"
-#include "random_network_generator_export.h"
+#include "rng_export.h"
 
 namespace evo {
 
-    class RANDOM_NETWORK_GENERATOR_EXPORT RNGOptions {
+    class RNG_EXPORT RNGOptions {
     private:
         int nFloatingSpecies_ = 3;
         int nBoundarySpecies_ = 1;

@@ -2,7 +2,7 @@
 #include "RNGOptions.h"
 #include "StoicCounter.h"
 #include "evoRateLaw.h"
-
+#include "TypeDefs.h"
 #include "rr/rrRoadRunner.h"
 
 using namespace evo;

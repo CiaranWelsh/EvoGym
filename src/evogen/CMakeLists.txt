@@ -28,8 +28,8 @@ target_link_libraries(
         ${target}-static
         PUBLIC
         roadrunner-static::roadrunner-static
-        ${MPI_LIBRARY}
 )
+
 
 message(STATUS "NUMCPP_INCLUDE_DIR ${NUMCPP_INCLUDE_DIR}")
 
@@ -38,19 +38,33 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}
         $<BUILD_INTERFACE:${RANDOM_NETWORK_GENERATOR_SOURCE_DIR}>
         $<BUILD_INTERFACE:${NUMCPP_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${BOOST_INSTALL_PREFIX}>
         $<BUILD_INTERFACE:${Boost_INCLUDE_DIRS}>
         $<BUILD_INTERFACE:${EVOGEN_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<BUILD_INTERFACE:${MPI_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-#add_sanitizers(${target}-static)
+if (${HAVE_MPI})
+    message(STATUS "Linking in MPI libraries")
+    target_compile_definitions(${target}-static PUBLIC HAVE_MPI)
+    target_include_directories(
+            ${target}-static PUBLIC
+            ${MPI_INCLUDE_DIR}
+    )
+    target_link_libraries(
+            ${target}-static
+            PUBLIC
+            ${MPI_LIBRARY}
+    )
+endif()
+
+
 add_sanitize_address(${target}-static)
 
 target_compile_definitions(
-        ${target}-static PUBLIC EVOGEN_STATIC_DEFINE LIBSBML_STATIC
+        ${target}-static PUBLIC RNG_STATIC_DEFINE LIBSBML_STATIC RR_STATIC
 )
 
 
@@ -61,16 +75,24 @@ target_include_directories(
         $<BUILD_INTERFACE:$<TARGET_PROPERTY:${target}-static,INCLUDE_DIRECTORIES>>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+target_compile_definitions(
+        ${target}-static PUBLIC LIBSBML_STATIC RR_STATIC
+)
+
 
 generate_export_header(
         ${target}
-        BASE_NAME RANDOM_NETWORK_GENERATOR
-        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/random_network_generator_export.h"
+        BASE_NAME RNG
+        EXPORT_FILE_NAME "${CMAKE_CURRENT_BINARY_DIR}/rng_export.h"
 )
 
 pybind11_add_module(evogen MODULE evogen.cpp)
 target_link_libraries(evogen PRIVATE roadrunner-static::roadrunner-static evogen-rng-static)
 target_include_directories(evogen PRIVATE "$<TARGET_PROPERTY:${target},INCLUDE_DIRECTORIES>")
+
+target_compile_definitions(
+        evogen PUBLIC LIBSBML_STATIC RR_STATIC RNG_STATIC_DEFINE
+)
 
 
 # install
@@ -86,6 +108,7 @@ install(TARGETS evogen
         COMPONENT RNG
         LIBRARY DESTINATION ${PYTHON_PACKAGE_INSTALL_PREFIX}
         )
+
 configure_file("${EVOGEN_ROOT}/__init__.py.in" "${CMAKE_BINARY_DIR}/__init__.py")
 INSTALL(
         FILES
@@ -102,15 +125,6 @@ install(FILES
         COMPONENT RNG
         )
 
-
-#install()
-## install the export info
-#install(
-#        EXPORT ${target}
-#        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/evogen
-#        NAMESPACE evogen::
-#        FILE ${target}.cmake
-#)
 
 
 

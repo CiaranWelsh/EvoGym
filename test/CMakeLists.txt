@@ -22,12 +22,17 @@ function(add_test_executable BINARY LINK_WITH_GOOGLETEST OUT_VARIABLE)
             evogen-rng-static
             roadrunner-static::roadrunner-static
             sbml-static
-            /usr/local/lib/libmpi.dylib
             )
+
+
     if (${LINK_WITH_GOOGLETEST})
         set(LINK_LIBRARIES ${LINK_LIBRARIES}
                 gtest gtest_main
                 gmock gmock_main)
+    endif ()
+
+    if (${HAVE_MPI})
+        set(LINK_LIBRARIES ${LINK_LIBRARIES} ${MPI_LIBRARY})
     endif ()
 
     gtest_add_tests(
@@ -40,24 +45,21 @@ function(add_test_executable BINARY LINK_WITH_GOOGLETEST OUT_VARIABLE)
     target_include_directories(
             ${BINARY} PRIVATE
             $<TARGET_PROPERTY:evogen-rng-static,INCLUDE_DIRECTORIES>
-            "/usr/local/include"
             "${CMAKE_CURRENT_SOURCE_DIR}/Mockups"
-            "/Users/ciaranwelsh/Documents/Evogen/test/Mockups"
             "${NUMCPP_INCLUDE_DIR}"
-            "/Users/ciaranwelsh/Documents/Evogen/third_party/NumCpp/include"
     )
     add_dependencies(${BINARY} evogen-rng roadrunner-static::roadrunner-static)
 
     # Add to an output scoped variable keeping track of binaries we need.
-#    message(STATUS "OUT_VARIABLE ${OUT_VARIABLE}")
-#    message(STATUS "OUT_VARIABLE_inner ${${OUT_VARIABLE}}")
+    #    message(STATUS "OUT_VARIABLE ${OUT_VARIABLE}")
+    #    message(STATUS "OUT_VARIABLE_inner ${${OUT_VARIABLE}}")
     if ("${${OUT_VARIABLE}}" STREQUAL "")
         set(${OUT_VARIABLE} "${BINARY}" PARENT_SCOPE)
     else ()
         set(${OUT_VARIABLE} "${${OUT_VARIABLE}}" "${BINARY}" PARENT_SCOPE)
     endif ()
 
-#    set(OUT_VARIABLE ${OUT_VARIABLE} ${BINARY} PARENT_SCOPE)
+    #    set(OUT_VARIABLE ${OUT_VARIABLE} ${BINARY} PARENT_SCOPE)
 endfunction()
 
 
@@ -72,11 +74,6 @@ add_custom_target(run-ctest
         )
 
 add_dependencies(run-ctest ${TEST_EXECUTABLES})
-
-
-
-
-
 
 
 #add_subdirectory(RoadRunnerQuestion)

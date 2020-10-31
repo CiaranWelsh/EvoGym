@@ -7,9 +7,10 @@
 
 #include "TypeDefs.h"
 #include "evoRateLaw.h"
+#include "rng_export.h"
 
 namespace evo {
-    struct NetworkComponent {
+    struct RNG_EXPORT NetworkComponent {
     public:
         StringVector ids;
 
@@ -71,7 +72,7 @@ namespace evo {
          * @brief return index of element in vector or -1 if not found
          */
         template<class T>
-        static bool indexOfElementInVector(T element, std::vector<T> vec) {
+        static int indexOfElementInVector(T element, std::vector<T> vec) {
             auto it = std::find(vec.begin(), vec.end(), element);
 
             if (it == vec.end()){
@@ -91,7 +92,7 @@ namespace evo {
      * @brief Data container for holding information about which compartments and their
      * sizes will be in a model
      */
-    struct Compartments : public NetworkComponent {
+    struct RNG_EXPORT Compartments : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         DoubleVector values;
 
@@ -106,7 +107,7 @@ namespace evo {
     /**
      * @brief Container to hold information about which BoundarySpecies a model will contain
      */
-    struct BoundarySpecies : public NetworkComponent {
+    struct RNG_EXPORT BoundarySpecies : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         IntVector compartment_index;
         IntVector values;
@@ -122,7 +123,7 @@ namespace evo {
     /**
      * @brief Container to hold information about which FloatingSpecies a model will contain
      */
-    struct FloatingSpecies : public NetworkComponent {
+    struct RNG_EXPORT FloatingSpecies : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
         IntVector compartment_index;
         DoubleVector values;
@@ -137,7 +138,7 @@ namespace evo {
 
 //    using Reaction = std::tuple<std::string, evoRateLaw, std::vector<int>, std::vector<int>, std::vector<int>>;
 
-    struct Reaction {
+    struct RNG_EXPORT Reaction {
         std::string name_;
         evoRateLaw rate_law_;
         std::vector<int> substrates_;
@@ -180,7 +181,7 @@ namespace evo {
     /**
      * @brief Container to hold reaction information
      */
-    struct Reactions : public NetworkComponent {
+    struct RNG_EXPORT Reactions : public NetworkComponent {
         using NetworkComponent::NetworkComponent;
 
         std::vector<Reaction> reactions;

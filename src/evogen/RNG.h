@@ -19,7 +19,7 @@ using namespace rr;
 
 namespace evo {
 
-    class RNGAbstract {
+    class RNG_EXPORT RNGAbstract {
         /**
          * @brief variable to hold the current value of parameter id.
          * Parameter IDs are k0 through k-whatever. The algorithm that creates this id
@@ -102,18 +102,19 @@ namespace evo {
          */
         RoadRunnerPtr generate();
 
+#ifdef HAVE_MPI
         /**
          * @brief Use this RNG to create a @param n RoadRunner using MPI
          * instance and @returns a vector of unique pointera to the newly created models.         *
          */
         NestedRoadRunnerPtrVector generateMPI(int n);
+#endif
 
         /**
          * @brief Use this RNG to create a @param n RoadRunner using MPI
          * instance and @returns a vector of unique pointera to the newly created models.         *
          */
         RoadRunnerPtrVector generate(int n);
-
 
     protected:
         /**
@@ -169,7 +170,7 @@ namespace evo {
                                     int idx);
         };
 
-    class BasicRNG : public RNGAbstract {
+    class RNG_EXPORT BasicRNG : public RNGAbstract {
     public:
         using RNGAbstract::RNGAbstract;
 
@@ -182,7 +183,7 @@ namespace evo {
         Reactions createReactions() override;
     };
 
-    class UniqueReactionsRNG : public BasicRNG {
+    class RNG_EXPORT UniqueReactionsRNG : public BasicRNG {
         int max_recursion_ = 1000;
 
     public:

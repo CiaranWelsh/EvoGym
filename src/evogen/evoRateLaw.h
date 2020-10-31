@@ -10,14 +10,14 @@
 
 #include "../TypeDefs.h"
 #include "RoleTypes.h"
-#include "random_network_generator_export.h"
+#include "rng_export.h"
 #include "sbml/SBMLTypes.h"
 
 namespace evo {
 
 
 
-    class RANDOM_NETWORK_GENERATOR_EXPORT evoRateLaw {
+    class RNG_EXPORT evoRateLaw {
         std::string name_;
         libsbml::ASTNode *rate_law_ = nullptr;
         std::string rate_law_string_;

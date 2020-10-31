@@ -4,13 +4,13 @@
 
 #include "gtest/gtest.h"
 
+#include "NumCpp.hpp"
 #include "RNG.h"
 #include "RNGOptions.h"
-#include "logger.h"
 #include "evoRateLaw.h"
+#include "logger.h"
 #include "rr/rrRoadRunner.h"
 #include <random>
-#include "NumCpp.hpp"
 
 #include "rr/ExecutableModelFactory.h"
 
@@ -59,20 +59,14 @@ public:
 
     NaiveRNGTests() {
         rateLaws["uni-uni"] = evoRateLaw("uni-uni", "k*A",
-                                         RoleMap({
-                                                         {"k", EVO_PARAMETER},
-                                                         {"A", EVO_SUBSTRATE},
-                                                         {"B", EVO_PRODUCT}}
-                                         )
-        );
+                                         RoleMap({{"k", EVO_PARAMETER},
+                                                  {"A", EVO_SUBSTRATE},
+                                                  {"B", EVO_PRODUCT}}));
         rateLaws["uni-bi"] = evoRateLaw("uni-bi", "k*A",
-                                        RoleMap({
-                                                        {"k", EVO_PARAMETER},
-                                                        {"A", EVO_SUBSTRATE},
-                                                        {"B", EVO_PRODUCT},
-                                                        {"C", EVO_PRODUCT}}
-                                        )
-        );
+                                        RoleMap({{"k", EVO_PARAMETER},
+                                                 {"A", EVO_SUBSTRATE},
+                                                 {"B", EVO_PRODUCT},
+                                                 {"C", EVO_PRODUCT}}));
     };
 };
 
@@ -155,7 +149,12 @@ TEST_F(NaiveRNGTests, TestFloatingSpeciesValue) {
 }
 
 TEST_F(NaiveRNGTests, TestReactionStoichiometryMatrix) {
-    RNGOptions options(rateLaws);
+    RateLaws rl;
+    rl["uni-uni"] = evoRateLaw("uni-uni", "k*A",
+                               RoleMap({{"k", EVO_PARAMETER},
+                                        {"A", EVO_SUBSTRATE},
+                                        {"B", EVO_PRODUCT}}));
+    RNGOptions options(rl);
     options.setNFloatingSpecies(2);
     options.setNBoundarySpecies(0);
     options.setNReactions(1);
@@ -170,8 +169,8 @@ TEST_F(NaiveRNGTests, TestReactionStoichiometryMatrix) {
     ASSERT_STREQ(expected.c_str(), actual.str().c_str());
 }
 
-
-TEST_F(NaiveRNGTests, TestGenerateMoreThan1Model) {
+#ifdef HAVE_MPI
+TEST_F(NaiveRNGTests, TestGenerateMoreThan1ModelMPI) {
     RNGOptions options(rateLaws);
     options.setNFloatingSpecies(3);
     options.setNBoundarySpecies(0);
@@ -181,45 +180,34 @@ TEST_F(NaiveRNGTests, TestGenerateMoreThan1Model) {
     auto rr_ptr = generator.generateMPI(4);
     ASSERT_EQ(4, rr_ptr[0].size());
 }
+#endif
+
+TEST_F(NaiveRNGTests, TestGenerateMoreThan1Model) {
+    RNGOptions options(rateLaws);
+    options.setNFloatingSpecies(3);
+    options.setNBoundarySpecies(0);
+    options.setNReactions(1);
+    options.setSeed(4);
+    BasicRNG generator(options);
+    auto rr_ptr = generator.generate(4);
+    ASSERT_EQ(4, rr_ptr.size());
+}
 
 TEST(NaiveRNGTestsNoFixture, TestGen) {
     RateLaws rateLaws;
     rateLaws["uni-uni"] = evoRateLaw("uni-uni", "k*A",
-                                     RoleMap({
-                                                     {"k", EVO_PARAMETER},
-                                                     {"A", EVO_SUBSTRATE},
-                                                     {"B", EVO_PRODUCT}}
-                                     )
-    );
+                                     RoleMap({{"k", EVO_PARAMETER},
+                                              {"A", EVO_SUBSTRATE},
+                                              {"B", EVO_PRODUCT}}));
     RNGOptions options(rateLaws);
     options.setNFloatingSpecies(2);
     options.setNBoundarySpecies(0);
     options.setNReactions(2);
-//    options.setSeed(4);
+    //    options.setSeed(4);
     BasicRNG generator(options);
     auto m = generator.generate();
     std::cout << m->getSBML() << std::endl;
     std::cout << m->getFullStoichiometryMatrix() << std::endl;
-//    auto rr_ptr = generator.generate(4);
-//    ASSERT_EQ(4, rr_ptr[0].size());
+    //    auto rr_ptr = generator.generate(4);
+    //    ASSERT_EQ(4, rr_ptr[0].size());
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
