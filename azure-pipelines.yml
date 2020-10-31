@@ -49,6 +49,18 @@ stages:
               pwd
               echo "doing ls"
               ls -lh
+              echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
+              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
+              wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz
+              tar -zxvf boost_1_74_0.tar.gz
+              ls
+            displayName: "Get Boost"
+
+          - script: |
+              echo "current driectory is: "
+              pwd
+              echo "doing ls"
+              ls -lh
               echo "Cd to $(Agent.BuildDirectory)/s/"
               cd $(Agent.BuildDirectory)/s
               wget https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/roadrunner-deps-gcc7.5-x64-release.tar.gz
@@ -75,7 +87,7 @@ stages:
           - task: CMake@1
             displayName: ConfigureCommand
             inputs:
-                cmakeArgs: -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure release ..
+                cmakeArgs: -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 ..
           - task: CMake@1
             displayName: BuildEvogen
             inputs:
