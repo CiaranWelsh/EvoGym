@@ -30,7 +30,11 @@ stages:
               BuildType: Debug
               roadrunner_install_prefix: "$(Build.BinariesDirectory)/roadrunner-install-azure-debug"
         steps:
-          # we cannot upload prebuilt binaries onto github for linux debug version because of github file size limits.
+          - bash: echo "##vso[task.prependpath]$CONDA/bin"
+            displayName: Add conda to PATH
+          - bash: conda create --yes --quiet --name py38 python=3.8
+            displayName: Create Python3.8 conda environment         
+           # we cannot upload prebuilt binaries onto github for linux debug version because of github file size limits.
           # therefore we do this build with Release llvm for both debug and release. Oddly enough it seems to work.
           - script: |
               echo "current driectory is: "
@@ -84,14 +88,35 @@ stages:
               ls
             displayName: "Build Roadrunner"
 
-          - task: CMake@1
-            displayName: ConfigureCommand
-            inputs:
-                cmakeArgs: -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 ..
+          - script: |
+            displayName: ConfigureEvogenBuild
+            cd /home/vsts/work/1/s
+            conda activate py38
+            mkdir build 
+            cd build 
+            cmake DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=$(dirname $(dirname $(which python))) .. 
           - task: CMake@1
             displayName: BuildEvogen
-            inputs:
-              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+            displayName: ConfigureEvogenBuild
+            conda activate py38
+            cd /home/vsts/work/1/s/build
+            cmake --build . --target install --config $(BuildType) -j 12
+              
+
+
+
+# add conda to path in windows
+  #             - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+  # displayName: Add conda to PATH
+
+# add conda to path macOS-10
+#   - bash: echo "##vso[task.prependpath]$CONDA/bin"
+#   displayName: Add conda to PATH
+
+# # On Hosted macOS, the agent user doesn't have ownership of Miniconda's installation directory/
+# # We need to take ownership if we want to update conda or install packages globally
+# - bash: sudo chown -R $USER $CONDA
+#   displayName: Take ownership of conda installation
 
           # - script: |
           #     echo "pwd: $(pwd)"
