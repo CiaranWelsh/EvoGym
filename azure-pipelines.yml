@@ -30,7 +30,7 @@ stages:
               BuildType: Debug
               roadrunner_install_prefix: "$(Build.BinariesDirectory)/roadrunner-install-azure-debug"
         steps:
-          - bash: echo "##vso[task.prependpath]$CONDA/bin"
+          - bash: echo "##vso[task.prependpath]$CONDA/bin" && conda init bash
             displayName: Add conda to PATH
           - bash: conda create --yes --quiet --name py38 python=3.8
             displayName: Create Python3.8 conda environment         
