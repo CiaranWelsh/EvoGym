@@ -89,17 +89,17 @@ stages:
             displayName: "Build Roadrunner"
 
           - script: |
+              cd /home/vsts/work/1/s
+              conda activate py38
+              mkdir build
+              cd build
+              cmake DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=$(dirname $(dirname $(which python))) ..
             displayName: ConfigureEvogenBuild
-            cd /home/vsts/work/1/s
-            conda activate py38
-            mkdir build 
-            cd build 
-            cmake DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=$(dirname $(dirname $(which python))) .. 
           - script: |
+              conda activate py38
+              cd /home/vsts/work/1/s/build
+              cmake --build . --target install --config $(BuildType) -j 12
             displayName: BuildEvogenBuild
-            conda activate py38
-            cd /home/vsts/work/1/s/build
-            cmake --build . --target install --config $(BuildType) -j 12
 
 
 
