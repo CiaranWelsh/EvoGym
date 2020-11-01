@@ -118,17 +118,20 @@ stages:
             displayName: Run C++ Tests
 
           - script: |
+              echo "conda shell.bash hook: $(conda shell.bash hook)"
               eval "$(conda shell.bash hook)"
               conda activate py38
-              cd /home/vsts/work/1/s/install-azure-release
-              python setup.py bdist_wheel
-              echo "ls dist: $(ls dist)"
-              pip install dist/*
-              touch run_tests.py
-              echo "import evogen" >> run_tests.py
-              echo "evogen.runTests()" >> run_tests.py
-              echo "running python tests"
-              python run_tests.py
+              cd /home/vsts/work/1/s/install-azure-release/site-packages/evogen
+              python evogen_tests.py
+
+#              python setup.py bdist_wheel
+#              echo "ls: $(ls)"
+#              pip install dist/*
+#              touch run_tests.py
+#              echo "import evogen" >> run_tests.py
+#              echo "evogen.runTests()" >> run_tests.py
+#              echo "running python tests"
+#              python run_tests.py
             displayName: Run Python Tests
 
 
