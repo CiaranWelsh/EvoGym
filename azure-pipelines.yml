@@ -105,12 +105,6 @@ stages:
           - script: |
               cd /home/vsts/work/1/s
               echo "pwd: $(pwd)"
-#              echo "conda init bash"
-#              conda init bash
-#              echo "source ~/.bashrc"
-#              source ~/.bashrc
-#              echo "conda activate py38"
-#              conda activate py38
               echo "which python $(which python)
               mkdir build
               cd build
