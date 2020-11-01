@@ -90,7 +90,7 @@ stages:
               ls
             displayName: "Build Roadrunner"
 
-          - script: conda create --name py38 python=3.8
+          - script: conda create --yes --name py38 python=3.8
             displayName: Create Anaconda environment
           - script: conda env list
             displayName:  environment installation verification
