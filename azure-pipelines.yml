@@ -94,15 +94,10 @@ stages:
             displayName: Create Anaconda environment
           - script: conda env list
             displayName:  environment installation verification
-          - task: Bash@3
-            inputs:
-              targetType: 'inline'
-              script: |
-                eval "$(conda shell.bash hook)"
-                conda activate py38
-            displayName: Active
-
           - script: |
+              echo "conda shell.bash hook: $(conda shell.bash hook)"
+              eval "$(conda shell.bash hook)"
+              conda activate py38
               conda activate py38
               conda install -y numpy
               cd /home/vsts/work/1/s
