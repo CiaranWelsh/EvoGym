@@ -111,7 +111,6 @@ stages:
               cmake --build . --target install --config $(BuildType) -j 12
             displayName: BuildEvogenBuild
           - script: |
-              conda activate py38
               cd /home/vsts/work/1/s/build
               echo "running ctest"
               ctest --verbose --extra-verbose --progress .
@@ -119,6 +118,7 @@ stages:
             displayName: Run C++ Tests
 
           - script: |
+              eval "$(conda shell.bash hook)"
               conda activate py38
               cd /home/vsts/work/1/s/install-azure-release
               python setup.py bdist_wheel
