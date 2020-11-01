@@ -98,7 +98,6 @@ stages:
               echo "conda shell.bash hook: $(conda shell.bash hook)"
               eval "$(conda shell.bash hook)"
               conda activate py38
-              conda activate py38
               conda install -y numpy
               cd /home/vsts/work/1/s
               echo "pwd: $(pwd)"
@@ -108,10 +107,29 @@ stages:
               cmake -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
             displayName: ConfigureEvogenBuild
           - script: |
-              conda activate py38
               cd /home/vsts/work/1/s/build
               cmake --build . --target install --config $(BuildType) -j 12
             displayName: BuildEvogenBuild
+          - script: |
+              conda activate py38
+              cd /home/vsts/work/1/s/build
+              echo "running ctest"
+              ctest --verbose --extra-verbose --progress .
+              echo "running python tests"
+            displayName: Run C++ Tests
+
+          - script: |
+              conda activate py38
+              cd /home/vsts/work/1/s/install-azure-release
+              python setup.py bdist_wheel
+              echo "ls dist: $(ls dist)"
+              pip install dist/*
+              touch run_tests.py
+              echo "import evogen" >> run_tests.py
+              echo "evogen.runTests()" >> run_tests.py
+              echo "running python tests"
+              python run_tests.py
+            displayName: Run Python Tests
 
 
 
