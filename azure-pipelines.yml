@@ -110,7 +110,7 @@ stages:
               echo "which python $(which python)"
               mkdir build
               cd build
-              cmake -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=$(dirname $(dirname $(which python))) ..
+              cmake -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
             displayName: ConfigureEvogenBuild
           - script: |
               conda activate py38
@@ -123,8 +123,7 @@ stages:
 # add conda to path in windows
   #             - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
   # displayName: Add conda to PATH
-
-# add conda to path macOS-10
+          # add conda to path macOS-10
 #   - bash: echo "##vso[task.prependpath]$CONDA/bin"
 #   displayName: Add conda to PATH
 
