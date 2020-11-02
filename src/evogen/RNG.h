@@ -116,6 +116,9 @@ namespace evo {
          */
         RoadRunnerPtrVector generate(int n);
 
+        static void deleteRRModel(RoadRunner *rr);
+
+
     protected:
         /**
          * @brief create a roadrunner model.
@@ -168,7 +171,8 @@ namespace evo {
         static std::string
         convertSpeciesIndexToString(const BoundarySpecies &boundarySpecies, const FloatingSpecies &floatingSpecies,
                                     int idx);
-        };
+
+    };
 
     class RNG_EXPORT BasicRNG : public RNGAbstract {
     public:

@@ -38,6 +38,9 @@ namespace evo {
         options_ = std::make_unique<RNGOptions>(options);
     }
 
+    void RNGAbstract::deleteRRModel(RoadRunner *rr){
+        delete rr;
+    }
     /************************************************************************
  * Private member functions
  */
@@ -235,6 +238,8 @@ namespace evo {
             //            return std::move(std::unique_ptr<RoadRunner>(rr));
         }
     }
+
+
 
     /************************************************************************
  * Protected member functions

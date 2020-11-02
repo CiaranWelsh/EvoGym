@@ -123,15 +123,110 @@ stages:
               conda activate py38
               cd /home/vsts/work/1/s/install-azure-release/site-packages/evogen
               python evogen_tests.py
+            displayName: Run Python Tests
 
-#              python setup.py bdist_wheel
-#              echo "ls: $(ls)"
-#              pip install dist/*
-#              touch run_tests.py
-#              echo "import evogen" >> run_tests.py
-#              echo "evogen.runTests()" >> run_tests.py
-#              echo "running python tests"
-#              python run_tests.py
+      - job: BuildEvogenMac
+        timeoutInMinutes: "0"
+        displayName: Mac
+        continueOnError: "false"
+        pool:
+          vmImage: "macOS-10.15"
+
+        strategy:
+          matrix:
+            64-bit Mac Release:
+              BuildType: Release
+              roadrunner_install_prefix: "$(Build.BinariesDirectory)/roadrunner-install-azure-release"
+            64-bit Mac Debug:
+              BuildType: Debug
+              roadrunner_install_prefix: "$(Build.BinariesDirectory)/roadrunner-install-azure-debug"
+        steps:
+          - checkout: self
+            submodules: recursive
+          - script: |
+              echo "pwd: $(pwd)"
+              ls -R
+
+           # we cannot upload prebuilt binaries onto github for linux debug version because of github file size limits.
+          # therefore we do this build with Release llvm for both debug and release. Oddly enough it seems to work.
+          - script: |
+              echo "current driectory is: "
+              pwd
+              echo "doing ls"
+              ls -lh
+              echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
+              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
+              wget https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-clang11.0.3-x64-release.zip
+              tar -zxvf llvm-6.x-clang11.0.3-x64-release
+              ls
+            displayName: "Get LLVM"
+
+          - script: |
+              echo "brew installing boost"
+              brew install boost
+            displayName: "Get Boost"
+
+          - script: |
+              echo "current driectory is: "
+              pwd
+              echo "doing ls"
+              ls -lh
+              echo "Cd to $(Agent.BuildDirectory)/s/"
+              cd $(Agent.BuildDirectory)/s
+              wget https://github.com/sys-bio/libroadrunner-deps/releases/download/v2.0.1/libroadrunner-deps-mac-x64-release.zip
+              tar -zxvf libroadrunner-deps-mac-x64-release.zip
+              ls
+            displayName: "Get Dependencies"
+
+          - script: |
+              echo "current driectory is: "
+              pwd
+              echo "doing ls"
+              ls -lh
+              echo "Cd to $(Agent.BuildDirectory)/s/"
+              cd $(Agent.BuildDirectory)/s
+              git clone https://github.com/sys-bio/roadrunner.git
+              cd roadrunner
+              mkdir build
+              cd build
+              cmake -DCMAKE_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DRR_DEPENDENCIES_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/roadrunner-deps-gcc7.5-x64-release" -DLLVM_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
+              cmake --build . --target install --config Release -j 12
+              ls
+            displayName: "Build Roadrunner"
+
+          - script: conda create --yes --name py38 python=3.8
+            displayName: Create Anaconda environment
+          - script: conda env list
+            displayName:  environment installation verification
+          - script: |
+              echo "conda shell.bash hook: $(conda shell.bash hook)"
+              eval "$(conda shell.bash hook)"
+              conda activate py38
+              conda install -y numpy
+              cd /home/vsts/work/1/s
+              echo "pwd: $(pwd)"
+              echo "which python $(which python)"
+              mkdir build
+              cd build
+              cmake -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
+            displayName: ConfigureEvogenBuild
+          - script: |
+              cd /home/vsts/work/1/s/build
+              cmake --build . --target install --config $(BuildType) -j 12
+            displayName: BuildEvogenBuild
+          - script: |
+              cd /home/vsts/work/1/s/build
+              echo "running ctest"
+              ctest --verbose --extra-verbose --progress .
+              echo "running python tests"
+            displayName: Run C++ Tests
+
+          - script: |
+              echo "conda shell.bash hook: $(conda shell.bash hook)"
+              eval "$(conda shell.bash hook)"
+              conda activate py38
+              cd /home/vsts/work/1/s/install-azure-release/site-packages/evogen
+              python evogen_tests.py
             displayName: Run Python Tests
 
 

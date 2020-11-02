@@ -1,6 +1,151 @@
+import sys
+sys.path.append("/Users/ciaranwelsh/Documents/Evogen/cmake-build-debug/lib")
 import unittest
+import evogen
 from evogen import eRoleType, RateLaw, RNGOptions, RoadRunner, massActionRateLaws
 from evogen import BasicRNG, UniqueReactionsRNG, RNGFactory, eRNG
+
+class RoadRunnerPybindInterfaceTests(unittest.TestCase):
+    """
+    These are roadrunner tests. We do not need to test roadrunner itself
+    only that we can load callable functions
+    """
+
+    def setUp(self) -> None:
+        options = RNGOptions(massActionRateLaws())
+        options.setNReactions(4)
+        options.setNFloatingSpecies(6)
+        options.setNBoundarySpecies(1)
+        options.setNCompartments(1)
+        rng = BasicRNG(options)
+        self.rr = rng.generate()
+
+    def test_getInstanceCount(self):
+        self.assertTrue(callable(self.rr.getInstanceCount))
+
+    def test_getModelName(self):
+        self.assertTrue(callable(self.rr.getModelName))
+
+    def test_getDependentFloatingSpeciesIds(self):
+        self.assertTrue(callable(self.rr.getDependentFloatingSpeciesIds))
+
+    def test_getFloatingSpeciesConcentrationIds(self):
+        self.assertTrue(callable(self.rr.getFloatingSpeciesConcentrationIds))
+
+    def test_setValue(self):
+        self.assertTrue(callable(self.rr.setValue))
+
+    def test_getFloatingSpeciesAmountsNamedArray(self):
+        self.assertTrue(callable(self.rr.getFloatingSpeciesAmountsNamedArray))
+
+    def test_getFloatingSpeciesConcentrationsNamedArray(self):
+        self.assertTrue(callable(self.rr.getFloatingSpeciesConcentrationsNamedArray))
+
+    def test_getBoundarySpeciesAmountsNamedArray(self):
+        self.assertTrue(callable(self.rr.getBoundarySpeciesAmountsNamedArray))
+
+    def test_getBoundarySpeciesConcentrationsNamedArray(self):
+        self.assertTrue(callable(self.rr.getBoundarySpeciesConcentrationsNamedArray))
+
+    def test_getRatesOfChange(self):
+        self.assertTrue(callable(self.rr.getRatesOfChange))
+
+    def test_getRatesOfChangeNamedArray(self):
+        self.assertTrue(callable(self.rr.getRatesOfChangeNamedArray))
+
+    def test_getIndependentRatesOfChange(self):
+        self.assertTrue(callable(self.rr.getIndependentRatesOfChange))
+
+    def test_getIndependentRatesOfChangeNamedArray(self):
+        self.assertTrue(callable(self.rr.getIndependentRatesOfChangeNamedArray))
+
+    def test_getDependentRatesOfChange(self):
+        self.assertTrue(callable(self.rr.getDependentRatesOfChange))
+
+    def test_getDependentRatesOfChangeNamedArray(self):
+        self.assertTrue(callable(self.rr.getDependentRatesOfChangeNamedArray))
+
+    def test_getFullJacobian(self):
+        self.assertTrue(callable(self.rr.getFullJacobian))
+
+    def test_getFullReorderedJacobian(self):
+        self.assertTrue(callable(self.rr.getFullReorderedJacobian))
+
+    def test_getReducedJacobian(self):
+        self.assertTrue(callable(self.rr.getReducedJacobian))
+
+    def test_getFullEigenValues(self):
+        self.assertTrue(callable(self.rr.getFullEigenValues))
+
+    def test_getReducedEigenValues(self):
+        self.assertTrue(callable(self.rr.getReducedEigenValues))
+
+    def test_getLinkMatrix(self):
+        self.assertTrue(callable(self.rr.getLinkMatrix))
+
+    def test_getNrMatrix(self):
+        self.assertTrue(callable(self.rr.getNrMatrix))
+
+    def test_getKMatrix(self):
+        self.assertTrue(callable(self.rr.getKMatrix))
+
+    def test_getReducedStoichiometryMatrix(self):
+        self.assertTrue(callable(self.rr.getReducedStoichiometryMatrix))
+
+    def test_getFullStoichiometryMatrix(self):
+        self.assertTrue(callable(self.rr.getFullStoichiometryMatrix))
+
+    def test_getExtendedStoichiometryMatrix(self):
+        self.assertTrue(callable(self.rr.getExtendedStoichiometryMatrix))
+
+    def test_getL0Matrix(self):
+        self.assertTrue(callable(self.rr.getL0Matrix))
+
+    def test_getConservationMatrix(self):
+        self.assertTrue(callable(self.rr.getConservationMatrix))
+
+    def test_getUnscaledConcentrationControlCoefficientMatrix(self):
+        self.assertTrue(callable(self.rr.getUnscaledConcentrationControlCoefficientMatrix))
+
+    def test_getScaledConcentrationControlCoefficientMatrix(self):
+        self.assertTrue(callable(self.rr.getScaledConcentrationControlCoefficientMatrix))
+
+    def test_getUnscaledFluxControlCoefficientMatrix(self):
+        self.assertTrue(callable(self.rr.getUnscaledFluxControlCoefficientMatrix))
+
+    def test_getScaledFluxControlCoefficientMatrix(self):
+        self.assertTrue(callable(self.rr.getScaledFluxControlCoefficientMatrix))
+
+    def test_getEigenValueIds(self):
+        self.assertTrue(callable(self.rr.getEigenValueIds))
+
+    def test_getUnscaledParameterElasticity(self):
+        self.assertTrue(callable(self.rr.getUnscaledParameterElasticity))
+
+    def test_getFrequencyResponse(self):
+        self.assertTrue(callable(self.rr.getFrequencyResponse))
+
+    def test_setConservedMoietyAnalysis(self):
+        self.rr.setConservedMoietyAnalysis(True)
+        self.assertTrue(self.rr.getConservedMoietyAnalysis())
+
+    def test_addSpecies(self):
+        self.assertTrue(callable(self.rr.getNumberOfFloatingSpecies))
+
+    def test_addReaction(self):
+        self.assertTrue(callable(self.rr.addReaction))
+
+    def test_setKineticLaw(self):
+        self.assertTrue(callable(self.rr.setKineticLaw))
+
+    def test_getKineticLaw(self):
+        self.assertTrue(callable(self.rr.getKineticLaw))
+
+    def test_addParameter(self):
+        self.assertTrue(callable(self.rr.addParameter))
+
+    def test_addCompartment(self):
+        self.assertTrue(callable(self.rr.addCompartment))
 
 
 class RateLawTests(unittest.TestCase):
@@ -298,133 +443,133 @@ class RNGFactoryTests(unittest.TestCase):
 """
         self.assertEqual(sbml_string, m.getSBML())
 
-    def test_unique_reactions_rng(self):
-        random_network_generator = RNGFactory(self.options, eRNG.unique_reactions)
-        m = random_network_generator.generate()
-        print(m.getSBML())
-        sbml_string = """<?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model>
-    <listOfCompartments>
-      <compartment id="C0" size="1" constant="false"/>
-    </listOfCompartments>
-    <listOfSpecies>
-      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-    </listOfSpecies>
-    <listOfParameters>
-      <parameter id="k0" value="4.96596023807027" constant="false"/>
-      <parameter id="k1" value="0.446282136131609" constant="false"/>
-      <parameter id="k2" value="4.02342823876936" constant="false"/>
-      <parameter id="k3" value="7.87774413611084" constant="false"/>
-    </listOfParameters>
-    <listOfReactions>
-      <reaction id="R0" reversible="false">
-        <listOfReactants>
-          <speciesReference species="S0" stoichiometry="1" constant="true"/>
-          <speciesReference species="S1" stoichiometry="1" constant="true"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="I0" stoichiometry="1" constant="true"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> k0 </ci>
-              <ci> S1 </ci>
-              <ci> S0 </ci>
-            </apply>
-          </math>
-        </kineticLaw>
-      </reaction>
-      <reaction id="R1" reversible="false">
-        <listOfReactants>
-          <speciesReference species="I0" stoichiometry="1" constant="true"/>
-          <speciesReference species="S1" stoichiometry="1" constant="true"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="S0" stoichiometry="1" constant="true"/>
-          <speciesReference species="S2" stoichiometry="1" constant="true"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> k1 </ci>
-              <ci> S1 </ci>
-              <ci> I0 </ci>
-            </apply>
-          </math>
-        </kineticLaw>
-      </reaction>
-      <reaction id="R2" reversible="false">
-        <listOfReactants>
-          <speciesReference species="S1" stoichiometry="1" constant="true"/>
-          <speciesReference species="S2" stoichiometry="1" constant="true"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="I0" stoichiometry="1" constant="true"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> k2 </ci>
-              <ci> S2 </ci>
-              <ci> S1 </ci>
-            </apply>
-          </math>
-        </kineticLaw>
-      </reaction>
-      <reaction id="R3" reversible="false">
-        <listOfReactants>
-          <speciesReference species="I0" stoichiometry="1" constant="true"/>
-          <speciesReference species="S0" stoichiometry="1" constant="true"/>
-        </listOfReactants>
-        <listOfProducts>
-          <speciesReference species="S1" stoichiometry="1" constant="true"/>
-        </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <times/>
-              <ci> k3 </ci>
-              <ci> S0 </ci>
-              <ci> I0 </ci>
-            </apply>
-          </math>
-        </kineticLaw>
-      </reaction>
-    </listOfReactions>
-  </model>
-</sbml>
-"""
-        self.assertEqual(sbml_string, m.getSBML())
-
-    def test_basic_rng_list_of(self):
-        random_network_generator = RNGFactory(self.options, eRNG.basic)
-        m = random_network_generator.generate(3)
-        sbmls = [i.getSBML() for i in m]
-        expected = [
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k0" value="4.96596023807027" constant="false"/>\n      <parameter id="k1" value="0.446282136131609" constant="false"/>\n      <parameter id="k2" value="4.02342823876936" constant="false"/>\n      <parameter id="k3" value="7.87774413611084" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k0 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k1 </ci>\n              <ci> I0 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k2 </ci>\n              <ci> S2 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k3 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.90843559545756" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.37170907331734" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.33570488837273" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k4" value="5.93746595915197" constant="false"/>\n      <parameter id="k5" value="1.7987727355235" constant="false"/>\n      <parameter id="k6" value="8.5847165888571" constant="false"/>\n      <parameter id="k7" value="4.54729072200021" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k4 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k5 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k6 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k7 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="9.41775031727176" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="2.20899980020738" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="9.97894064779844" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k8" value="1.75414310532654" constant="false"/>\n      <parameter id="k9" value="9.18794885529502" constant="false"/>\n      <parameter id="k10" value="3.84345418937081" constant="false"/>\n      <parameter id="k11" value="6.91988210311838" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k8 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k9 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k10 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k11 </ci>\n              <ci> S0 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n']
-        self.assertEqual(expected, sbmls)
-
-    def test_unique_reactions_rng_list_of(self):
-        random_network_generator = RNGFactory(self.options, eRNG.unique_reactions)
-        m = random_network_generator.generate(3)
-        sbmls = [i.getSBML() for i in m]
-        expected = [
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k0" value="4.96596023807027" constant="false"/>\n      <parameter id="k1" value="0.446282136131609" constant="false"/>\n      <parameter id="k2" value="4.02342823876936" constant="false"/>\n      <parameter id="k3" value="7.87774413611084" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k0 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k1 </ci>\n              <ci> S1 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k2 </ci>\n              <ci> S2 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k3 </ci>\n              <ci> S0 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.90843559545756" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.37170907331734" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.33570488837273" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k4" value="2.28690980220531" constant="false"/>\n      <parameter id="k5" value="9.97915124132046" constant="false"/>\n      <parameter id="k6" value="9.11716187952205" constant="false"/>\n      <parameter id="k7" value="0.912737556922599" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k4 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k5 </ci>\n              <ci> S0 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k6 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k7 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
-            '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="1.03519122182768" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.36012461049451" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.98894184346773" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k8" value="0.308670868626717" constant="false"/>\n      <parameter id="k9" value="5.95406763599515" constant="false"/>\n      <parameter id="k10" value="0.356157366483058" constant="false"/>\n      <parameter id="k11" value="2.67491497136061" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k8 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k9 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k10 </ci>\n              <ci> S1 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k11 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n']
-
-        self.assertEqual(expected, sbmls)
-
+#     def test_unique_reactions_rng(self):
+#         random_network_generator = RNGFactory(self.options, eRNG.unique_reactions)
+#         m = random_network_generator.generate()
+#         print(m.getSBML())
+#         sbml_string = """<?xml version="1.0" encoding="UTF-8"?>
+# <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+#   <model>
+#     <listOfCompartments>
+#       <compartment id="C0" size="1" constant="false"/>
+#     </listOfCompartments>
+#     <listOfSpecies>
+#       <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+#       <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+#       <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+#       <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+#     </listOfSpecies>
+#     <listOfParameters>
+#       <parameter id="k0" value="4.96596023807027" constant="false"/>
+#       <parameter id="k1" value="0.446282136131609" constant="false"/>
+#       <parameter id="k2" value="4.02342823876936" constant="false"/>
+#       <parameter id="k3" value="7.87774413611084" constant="false"/>
+#     </listOfParameters>
+#     <listOfReactions>
+#       <reaction id="R0" reversible="false">
+#         <listOfReactants>
+#           <speciesReference species="S0" stoichiometry="1" constant="true"/>
+#           <speciesReference species="S1" stoichiometry="1" constant="true"/>
+#         </listOfReactants>
+#         <listOfProducts>
+#           <speciesReference species="I0" stoichiometry="1" constant="true"/>
+#         </listOfProducts>
+#         <kineticLaw>
+#           <math xmlns="http://www.w3.org/1998/Math/MathML">
+#             <apply>
+#               <times/>
+#               <ci> k0 </ci>
+#               <ci> S1 </ci>
+#               <ci> S0 </ci>
+#             </apply>
+#           </math>
+#         </kineticLaw>
+#       </reaction>
+#       <reaction id="R1" reversible="false">
+#         <listOfReactants>
+#           <speciesReference species="I0" stoichiometry="1" constant="true"/>
+#           <speciesReference species="S1" stoichiometry="1" constant="true"/>
+#         </listOfReactants>
+#         <listOfProducts>
+#           <speciesReference species="S0" stoichiometry="1" constant="true"/>
+#           <speciesReference species="S2" stoichiometry="1" constant="true"/>
+#         </listOfProducts>
+#         <kineticLaw>
+#           <math xmlns="http://www.w3.org/1998/Math/MathML">
+#             <apply>
+#               <times/>
+#               <ci> k1 </ci>
+#               <ci> S1 </ci>
+#               <ci> I0 </ci>
+#             </apply>
+#           </math>
+#         </kineticLaw>
+#       </reaction>
+#       <reaction id="R2" reversible="false">
+#         <listOfReactants>
+#           <speciesReference species="S1" stoichiometry="1" constant="true"/>
+#           <speciesReference species="S2" stoichiometry="1" constant="true"/>
+#         </listOfReactants>
+#         <listOfProducts>
+#           <speciesReference species="I0" stoichiometry="1" constant="true"/>
+#         </listOfProducts>
+#         <kineticLaw>
+#           <math xmlns="http://www.w3.org/1998/Math/MathML">
+#             <apply>
+#               <times/>
+#               <ci> k2 </ci>
+#               <ci> S2 </ci>
+#               <ci> S1 </ci>
+#             </apply>
+#           </math>
+#         </kineticLaw>
+#       </reaction>
+#       <reaction id="R3" reversible="false">
+#         <listOfReactants>
+#           <speciesReference species="I0" stoichiometry="1" constant="true"/>
+#           <speciesReference species="S0" stoichiometry="1" constant="true"/>
+#         </listOfReactants>
+#         <listOfProducts>
+#           <speciesReference species="S1" stoichiometry="1" constant="true"/>
+#         </listOfProducts>
+#         <kineticLaw>
+#           <math xmlns="http://www.w3.org/1998/Math/MathML">
+#             <apply>
+#               <times/>
+#               <ci> k3 </ci>
+#               <ci> S0 </ci>
+#               <ci> I0 </ci>
+#             </apply>
+#           </math>
+#         </kineticLaw>
+#       </reaction>
+#     </listOfReactions>
+#   </model>
+# </sbml>
+# """
+#         self.assertEqual(sbml_string, m.getSBML())
+#
+#     def test_basic_rng_list_of(self):
+#         random_network_generator = RNGFactory(self.options, eRNG.basic)
+#         m = random_network_generator.generate(3)
+#         sbmls = [i.getSBML() for i in m]
+#         expected = [
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k0" value="4.96596023807027" constant="false"/>\n      <parameter id="k1" value="0.446282136131609" constant="false"/>\n      <parameter id="k2" value="4.02342823876936" constant="false"/>\n      <parameter id="k3" value="7.87774413611084" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k0 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k1 </ci>\n              <ci> I0 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k2 </ci>\n              <ci> S2 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k3 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.90843559545756" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.37170907331734" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.33570488837273" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k4" value="5.93746595915197" constant="false"/>\n      <parameter id="k5" value="1.7987727355235" constant="false"/>\n      <parameter id="k6" value="8.5847165888571" constant="false"/>\n      <parameter id="k7" value="4.54729072200021" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k4 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k5 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k6 </ci>\n              <ci> I0 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k7 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="9.41775031727176" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="2.20899980020738" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="9.97894064779844" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k8" value="1.75414310532654" constant="false"/>\n      <parameter id="k9" value="9.18794885529502" constant="false"/>\n      <parameter id="k10" value="3.84345418937081" constant="false"/>\n      <parameter id="k11" value="6.91988210311838" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k8 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k9 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k10 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k11 </ci>\n              <ci> S0 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n']
+#         self.assertEqual(expected, sbmls)
+#
+#     def test_unique_reactions_rng_list_of(self):
+#         random_network_generator = RNGFactory(self.options, eRNG.unique_reactions)
+#         m = random_network_generator.generate(3)
+#         sbmls = [i.getSBML() for i in m]
+#         expected = [
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.60097836983103" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="8.02826326562568" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="8.07203805479603" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k0" value="4.96596023807027" constant="false"/>\n      <parameter id="k1" value="0.446282136131609" constant="false"/>\n      <parameter id="k2" value="4.02342823876936" constant="false"/>\n      <parameter id="k3" value="7.87774413611084" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k0 </ci>\n              <ci> S1 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k1 </ci>\n              <ci> S1 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k2 </ci>\n              <ci> S2 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k3 </ci>\n              <ci> S0 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="5.90843559545756" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.37170907331734" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.33570488837273" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k4" value="2.28690980220531" constant="false"/>\n      <parameter id="k5" value="9.97915124132046" constant="false"/>\n      <parameter id="k6" value="9.11716187952205" constant="false"/>\n      <parameter id="k7" value="0.912737556922599" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k4 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k5 </ci>\n              <ci> S0 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k6 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k7 </ci>\n              <ci> S0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n',
+#             '<?xml version="1.0" encoding="UTF-8"?>\n<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">\n  <model>\n    <listOfCompartments>\n      <compartment id="C0" size="1" constant="false"/>\n    </listOfCompartments>\n    <listOfSpecies>\n      <species id="I0" compartment="C0" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>\n      <species id="S0" compartment="C0" initialAmount="1.03519122182768" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S1" compartment="C0" initialAmount="7.36012461049451" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n      <species id="S2" compartment="C0" initialAmount="1.98894184346773" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>\n    </listOfSpecies>\n    <listOfParameters>\n      <parameter id="k8" value="0.308670868626717" constant="false"/>\n      <parameter id="k9" value="5.95406763599515" constant="false"/>\n      <parameter id="k10" value="0.356157366483058" constant="false"/>\n      <parameter id="k11" value="2.67491497136061" constant="false"/>\n    </listOfParameters>\n    <listOfReactions>\n      <reaction id="R0" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k8 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R1" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k9 </ci>\n              <ci> S2 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R2" reversible="false">\n        <listOfReactants>\n          <speciesReference species="I0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k10 </ci>\n              <ci> S1 </ci>\n              <ci> I0 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n      <reaction id="R3" reversible="false">\n        <listOfReactants>\n          <speciesReference species="S1" stoichiometry="1" constant="true"/>\n        </listOfReactants>\n        <listOfProducts>\n          <speciesReference species="S0" stoichiometry="1" constant="true"/>\n          <speciesReference species="S2" stoichiometry="1" constant="true"/>\n        </listOfProducts>\n        <kineticLaw>\n          <math xmlns="http://www.w3.org/1998/Math/MathML">\n            <apply>\n              <times/>\n              <ci> k11 </ci>\n              <ci> S1 </ci>\n            </apply>\n          </math>\n        </kineticLaw>\n      </reaction>\n    </listOfReactions>\n  </model>\n</sbml>\n']
+#
+#         self.assertEqual(expected, sbmls)
+#
 
 if __name__ == "__main__":
     unittest.main()

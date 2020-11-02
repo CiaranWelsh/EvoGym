@@ -95,8 +95,8 @@ add_custom_target(printGenex
 find_path(
         BOOST_INSTALL_PREFIX
         NAMES
-        lib/cmake/Boost-1.75.0/BoostConfig.cmake
         boost/algorithm/algorithm.hpp
+        lib/cmake/Boost-1.75.0/BoostConfig.cmake
 )
 
 message(STATUS "BOOST_INSTALL_PREFIX ${BOOST_INSTALL_PREFIX}")
