@@ -194,13 +194,11 @@ stages:
               ls
             displayName: "Build Roadrunner"
 
-          - script: conda create --yes --name py38 python=3.8
-            displayName: Create Anaconda environment
-          - script: conda env list
-            displayName:  environment installation verification
           - script: |
               echo "conda shell.bash hook: $(conda shell.bash hook)"
               eval "$(conda shell.bash hook)"
+              conda create --yes --name py38 python=3.8
+              conda env list
               conda activate py38
               conda install -y numpy
               cd /home/vsts/work/1/s
