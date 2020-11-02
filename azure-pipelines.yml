@@ -193,10 +193,16 @@ stages:
               cmake --build . --target install --config Release -j 12
               ls
             displayName: "Build Roadrunner"
-
           - script: |
-              echo "conda shell.bash hook: $(conda shell.bash hook)"
-              eval "$(conda shell.bash hook)"
+              echo "Installing Miniconda"
+              set -x -e
+              curl -o $(Build.StagingDirectory)/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+              chmod +x $(Build.StagingDirectory)/miniconda.sh
+              $(Build.StagingDirectory)/miniconda.sh -b -p $(Build.StagingDirectory)/miniconda
+              source ci/azurepipelines/activate_conda "$(Build.StagingDirectory)/miniconda/bin/python"
+              echo "Setting up Conda environment"
+            displayName: 'Install miniconda'
+          - script: |
               conda create --yes --name py38 python=3.8
               conda env list
               conda activate py38
