@@ -76,7 +76,7 @@ stages:
               wget https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-gcc7.5-x64-release.tar.gz
               mkdir -p $(LLVM_CACHE)
               tar -C $(LLVM_CACHE) -zxvf llvm-6.x-gcc7.5-x64-release.tar.gz
-              ls
+              ls -R
             displayName: "Get LLVM"
 
 
@@ -95,7 +95,7 @@ stages:
               echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
               wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz
               tar -C $(BOOST_CACHE) -zxvf boost_1_74_0.tar.gz
-              ls
+              ls -R
             displayName: "Get Boost"
 
 
@@ -114,7 +114,7 @@ stages:
               cd $(Agent.BuildDirectory)/s
               wget https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/roadrunner-deps-gcc7.5-x64-release.tar.gz
               tar -C $(ROADRUNNER_DEPS_CACHE) -zxvf roadrunner-deps-gcc7.5-x64-release.tar.gz
-              ls
+              ls -R
             displayName: "Get Dependencies"
 
 
