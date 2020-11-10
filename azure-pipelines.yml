@@ -50,11 +50,11 @@ stages:
               cd $(Pipeline.Workspace)
 
               mkdir -p $(LLVM_CACHE)
-              mkdir -p $(LLVM_INSTALL_PREFIX)
+              # mkdir -p $(LLVM_INSTALL_PREFIX)
               mkdir -p $(ROADRUNNER_DEPS_CACHE)
-              mkdir -p $(ROADRUNNER_DEPS_INSTALL_PREFIX)
+              # mkdir -p $(ROADRUNNER_DEPS_INSTALL_PREFIX)
               mkdir -p $(BOOST_CACHE)
-              mkdir -p $(BOOST_INSTALL_PREFIX)
+              # mkdir -p $(BOOST_INSTALL_PREFIX)
               mkdir -p $(ROADRUNNER_CACHE)
               mkdir -p $(CCACHE_DIR)
               mkdir -p $(ROADRUNNER_INSTALL_PREFIX)
@@ -95,23 +95,23 @@ stages:
             displayName: "Get LLVM"
 
 
-          # - task: Cache@2
-          #   inputs:
-          #     key: 'boost_cache | "$(Agent.OS)"'
-          #     path: $(BOOST_CACHE)
-          #   displayName: bost-cache       
+          - task: Cache@2
+            inputs:
+              key: 'boost_cache | "$(Agent.OS)"'
+              path: $(BOOST_CACHE)
+            displayName: bost-cache       
 
-          # - script: |
-          #     echo "current driectory is: "
-          #     pwd
-          #     echo "doing ls"
-          #     ls -lh
-          #     echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
-          #     echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
-          #     wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz
-          #     tar -C $(BOOST_CACHE) -zxvf boost_1_74_0.tar.gz
-          #     ls -R
-          #   displayName: "Get Boost"
+          - script: |
+              echo "current driectory is: "
+              pwd
+              echo "doing ls"
+              ls -lh
+              echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
+              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
+              wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz
+              tar -C $(BOOST_CACHE) -zxvf boost_1_74_0.tar.gz
+              ls -R $(Pipeline.Workspace)
+            displayName: "Get Boost"
 
 
           # - task: Cache@2
