@@ -1,9 +1,11 @@
 import sys
+
 sys.path.append("/Users/ciaranwelsh/Documents/Evogen/cmake-build-debug/lib")
 import unittest
 import evogen
 from evogen import eRoleType, RateLaw, RNGOptions, RoadRunner, massActionRateLaws
 from evogen import BasicRNG, UniqueReactionsRNG, RNGFactory, eRNG
+
 
 class RoadRunnerPybindInterfaceTests(unittest.TestCase):
     """
@@ -338,6 +340,7 @@ class RNGFactoryTests(unittest.TestCase):
     def tearDown(self) -> None:
         pass
 
+
 #     def test_basic_rng(self):
 #         random_network_generator = RNGFactory(self.options, eRNG.basic)
 #         m = random_network_generator.generate()
@@ -573,4 +576,3 @@ class RNGFactoryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

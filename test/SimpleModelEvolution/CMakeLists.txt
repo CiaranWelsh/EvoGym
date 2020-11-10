@@ -1,0 +1,28 @@
+
+# Test using googletests for Rate laws
+add_test_executable(SimpleModelTest TRUE TEST_EXECUTABLES SimpleModelTest.cpp)
+
+## Tests for RandomNetworkGenreationOptions using googletests
+#add_test_executable(NetworkGenerationOptionsTests TRUE TEST_EXECUTABLES RandomNetworkGenerationOptionsTests.cpp)
+#
+#add_test_executable(NetworkGenerationTests TRUE TEST_EXECUTABLES RandomNetworkGeneratorTests.cpp)
+#
+#add_test_executable(UniqueReactionsRandomNetworkGeneratorTests TRUE TEST_EXECUTABLES UniqueReactionsRandomNetworkGeneratorTests.cpp)
+#
+#add_test_executable(NetworkComponentTests TRUE TEST_EXECUTABLES NetworkComponentTests.cpp)
+#
+#add_test_executable(StoichiometryCounterTests TRUE TEST_EXECUTABLES StoicCounterTests.cpp)
+#
+## count instances of stoichiometry matrix to ensure uniform sampling of topology space
+#add_test_executable(CountInstancesOfStoichiometryMatrices OFF TEST_EXECUTABLES CountInstancesOfStoichiometryMatrices.cpp)
+#
+##add_test_executable(NetworkGenerationTestWithMPI OFF GenerateMultipleNetworksWithMPI.cpp)
+#
+#
+##add_test_executable(IndividualTests ON IndividualTests.cpp ${MOCKUP_DIR}/MockRandomNetworkGenerator.h)
+#
+#
+## propagate TEST_EXECUTABLES upwards
+#set(TEST_EXECUTABLES ${TEST_EXECUTABLES} PARENT_SCOPE)
+#
+#install(FILES evogen_tests.py DESTINATION ${PYTHON_PACKAGE_INSTALL_PREFIX})

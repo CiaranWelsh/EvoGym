@@ -69,7 +69,7 @@ endfunction()
 #add_subdirectory(${MOCKUP_DIR})
 
 add_subdirectory(RandomNetworkGenerationTest)
-
+add_subdirectory(SimpleModelEvolution)
 add_custom_target(run-ctest
         COMMAND ${CMAKE_CTEST_COMMAND} --verbose --extra-verbose --progress ${CMAKE_BINARY_DIR}
         )

@@ -15,8 +15,6 @@
 
 namespace evo {
 
-
-
     class RNG_EXPORT evoRateLaw {
         std::string name_;
         libsbml::ASTNode *rate_law_ = nullptr;
