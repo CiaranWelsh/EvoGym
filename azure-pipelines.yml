@@ -130,7 +130,7 @@ stages:
               echo "Cd to $(Agent.BuildDirectory)/s/"
               cd $(Agent.BuildDirectory)/s
               git clone https://github.com/sys-bio/roadrunner.git $(ROADRUNNER_CACHE)
-              cd roadrunner 
+              cd $(ROADRUNNER_CACHE) 
               mkdir build 
               cd build 
               cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX=$(ROADRUNNER_DEPS_CACHE) -DLLVM_INSTALL_PREFIX=$(LLVM_CACHE) -DCMAKE_BUILD_TYPE=Release  ..
