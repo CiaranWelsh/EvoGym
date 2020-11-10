@@ -21,7 +21,7 @@ stages:
         pool:
           vmImage: "ubuntu-18.04"
         variables:
-          C: $(Pipeline.Workspace)/llvm-6.X
+          LLVM_CACHE: $(Pipeline.Workspace)/llvm-6.X
           LLVM_INSTALL_PREFIX: $(INSTALL_PREFIX)/llvm-6.x-gcc7.5-x64-release
           ROADRUNNER_DEPS_CACHE: $(Pipeline.Workspace)/roadrunner-deps-gcc7.5-x64-release
           BOOST_CACHE: $(Pipeline.Workspace)/boost_1_74_0
