@@ -72,7 +72,8 @@ stages:
               echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
               echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
               wget https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-gcc7.5-x64-release.tar.gz
-              tar -C ${LLVM_CACHE) -zxvf llvm-6.x-gcc7.5-x64-release.tar.gz
+              mkdir -p $(LLVM_CACHE)
+              tar -C $(LLVM_CACHE) -zxvf llvm-6.x-gcc7.5-x64-release.tar.gz
               ls
             displayName: "Get LLVM"
 
