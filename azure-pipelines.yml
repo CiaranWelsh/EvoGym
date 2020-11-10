@@ -133,7 +133,7 @@ stages:
               cd $(ROADRUNNER_CACHE) 
               mkdir build 
               cd build 
-              cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX=$(ROADRUNNER_DEPS_CACHE) -DLLVM_INSTALL_PREFIX=$(LLVM_CACHE) -DCMAKE_BUILD_TYPE=Release  ..
+              cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX=$(ROADRUNNER_DEPS_INSTALL_PREFIX) -DLLVM_INSTALL_PREFIX=$(LLVM_INSTALL_PREFIX) -DCMAKE_BUILD_TYPE=Release  ..
               cmake --build . --target install --config Release -j 12
               ls
             displayName: "Build Roadrunner"
@@ -152,7 +152,7 @@ stages:
               echo "which python $(which python)"
               mkdir build
               cd build
-              cmake -DROADRUNNER_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DLLVM_INSTALL_PREFIX=$(LLVM_CACHE) -DCMAKE_INSTALL_PREFIX=$(INSTALL_PREFIX) -DBOOST_INSTALL_PREFIX=$(BOOST_CACHE) -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
+              cmake -DROADRUNNER_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DLLVM_INSTALL_PREFIX=$(LLVM_INSTALL_PREFIX) -DCMAKE_INSTALL_PREFIX=$(INSTALL_PREFIX) -DBOOST_INSTALL_PREFIX=$(BOOST_INSTALL_PREFIX) -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
             displayName: ConfigureEvogenBuild
           - script: |
               cd /home/vsts/work/1/s/build
