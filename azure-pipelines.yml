@@ -20,525 +20,99 @@ stages:
         continueOnError: "false"
         pool:
           vmImage: "ubuntu-18.04"
-        variables:
-          LLVM_CACHE: $(Pipeline.Workspace)/llvm-6.X
-          LLVM_INSTALL_PREFIX: $(LLVM_CACHE)/llvm-6.x-gcc7.5-x64-release
 
-          ROADRUNNER_DEPS_CACHE: $(Pipeline.Workspace)/roadrunner-deps
-          ROADRUNNER_DEPS_INSTALL_PREFIX: $(ROADRUNNER_DEPS_CACHE)/libroadrunner-deps-gcc7.5-x64-release.tar.gz
-
-          BOOST_CACHE: $(Pipeline.Workspace)/boost
-          BOOST_INSTALL_PREFIX: $(BOOST_CACHE)/boost_1_74_0
-
-          ROADRUNNER_CACHE: $(Pipeline.Workspace)/roadrunner
-          CCACHE_DIR: $(Pipeline.Workspace)/ccache
-
-          ROADRUNNER_INSTALL_PREFIX: $(Pipeline.Workspace)/roadrunner-installed
-          INSTALL_PREFIX: $(Pipeline.Workspace)/Evogen-installed
-
+        strategy:
+          matrix:
+            64-bit Linux Release:
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-release"
+            64-bit Linux Debug:
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-debug"
         steps:
-          - checkout: self
-            submodules: recursive
-
-          - script: |
-              echo "Default directory: $(pwd)"
-              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
-              echo "Pipeline.Workspace $(Pipeline.Workspace)"
-              echo "System.DefaultWorkingDirectory $(System.DefaultWorkingDirectory)"
-              echo "Agent.OS $(Agent.OS)"
-
-              cd $(Pipeline.Workspace)
-
-              mkdir -p $(LLVM_CACHE)
-              # mkdir -p $(LLVM_INSTALL_PREFIX)
-              mkdir -p $(ROADRUNNER_DEPS_CACHE)
-              # mkdir -p $(ROADRUNNER_DEPS_INSTALL_PREFIX)
-              mkdir -p $(BOOST_CACHE)
-              # mkdir -p $(BOOST_INSTALL_PREFIX)
-              mkdir -p $(ROADRUNNER_CACHE)
-              mkdir -p $(CCACHE_DIR)
-              mkdir -p $(ROADRUNNER_INSTALL_PREFIX)
-              mkdir -p $(INSTALL_PREFIX)
-
-              ls -R
-
-
-            displayName: CreateDirectories
-
-          - task: Cache@2
+          - task: CMake@1
+            displayName: ConfigureCommand
             inputs:
-              key: 'ccache | "$(Agent.OS)"'
-              path: $(CCACHE_DIR)
-            displayName: ccache
-
-
-
-          - task: Cache@2
+              cmakeArgs: $(CMakeArgs)  -DCMAKE_BUILD_TYPE=$(BuildType) -DBUILD_TESTS=ON ..
+          - task: CMake@1
+            displayName: BuildCommand
             inputs:
-              key: 'llvm_cache | "$(Agent.OS)"'
-              path: $(LLVM_CACHE)
-            displayName: llvm-cache            
-
-           # we cannot upload prebuilt binaries onto github for linux debug version because of github file size limits.
-          # therefore we do this build with Release llvm for both debug and release. Oddly enough it seems to work.
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
           - script: |
-              echo "current driectory is: "
-              pwd
-              echo "doing ls"
-              ls -lh
-              echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
-              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
-              wget https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-gcc7.5-x64-release.tar.gz
-              mkdir -p $(LLVM_CACHE)
-              tar -C $(LLVM_CACHE) -zxvf llvm-6.x-gcc7.5-x64-release.tar.gz
-              ls -R $(dirname $(LLVM_))
-            displayName: "Get LLVM"
-
-
-          - task: Cache@2
-            inputs:
-              key: 'boost_cache | "$(Agent.OS)"'
-              path: $(BOOST_CACHE)
-            displayName: bost-cache       
-
-          - script: |
-              echo "current driectory is: "
-              pwd
-              echo "doing ls"
-              ls -lh
-              echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
-              echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
-              wget https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz
-              tar -C $(BOOST_CACHE) -zxvf boost_1_74_0.tar.gz
-              ls -R $(Pipeline.Workspace)
-            displayName: "Get Boost"
-
-
-          - task: Cache@2
-            inputs:
-              key: 'roadrunner_deps_cache | "$(Agent.OS)"'
-              path: $(ROADRUNNER_DEPS_CACHE)
-            displayName: roadrunnner-deps-cache      
-
-          - script: |
-              echo "current driectory is: "
-              pwd
-              echo "doing ls"
-              ls -lh
-              echo "Cd to $(Agent.BuildDirectory)/s/"
-              cd $(Agent.BuildDirectory)/s
-              wget https://github.com/sys-bio/libroadrunner-deps/releases/download/v2.0.1/libroadrunner-deps-gcc7.5-x64-release.tar.gz
-              tar -C $(ROADRUNNER_DEPS_CACHE) -zxvf libroadrunner-deps-gcc7.5-x64-release.tar.gz
-              ls -R
-            displayName: "Get Dependencies"
-
-
-          - task: Cache@2
-            inputs:
-              key: 'roadrunner_cache | "$(Agent.OS)"'
-              path: $(ROADRUNNER_CACHE)
-            displayName: roadrunner-cache      
-
-          - script: |
-              git clone https://github.com/sys-bio/roadrunner.git $(ROADRUNNER_CACHE)
-              ls -R $(dirname $(ROADRUNNER_CACHE))
-              cd $(ROADRUNNER_CACHE)
-              mkdir build 
-              cd build 
-              cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX="$(ROADRUNNER_DEPS_INSTALL_PREFIX)" -DLLVM_INSTALL_PREFIX="$(LLVM_INSTALL_PREFIX)" -DCMAKE_BUILD_TYPE=Release  ..
-              cmake --build . --target install --config Release -j 12
+              echo "pwd: $(pwd)"
               ls
-            displayName: "Build Roadrunner"
+              echo "$(Agent.BuildDirectory)"
+              cd $(Agent.BuildDirectory)/s/build
+              echo "pwd: $(pwd)"
+              ls
+              ctest --verbose --extra-verbose --progress
+            displayName: RunTests
+            
+            
+      - job: BuildEvogenWindows
+        timeoutInMinutes: "0"
+        displayName: Windows
+        continueOnError: "false"
+        pool:
+          vmImage: "windows2019"
 
-          # - script: conda create --yes --name py38 python=3.8
-          #   displayName: Create Anaconda environment
-          # - script: conda env list
-          #   displayName:  environment installation verification
-          # - script: |
-          #     echo "conda shell.bash hook: $(conda shell.bash hook)"
-          #     eval "$(conda shell.bash hook)"
-          #     conda activate py38
-          #     conda install -y numpy
-          #     cd /home/vsts/work/1/s
-          #     echo "pwd: $(pwd)"
-          #     echo "which python $(which python)"
-          #     mkdir build
-          #     cd build
-          #     cmake -DROADRUNNER_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DLLVM_INSTALL_PREFIX=$(LLVM_INSTALL_PREFIX) -DCMAKE_INSTALL_PREFIX=$(INSTALL_PREFIX) -DBOOST_INSTALL_PREFIX=$(BOOST_INSTALL_PREFIX) -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
-          #   displayName: ConfigureEvogenBuild
-          # - script: |
-          #     cd /home/vsts/work/1/s/build
-          #     cmake --build . --target install --config $(BuildType) -j 12
-          #   displayName: BuildEvogenBuild
-          # - script: |
-          #     cd /home/vsts/work/1/s/build
-          #     echo "running ctest"
-          #     ctest --verbose --extra-verbose --progress .
-          #     echo "running python tests"
-          #   displayName: Run C++ Tests
+        strategy:
+          matrix:
+            64-bit Windows Release:
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-release"
+            64-bit Windows Debug:
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-debug"
+        steps:
+          - task: CMake@1
+            displayName: ConfigureCommand
+            inputs:
+              cmakeArgs: $(CMakeArgs)  -DCMAKE_BUILD_TYPE=$(BuildType) -DBUILD_TESTS=ON ..
+          - task: CMake@1
+            displayName: BuildCommand
+            inputs:
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+          - script: |
+              echo "pwd: $(pwd)"
+              ls
+              echo "$(Agent.BuildDirectory)"
+              cd $(Agent.BuildDirectory)/s/build
+              echo "pwd: $(pwd)"
+              ls
+              ctest --verbose --extra-verbose --progress
+            displayName: RunTests
+      - job: BuildEvogenMac
+        timeoutInMinutes: "0"
+        displayName: Mac
+        continueOnError: "false"
+        pool:
+          vmImage: "macOS-10.15"
 
-          # - script: |
-          #     echo "conda shell.bash hook: $(conda shell.bash hook)"
-          #     eval "$(conda shell.bash hook)"
-          #     conda activate py38
-          #     cd /home/vsts/work/1/s/install-azure-release/site-packages/evogen
-          #     python evogen_tests.py
-          #   displayName: Run Python Tests
+        strategy:
+          matrix:
+            64-bit Mac Release:
+              BuildType: Release
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-release"
+            64-bit Mac Debug:
+              BuildType: Debug
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-debug"
+        steps:
+          - task: CMake@1
+            displayName: ConfigureCommand
+            inputs:
+              cmakeArgs: $(CMakeArgs)  -DCMAKE_BUILD_TYPE=$(BuildType) -DBUILD_TESTS=ON ..
+          - task: CMake@1
+            displayName: BuildCommand
+            inputs:
+              cmakeArgs: --build . --target install --config $(BuildType) -j 12
+          - script: |
+              echo "pwd: $(pwd)"
+              ls
+              echo "$(Agent.BuildDirectory)"
+              cd $(Agent.BuildDirectory)/s/build
+              echo "pwd: $(pwd)"
+              ls
+              ctest --verbose --extra-verbose --progress
+            displayName: RunTests
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      # - job: BuildEvogenMac
-      #   timeoutInMinutes: "0"
-      #   displayName: Mac
-      #   continueOnError: "false"
-      #   pool:
-      #     vmImage: "macOS-10.15"
-
-      #   steps:
-      #     - checkout: self
-      #       submodules: recursive
-      #     - script: |
-      #         echo "pwd: $(pwd)"
-      #         ls -R
-
-      #      # we cannot upload prebuilt binaries onto github for linux debug version because of github file size limits.
-      #     # therefore we do this build with Release llvm for both debug and release. Oddly enough it seems to work.
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         echo "Agent.HomeDirectory $(Agent.HomeDirectory)"
-      #         echo "Agent.BuildDirectory $(Agent.BuildDirectory)"
-      #         wget https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-clang11.0.3-x64-release.zip
-      #         tar -zxvf llvm-6.x-clang11.0.3-x64-release
-      #         ls
-      #       displayName: "Get LLVM"
-
-      #     - script: |
-      #         echo "brew installing boost"
-      #         brew install boost
-      #       displayName: "Get Boost"
-
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         echo "Cd to $(Agent.BuildDirectory)/s/"
-      #         cd $(Agent.BuildDirectory)/s
-      #         wget https://github.com/sys-bio/libroadrunner-deps/releases/download/v2.0.1/libroadrunner-deps-mac-x64-release.zip
-      #         tar -zxvf libroadrunner-deps-mac-x64-release.zip
-      #         ls
-      #       displayName: "Get Dependencies"
-
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         echo "Cd to $(Agent.BuildDirectory)/s/"
-      #         cd $(Agent.BuildDirectory)/s
-      #         git clone https://github.com/sys-bio/roadrunner.git
-      #         cd roadrunner
-      #         mkdir build
-      #         cd build
-      #         cmake -DCMAKE_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DRR_DEPENDENCIES_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/roadrunner-deps-gcc7.5-x64-release" -DLLVM_INSTALL_PREFIX="$(Agent.BuildDirectory)/s/llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
-      #         cmake --build . --target install --config Release -j 12
-      #         ls
-      #       displayName: "Build Roadrunner"
-      #     - script: |
-      #         echo "Installing Miniconda"
-      #         set -x -e
-      #         curl -o $(Build.StagingDirectory)/miniconda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
-      #         chmod +x $(Build.StagingDirectory)/miniconda.sh
-      #         $(Build.StagingDirectory)/miniconda.sh -b -p $(Build.StagingDirectory)/miniconda
-      #         unset CONDA_SHLVL
-      #         eval "$($(Build.StagingDirectory)/miniconda/bin/python -m conda shell.bash hook)"
-      #         conda activate base
-      #         echo "Setting up Conda environment"
-      #       displayName: 'Install miniconda'
-      #     - script: |
-      #         conda create --yes --name py38 python=3.8
-      #         conda env list
-      #         conda activate py38
-      #         conda install -y numpy
-      #         cd /home/vsts/work/1/s
-      #         echo "pwd: $(pwd)"
-      #         echo "which python $(which python)"
-      #         mkdir build
-      #         cd build
-      #         cmake -DROADRUNNER_INSTALL_PREFIX="$(roadrunner_install_prefix)" -DLLVM_INSTALL_PREFIX="../llvm-6.x-gcc7.5-x64-release" -DCMAKE_BUILD_TYPE=$(BuildType)  -DCMAKE_INSTALL_PREFIX=../install-azure-release -DBOOST_INSTALL_PREFIX=../boost_1_74_0 -DPython_ROOT_DIR=/usr/share/miniconda/envs/py38 ..
-      #       displayName: ConfigureEvogenBuild
-      #     - script: |
-      #         cd /home/vsts/work/1/s/build
-      #         cmake --build . --target install --config $(BuildType) -j 12
-      #       displayName: BuildEvogenBuild
-      #     - script: |
-      #         cd /home/vsts/work/1/s/build
-      #         echo "running ctest"
-      #         ctest --verbose --extra-verbose --progress .
-      #         echo "running python tests"
-      #       displayName: Run C++ Tests
-
-      #     - script: |
-      #         echo "conda shell.bash hook: $(conda shell.bash hook)"
-      #         eval "$(conda shell.bash hook)"
-      #         conda activate py38
-      #         cd /home/vsts/work/1/s/install-azure-release/site-packages/evogen
-      #         python evogen_tests.py
-      #       displayName: Run Python Tests
-
-
-
-# add conda to path in windows
-  #             - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
-  # displayName: Add conda to PATH
-          # add conda to path macOS-10
-#   - bash: echo "##vso[task.prependpath]$CONDA/bin"
-#   displayName: Add conda to PATH
-
-# # On Hosted macOS, the agent user doesn't have ownership of Miniconda's installation directory/
-# # We need to take ownership if we want to update conda or install packages globally
-# - bash: sudo chown -R $USER $CONDA
-#   displayName: Take ownership of conda installation
-
-          # - script: |
-          #     echo "pwd: $(pwd)"
-          #     ls
-          #     echo "$(Agent.BuildDirectory)"
-          #     cd $(Agent.BuildDirectory)/s/build
-          #     echo "pwd: $(pwd)"
-          #     ls
-          #     ctest --verbose --extra-verbose --progress
-          #   displayName: RunTests
-
-      # - job: BuildEvogenWindowsRelease
-      #   timeoutInMinutes: "0"
-      #   displayName: Windows
-      #   continueOnError: "false"
-      #   pool:
-      #     vmImage: "windows-2019"
-
-      #   strategy:
-      #     matrix:
-      #       64-bit Windows Release:
-      #         BuildType: Release
-      #         SelfHost: false
-      #         CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-release"
-      #         llvm_link: https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-msvc2019-x64-release.zip
-      #         llvm_zip: llvm-6.x-msvc2019-x64-release.zip
-      #         llvm_install: llvm-6.x-msvc2019-x64-release
-      #         rr_deps_link: https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/roadrunner-deps-msvc2019-x64-release.zip
-      #         rr_deps_zip: roadrunner_deps-msvc2019-x64-release.zip
-      #         rr_deps_install: roadrunner-deps-msvc2019-x64-release
-
-      #   steps:
-      #     - powershell: |
-      #         $ProgressPreference = 'SilentlyContinue'
-      #         Invoke-WebRequest $(llvm_link) -OutFile $(llvm_zip)
-      #         Expand-Archive  $(llvm_zip) -Destination .
-      #         rm $(llvm_zip) # since we are limited to 10gb space per job we clean up zips
-      #         echo "pwd: $(pwd)"
-      #         dir
-      #         cd '$(llvm_install)'
-      #         dir
-      #       displayName: "Get LLVM"
-      #       errorActionPreference: 'stop'
-      #     - powershell: |
-      #         $ProgressPreference = 'SilentlyContinue'
-      #         Invoke-WebRequest $(rr_deps_link) -OutFile $(rr_deps_zip)
-      #         Expand-Archive $(rr_deps_zip)  -Destination .
-      #         rm $(rr_deps_zip)
-      #         echo "pwd: $(pwd)"
-      #         dir
-      #       errorActionPreference: 'stop'
-      #       displayName: "Get Dependencies"
-      #     - task: CMake@1
-      #       displayName: ConfigureCommand
-      #       inputs:
-      #         cmakeArgs: $(CMakeArgs) -DRR_DEPENDENCIES_INSTALL_PREFIX="../$(rr_deps_install)" -DLLVM_INSTALL_PREFIX="../$(llvm_install)" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
-      #     - task: CMake@1
-      #       displayName: BuildRoadrunner
-      #       inputs:
-      #         cmakeArgs: --build . --config $(BuildType) -j 12
-      #     - script: |
-      #         echo "pwd: $(pwd)"
-      #         ls
-      #         cd $(Agent.BuildDirectory)/s/build
-      #         echo "pwd: $(pwd)"
-      #         ls
-      #         ctest --verbose --extra-verbose --progress
-      #       displayName: RunTests
-
-
-      # - job: BuildRoadrunnerMacRelease
-      #   timeoutInMinutes: "0"
-      #   displayName: MacOS
-      #   continueOnError: "false"
-      #   pool:
-      #     vmImage: 'macOS-10.15'
-
-      #   strategy:
-      #     matrix:
-      #       64-bit Mac Release:
-      #         BuildType: Release
-      #         SelfHost: false
-      #         CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-release"
-      #         llvm_link: https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-clang11.0.3-x64-release.zip
-      #         llvm_zip: llvm-6.x-clang11.0.3-x64-release.zip
-      #         llvm_install: llvm-6.x-clang11.0.3-x64-release
-      #         rr_deps_link: https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/libroadrunner-deps-mac-x64-release.zip
-      #         rr_deps_zip: libroadrunner-deps-mac-x64-release.zip
-      #         rr_deps_install: libroadrunner-deps-mac-x64-release
-
-      #   steps:
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         wget $(llvm_link)
-      #         tar -zxvf $(llvm_zip)
-      #         ls
-      #       displayName: "Get LLVM"
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         wget $(rr_deps_link)
-      #         tar -zxvf $(rr_deps_zip)
-      #         ls
-      #       displayName: "Get Dependencies"
-      #     - task: CMake@1
-      #       displayName: ConfigureCommand
-      #       inputs:
-      #         cmakeArgs: $(CMakeArgs) -DRR_DEPENDENCIES_INSTALL_PREFIX="../$(rr_deps_install)" -DLLVM_INSTALL_PREFIX="../$(llvm_install)" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
-      #     - task: CMake@1
-      #       displayName: BuildRoadrunner
-      #       inputs:
-      #         cmakeArgs: --build . --target install --config $(BuildType) -j 12
-      #     - script: |
-      #         echo "pwd: $(pwd)"
-      #         ls
-      #         cd $(Agent.BuildDirectory)/s/build
-      #         echo "pwd: $(pwd)"
-      #         ls
-      #         ctest --verbose --extra-verbose --progress
-      #       displayName: RunTests
-
-      # - job: BuildRoadrunnerWindowsDebug
-      #   timeoutInMinutes: "0"
-      #   displayName: Windows
-      #   continueOnError: "false"
-      #   pool:
-      #     vmImage: "windows-2019"
-
-      #   strategy:
-      #     matrix:
-      #       64-bit Windows Debug:
-      #         BuildType: Debug
-      #         SelfHost: false
-      #         CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-debug"
-      #         llvm_link: https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-msvc2019-x64-debug.zip
-      #         llvm_zip: llvm-6.x-msvc2019-x64-debug.zip
-      #         llvm_install: llvm-6.x-msvc2019-x64-debug
-      #         rr_deps_link: https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/roadrunner-deps-msvc2019-x64-debug.zip
-      #         rr_deps_zip: roadrunner_deps-msvc2019-x64-debug.zip
-      #         rr_deps_install: roadrunner-deps-msvc2019-x64-debug
-
-      #   steps:
-      #     - powershell: |
-      #         $ProgressPreference = 'SilentlyContinue'
-      #         Invoke-WebRequest $(llvm_link) -OutFile $(llvm_zip)
-      #         Expand-Archive  $(llvm_zip) -Destination .
-      #         rm $(llvm_zip) # since we are limited to 10gb space per job we clean up zips
-      #         echo "pwd: $(pwd)"
-      #         dir
-      #         cd '$(llvm_install)'
-      #         dir
-      #       displayName: "Get LLVM"
-      #       errorActionPreference: 'stop'
-      #     - powershell: |
-      #         $ProgressPreference = 'SilentlyContinue'
-      #         Invoke-WebRequest $(rr_deps_link) -OutFile $(rr_deps_zip)
-      #         Expand-Archive $(rr_deps_zip)  -Destination .
-      #         rm $(rr_deps_zip)
-      #         echo "pwd: $(pwd)"
-      #         dir
-      #       errorActionPreference: 'stop'
-      #       displayName: "Get Dependencies"
-      #     - task: CMake@1
-      #       displayName: ConfigureCommand
-      #       inputs:
-      #         cmakeArgs: $(CMakeArgs) -DRR_DEPENDENCIES_INSTALL_PREFIX="../$(rr_deps_install)" -DLLVM_INSTALL_PREFIX="../$(llvm_install)" -DCMAKE_BUILD_TYPE=$(BuildType) ..
-      #     - task: CMake@1
-      #       displayName: BuildRoadrunner
-      #       inputs:
-      #         cmakeArgs: --build . --config $(BuildType) -j 12
-      #     ## Don't run testing on the debug version--it takes too long.
-
-      # - job: BuildRoadrunnerMacDebug
-      #   timeoutInMinutes: "0"
-      #   displayName: MacOS
-      #   continueOnError: "false"
-      #   pool:
-      #     vmImage: 'macOS-10.15'
-
-      #   strategy:
-      #     matrix:
-      #       64-bit Mac Debug:
-      #         BuildType: Debug
-      #         SelfHost: false
-      #         CMakeArgs: "-DCMAKE_INSTALL_PREFIX=$(Build.BinariesDirectory)/install-azure-debug"
-      #         llvm_link: https://github.com/sys-bio/llvm-6.x/releases/download/release%2F6.x/llvm-6.x-clang11.0.3-x64-release.zip
-      #         llvm_zip: llvm-6.x-clang11.0.3-x64-release.zip
-      #         llvm_install: llvm-6.x-clang11.0.3-x64-release
-      #         rr_deps_link: https://github.com/CiaranWelsh/roadrunner-deps/releases/download/v2.0.1/libroadrunner-deps-mac-x64-debug.zip
-      #         rr_deps_zip: libroadrunner-deps-mac-x64-debug.zip
-      #         rr_deps_install: libroadrunner-deps-mac-x64-debug
-
-      #   steps:
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         wget $(llvm_link)
-      #         tar -zxvf $(llvm_zip)
-      #         ls
-      #       displayName: "Get LLVM"
-      #     - script: |
-      #         echo "current driectory is: "
-      #         pwd
-      #         echo "doing ls"
-      #         ls -lh
-      #         wget $(rr_deps_link)
-      #         tar -zxvf $(rr_deps_zip)
-      #         ls
-      #       displayName: "Get Dependencies"
-      #     - task: CMake@1
-      #       displayName: ConfigureCommand
-      #       inputs:
-      #         cmakeArgs: $(CMakeArgs) -DRR_DEPENDENCIES_INSTALL_PREFIX="../$(rr_deps_install)" -DLLVM_INSTALL_PREFIX="../$(llvm_install)" -DCMAKE_BUILD_TYPE=$(BuildType)  ..
-      #     - task: CMake@1
-      #       displayName: BuildRoadrunner
-      #       inputs:
-      #         cmakeArgs: --build . --target install --config $(BuildType) -j 12
-      #     ## Don't run testing on the debug version--it takes too long.
