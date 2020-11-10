@@ -133,27 +133,22 @@ stages:
             displayName: "Get Dependencies"
 
 
-          # - task: Cache@2
-          #   inputs:
-          #     key: 'roadrunner_cache | "$(Agent.OS)"'
-          #     path: $(ROADRUNNER_CACHE)
-          #   displayName: roadrunner-cache      
+          - task: Cache@2
+            inputs:
+              key: 'roadrunner_cache | "$(Agent.OS)"'
+              path: $(ROADRUNNER_CACHE)
+            displayName: roadrunner-cache      
 
-          # - script: |
-          #     echo "current driectory is: "
-          #     pwd
-          #     echo "doing ls"
-          #     ls -lh
-          #     echo "Cd to $(Agent.BuildDirectory)/s/"
-          #     cd $(Agent.BuildDirectory)/s
-          #     git clone https://github.com/sys-bio/roadrunner.git $(ROADRUNNER_CACHE)
-          #     cd $(ROADRUNNER_CACHE) 
-          #     mkdir build 
-          #     cd build 
-          #     cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX=$(ROADRUNNER_DEPS_INSTALL_PREFIX) -DLLVM_INSTALL_PREFIX=$(LLVM_INSTALL_PREFIX) -DCMAKE_BUILD_TYPE=Release  ..
-          #     cmake --build . --target install --config Release -j 12
-          #     ls
-          #   displayName: "Build Roadrunner"
+          - script: |
+              git clone https://github.com/sys-bio/roadrunner.git $(ROADRUNNER_CACHE)
+              ls -R $(dirname $(ROADRUNNER_CACHE))
+              cd $(ROADRUNNER_CACHE)/roadrunner
+              mkdir build 
+              cd build 
+              cmake -DCMAKE_INSTALL_PREFIX="$(ROADRUNNER_INSTALL_PREFIX)" -DRR_DEPENDENCIES_INSTALL_PREFIX="$(ROADRUNNER_DEPS_INSTALL_PREFIX)" -DLLVM_INSTALL_PREFIX="$(LLVM_INSTALL_PREFIX)" -DCMAKE_BUILD_TYPE=Release  ..
+              cmake --build . --target install --config Release -j 12
+              ls
+            displayName: "Build Roadrunner"
 
           # - script: conda create --yes --name py38 python=3.8
           #   displayName: Create Anaconda environment
